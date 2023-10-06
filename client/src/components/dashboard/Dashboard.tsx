@@ -7,9 +7,17 @@ import {
 } from "@chakra-ui/react";
 import MobileNav from "../header-sidenav/MobileNav";
 import SideNav from "../header-sidenav/SideBar";
+import { ReactNode } from "react";
 
-const Dashboard = () => {
+interface DashboardProps{
+  title?:ReactNode;
+  children?:ReactNode;
+
+}
+
+const Dashboard = (props:DashboardProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {title, children} = props
 
   return (
     <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
@@ -31,7 +39,7 @@ const Dashboard = () => {
       </Drawer>
       <MobileNav onOpen={onOpen} />
       <Box ml={{ base: 0, md: 60 }} p="4">
-        {/* Content */}
+        {children}
       </Box>
     </Box>
   );

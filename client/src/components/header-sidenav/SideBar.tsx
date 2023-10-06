@@ -15,6 +15,7 @@ import {
   FiStar,
   FiTrendingUp,
 } from "react-icons/fi";
+import { TfiAnnouncement } from "react-icons/tfi";
 import NavItem from "./NavItem";
 
 interface SideNavProps extends BoxProps {
@@ -24,13 +25,15 @@ interface SideNavProps extends BoxProps {
 interface LinkItemProps {
   name: string;
   icon: IconType;
+  path: string;
 }
 const LinkItems: Array<LinkItemProps> = [
-  { name: "Dashboard", icon: FiHome },
-  { name: "Faq's", icon: FiTrendingUp },
-  { name: "Tickets", icon: FiCompass },
-  { name: "User Access", icon: FiStar },
-  { name: "Upload Data", icon: FiSettings },
+  { name: "Dashboard", icon: FiHome, path: "/" },
+  { name: "Announcements", icon: TfiAnnouncement, path: "/announcements" },
+  { name: "Faq's", icon: FiTrendingUp, path: "/faq" },
+  { name: "Tickets", icon: FiCompass, path: "/tickets" },
+  { name: "User Access", icon: FiStar, path: "/users" },
+  { name: "Upload Data", icon: FiSettings, path: "/upload" },
 ];
 
 const SideNav = ({ onClose, ...rest }: SideNavProps) => {
@@ -64,6 +67,7 @@ const SideNav = ({ onClose, ...rest }: SideNavProps) => {
           icon={link.icon}
           activeStep={activeStep}
           setActiveStep={setActiveStep}
+          path={link.path}
         >
           {link.name}
         </NavItem>
