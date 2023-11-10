@@ -1,9 +1,10 @@
-import { Flex } from "@chakra-ui/react";
+import { Flex, HStack, Tooltip } from "@chakra-ui/react";
 import { TableProps } from "antd";
 import { ColumnsType } from "antd/es/table";
 import React, { useState } from "react";
 import TableContainer from "../common/TableContainer";
 import CreateFaqForm from "./CreateFaqForm";
+import { AiFillEye } from "react-icons/ai";
 
 interface DataType {
   key: React.Key;
@@ -16,7 +17,7 @@ function FaqDashboard() {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "Name",
+      title: "Title",
       dataIndex: "name",
       filters: [
         {
@@ -38,12 +39,12 @@ function FaqDashboard() {
       width: "30%",
     },
     {
-      title: "Age",
+      title: "Description",
       dataIndex: "age",
       sorter: (a, b) => a.age - b.age,
     },
     {
-      title: "Address",
+      title: "Category",
       dataIndex: "address",
       filters: [
         {
@@ -58,6 +59,17 @@ function FaqDashboard() {
       onFilter: (value, record) => record.address.startsWith(value as any),
       filterSearch: true,
       width: "40%",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <HStack>
+          <Tooltip label="Click to hide faq" hasArrow>
+            <AiFillEye size={24} style={{ cursor: "pointer" }} />
+          </Tooltip>
+        </HStack>
+      ),
     },
   ];
 
@@ -108,7 +120,7 @@ function FaqDashboard() {
         }}
         titleName="Faq Dashboard"
       />
-      <CreateFaqForm showModal={showModal} setShowModal={setShowModal}/>
+      <CreateFaqForm showModal={showModal} setShowModal={setShowModal} />
     </Flex>
   );
 }
