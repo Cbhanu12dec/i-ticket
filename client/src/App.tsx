@@ -9,6 +9,7 @@ import UploadUsers from "./components/users-upload/UploadUsers";
 import UsersTrackingPage from "./components/tickets/UsersTrackingPage";
 import AdminTicketsDashboard from "./components/tickets/AdminTicketsDashboard";
 import Announcement from "./components/announcements/Announcement";
+import Access from "./components/access/Access";
 function App() {
   return (
     <div className="App">
@@ -20,7 +21,7 @@ function App() {
             <Route path="/announcements" element={<Announcement />} />
             <Route path="/tickets" element={<AdminTicketsDashboard />} />
             <Route path="/upload" element={<UploadUsers />} />
-            <Route path="/users" element={<UsersTrackingPage />} />
+            <Route path="/users" element={<Access />} />
           </Routes>
         </Router>
       </Dashboard>
