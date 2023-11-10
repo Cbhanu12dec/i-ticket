@@ -51,6 +51,7 @@ function AdminDashboard() {
             maxW={{ base: "full" }}
             position={"relative"}
             backdropFilter="brightness(50%)"
+            
           >
             <LineChart
               width={280}
