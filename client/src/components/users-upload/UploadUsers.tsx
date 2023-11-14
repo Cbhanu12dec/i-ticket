@@ -5,6 +5,7 @@ import {
   HStack,
   Button,
   Grid,
+  Image,
   GridItem,
 } from "@chakra-ui/react";
 import { UploadProps } from "antd";
@@ -15,6 +16,7 @@ import {
   AiOutlineCloudUpload,
   AiOutlineInbox,
 } from "react-icons/ai";
+import Upload from "../assets/upload.svg";
 
 const UploadUsers = () => {
   const fileProps: UploadProps = {
@@ -96,7 +98,7 @@ const UploadUsers = () => {
         py="6"
         borderRadius={"lg"}
       >
-        <Flex direction={"column"} alignItems={"start"}>
+        <Flex direction={"column"} alignItems={"start"} w="100%">
           <Text
             mb="4"
             textColor={"purple.800"}
@@ -105,28 +107,31 @@ const UploadUsers = () => {
           >
             Instructions
           </Text>
-          <VStack
-            gap={1}
-            textColor={"gray"}
-            fontWeight={"hairline"}
-            fontSize={"sm"}
-            fontStyle={"italic"}
-          >
-            <Text>
-              Files should contains with fields firstName, lastname...
-            </Text>
-            <Text>
-              Files should contains with fields firstName, lastname...
-            </Text>
+          <Flex justifyContent={"space-between"} w="100%">
+            <VStack
+              gap={1}
+              textColor={"gray"}
+              fontWeight={"hairline"}
+              fontSize={"sm"}
+              fontStyle={"italic"}
+            >
+              <Text>
+                Files should contains with fields firstName, lastname...
+              </Text>
+              <Text>
+                Files should contains with fields firstName, lastname...
+              </Text>
 
-            <Text>
-              Files should contains with fields firstName, lastname...
-            </Text>
+              <Text>
+                Files should contains with fields firstName, lastname...
+              </Text>
 
-            <Text>
-              Files should contains with fields firstName, lastname...
-            </Text>
-          </VStack>
+              <Text>
+                Files should contains with fields firstName, lastname...
+              </Text>
+            </VStack>
+            <Image src={Upload} maxW={"52"} mr="10" />
+          </Flex>
         </Flex>
       </GridItem>
     </Grid>

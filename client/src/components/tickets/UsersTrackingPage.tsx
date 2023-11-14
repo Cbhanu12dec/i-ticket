@@ -7,7 +7,6 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
-  Stack,
   useDisclosure,
 } from "@chakra-ui/react";
 import { Steps } from "antd";
@@ -17,7 +16,7 @@ const UsersTrackingPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
-      <Button colorScheme="teal" onClick={onOpen}>
+      <Button bg="purple.800" color={"white"} onClick={onOpen}>
         Create user
       </Button>
       <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
@@ -34,20 +33,20 @@ const UsersTrackingPage = () => {
               current={1}
               items={[
                 {
-                    title:"Created Ticket",
-                    description:"Created At 10/20/2023."
+                  title: "Created Ticket",
+                  description: "Created At 10/20/2023.",
                 },
                 {
                   title: "Wating for Accept",
-                  description:"Ticket is not yet viewed...."
+                  description: "Ticket is not yet viewed....",
                 },
                 {
                   title: "In Progress",
-                  description:"Check any commentes are posted.."
+                  description: "Check any commentes are posted..",
                 },
                 {
                   title: "Completed",
-                  description:"Open ticket to view the action."
+                  description: "Open ticket to view the action.",
                 },
               ]}
             />

@@ -1,22 +1,26 @@
 import React, { useState } from "react";
 import TableContainer from "../common/TableContainer";
-import { Flex } from "@chakra-ui/react";
+import { Button, Flex, HStack, Text } from "@chakra-ui/react";
 import { ColumnsType, TableProps } from "antd/es/table";
 import CreatAnnouncement from "./CreateAnnouncement";
+import { universityAnnouncements } from "../data/Announcements";
 
 interface DataType {
   key: React.Key;
-  name: string;
-  age: number;
-  address: string;
+  title: string;
+  description: string;
+  status: string;
+  startDate: string;
+  completeDate: string;
+  accessLevel: string;
 }
 const Announcement = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "Name",
-      dataIndex: "name",
+      title: "Title",
+      dataIndex: "title",
       filters: [
         {
           text: "Joe",
@@ -33,59 +37,42 @@ const Announcement = () => {
       ],
       filterMode: "tree",
       filterSearch: true,
-      onFilter: (value, record) => record.name.startsWith(value as any),
-      width: "30%",
+      onFilter: (value, record) => record.title.startsWith(value as any),
     },
     {
-      title: "Age",
-      dataIndex: "age",
-      sorter: (a, b) => a.age - b.age,
+      title: "Description",
+      dataIndex: "description",
     },
     {
-      title: "Address",
-      dataIndex: "address",
+      title: "Status",
+      dataIndex: "status",
       filters: [
         {
-          text: "London",
-          value: "London",
+          text: "Published",
+          value: "Published",
         },
         {
-          text: "New York",
-          value: "New York",
+          text: "Upcomming",
+          value: "Upcomming",
         },
       ],
-      onFilter: (value, record) => record.address.startsWith(value as any),
+      onFilter: (value, record) => record.status.startsWith(value as any),
       filterSearch: true,
-      width: "40%",
+    },
+    {
+      title: "Start Date",
+      dataIndex: "startDate",
+    },
+    {
+      title: "complete Date",
+      dataIndex: "completeDate",
+    },
+    {
+      title: "Access Level",
+      dataIndex: "accessLevel",
     },
   ];
 
-  const data: DataType[] = [
-    {
-      key: "1",
-      name: "John Brown",
-      age: 32,
-      address: "New York No. 1 Lake Park",
-    },
-    {
-      key: "2",
-      name: "Jim Green",
-      age: 42,
-      address: "London No. 1 Lake Park",
-    },
-    {
-      key: "3",
-      name: "Joe Black",
-      age: 32,
-      address: "Sydney No. 1 Lake Park",
-    },
-    {
-      key: "4",
-      name: "Jim Red",
-      age: 32,
-      address: "London No. 2 Lake Park",
-    },
-  ];
   const onChange: TableProps<DataType>["onChange"] = (
     pagination,
     filters,
@@ -94,18 +81,48 @@ const Announcement = () => {
   ) => {
     console.log("params", pagination, filters, sorter, extra);
   };
+
+  const announcementStats = () => {
+    return (
+      <Flex
+        px="10"
+        py="4"
+        direction={"column"}
+        bg="white"
+        w="100%"
+        shadow={"md"}
+        rounded={"md"}
+      >
+        <Text>Total</Text>
+        <Text>100</Text>
+      </Flex>
+    );
+  };
   return (
-    <Flex>
+    <Flex direction={"column"} mx="10">
+      <Flex justifyContent={"space-between"} alignItems={"center"} my="4">
+        <Text fontSize={"lg"} fontWeight={600}>
+          {"Announcements Dashboard"}
+        </Text>
+        <Button
+          bg="purple.900"
+          color={"white"}
+          _hover={{ bg: "purple.800" }}
+          onClick={() => setShowModal(true)}
+        >
+          Create Announcements
+        </Button>
+      </Flex>
+      <HStack width={"100%"} justifyContent={"space-between"} gap={10}>
+        {[1, 2, 3, 4]?.map((item) => {
+          return announcementStats();
+        })}
+      </HStack>
+
       <TableContainer
         columns={columns}
-        dataSource={data}
+        dataSource={universityAnnouncements as DataType[]}
         onChange={onChange}
-        titleButtons={{
-          name: "Create Announcement",
-          showTitleButton: true,
-          onButtonClicked: () => setShowModal(true),
-        }}
-        titleName="Announcements Dashboard"
       />
       <CreatAnnouncement showModal={showModal} setShowModal={setShowModal} />
     </Flex>

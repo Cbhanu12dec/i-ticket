@@ -4,6 +4,7 @@ import {
   Grid,
   GridItem,
   StackDivider,
+  Tag,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -12,8 +13,10 @@ import data from "./data.json";
 
 const AdminTicketsDashboard = () => {
   return (
-    <Flex direction={"column"}>
-      <Text>Tickets Dashboard</Text>
+    <Flex direction={"column"} alignItems={"start"} mx="8" my="3">
+      <Text fontSize={"2xl"} fontWeight={"semibold"} mb="3">
+        Tickets Dashboard
+      </Text>
       <Grid templateColumns="repeat(6, 1fr)" gap={6}>
         <GridItem
           colSpan={2}
@@ -23,7 +26,7 @@ const AdminTicketsDashboard = () => {
           rounded={"lg"}
           shadow={"lg"}
         >
-          <Flex w="100%" direction={"column"}>
+          <Flex w="100%" direction={"column"} alignItems={"start"}>
             <Text
               textColor={"purple.800"}
               fontSize={"xl"}
@@ -32,10 +35,7 @@ const AdminTicketsDashboard = () => {
             >
               View your Tickets
             </Text>
-            <Segmented
-              block
-              options={["New", "Opened", "Completed", "Drafts"]}
-            />
+            <Segmented options={["New", "Opened", "Completed", "Drafts"]} />
           </Flex>
           <VStack
             divider={<StackDivider />}
@@ -46,8 +46,20 @@ const AdminTicketsDashboard = () => {
           >
             {data?.map((item, index) => {
               return (
-                <Flex direction={"column"} p="2" align={"start"} cursor={"pointer"}>
-                  <Text textColor={"purple.800"} fontWeight={"semibold"}>
+                <Flex
+                  direction={"column"}
+                  p="2"
+                  rounded={"md"}
+                  width={"100%"}
+                  align={"start"}
+                  cursor={"pointer"}
+                  bg={index === 0 ? "purple.800" : "white"}
+                  color={index === 0 ? "white" : "black"}
+                >
+                  <Text
+                    textColor={index === 0 ? "white" : "purple.800"}
+                    fontWeight={"semibold"}
+                  >
                     {item.title}
                   </Text>
                   <Text
@@ -70,22 +82,52 @@ const AdminTicketsDashboard = () => {
           shadow={"lg"}
           colSpan={4}
         >
-          <Flex direction={"column"} justifyContent={"start"}>
-            <Text
-              textColor={"purple.800"}
-              fontSize={"xl"}
-              fontWeight={500}
-              mb="4"
-            >
-              Detail Information about Ticket
-            </Text>
+          <Flex direction={"column"}>
+            <Flex justifyContent={"space-between"} alignItems={"center"}>
+              <Text
+                textColor={"purple.800"}
+                fontSize={"xl"}
+                fontWeight={500}
+                mb="4"
+              >
+                Detail Information about Ticket
+              </Text>
+              <Tag size={"sm"} colorScheme="green">
+                {" "}
+                OPEN
+              </Tag>
+            </Flex>
+
             <Divider />
 
-            <VStack mt="6" px="4" align={"start"}>
-              <Text textColor={"purple.800"} fontSize={"lg"} fontWeight={"semibold"}>{data[0]?.title}</Text>
+            <VStack
+              mt="4"
+              px="6"
+              align={"start"}
+              bg="#f1f5fa"
+              rounded={"md"}
+              py="6"
+              minH={"80"}
+            >
+              <Flex justifyContent={"space-between"} w="100%">
+                <Text
+                  textColor={"purple.800"}
+                  fontSize={"lg"}
+                  fontWeight={"semibold"}
+                >
+                  {data[0]?.title}
+                </Text>
+                <Text
+                  textColor={"purple.800"}
+                  fontSize={"lg"}
+                  fontWeight={"semibold"}
+                >
+                  {"#0012113"}
+                </Text>
+              </Flex>
+
               <Text fontSize={"sm"}>PRIORITY: {"LOW"}</Text>
-              <Text fontSize={"sm"}>PRIORITY: {"LOW"}</Text>
-              <Text fontSize={"sm"}>DESCRIPTION: {data[0].description}</Text>
+              <Text fontSize={"sm"}> {data[0].description}</Text>
             </VStack>
           </Flex>
         </GridItem>
