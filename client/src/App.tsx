@@ -9,18 +9,20 @@ import UploadUsers from "./components/users-upload/UploadUsers";
 import UsersTrackingPage from "./components/tickets/UsersTrackingPage";
 import AdminTicketsDashboard from "./components/tickets/AdminTicketsDashboard";
 import Announcement from "./components/announcements/Announcement";
+import Access from "./components/access/Access";
+import AdminDashboard from "./components/dashboard/AdminDashboard";
 function App() {
   return (
     <div className="App">
       <Dashboard>
         <Router>
           <Routes>
-            <Route path="/" element={<TicketsDashboard />} />
+            <Route path="/" element={<AdminDashboard />} />
             <Route path="/faq" element={<FaqDashboard />} />
             <Route path="/announcements" element={<Announcement />} />
             <Route path="/tickets" element={<AdminTicketsDashboard />} />
             <Route path="/upload" element={<UploadUsers />} />
-            <Route path="/users" element={<UsersTrackingPage />} />
+            <Route path="/users" element={<Access />} />
           </Routes>
         </Router>
       </Dashboard>
