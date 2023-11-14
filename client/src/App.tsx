@@ -12,6 +12,7 @@ import Announcement from "./components/announcements/Announcement";
 import Login from "./components/login/Login";
 import UserAccess from "./components/user-access/UserAccess";
 import AdminDashboard from "./components/dashboard/AdminDashboard";
+import ClientTicketsDashboard from "./components/tickets/ClientTicketsDashboard";
 function App() {
   return (
     <div className="App">
@@ -22,7 +23,7 @@ function App() {
             <Route path="/" element={<AdminDashboard />} />
             <Route path="/faq" element={<FaqDashboard />} />
             <Route path="/announcements" element={<Announcement />} />
-            <Route path="/tickets" element={<AdminTicketsDashboard />} />
+            <Route path="/tickets" element={<ClientTicketsDashboard />} />
             <Route path="/upload" element={<UploadUsers />} />
             <Route path="/users" element={<UserAccess />} />
           </Routes>

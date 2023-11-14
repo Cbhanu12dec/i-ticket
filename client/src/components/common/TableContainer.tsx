@@ -3,7 +3,7 @@ import { Table, TableProps } from "antd";
 import { AnyObject } from "antd/es/_util/type";
 import { MouseEventHandler } from "react";
 interface TableContainerProps<R extends AnyObject> extends TableProps<R> {
-  titleName?:string;
+  titleName?: string;
   titleButtons?: {
     name: String;
     showTitleButton: boolean;
@@ -19,7 +19,12 @@ const TableContainer = <R extends AnyObject>(props: TableContainerProps<R>) => {
           {titleName}
         </Text>
         {titleButtons?.showTitleButton && (
-          <Button bg="purple.900" color={"white"} _hover={{ bg: "purple.800" }} onClick={titleButtons.onButtonClicked}>
+          <Button
+            bg="purple.900"
+            color={"white"}
+            _hover={{ bg: "purple.800" }}
+            onClick={titleButtons.onButtonClicked}
+          >
             {titleButtons?.name}
           </Button>
         )}

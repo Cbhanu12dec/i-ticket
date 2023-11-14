@@ -1,90 +1,176 @@
-import { Flex } from "@chakra-ui/react";
+import { Flex, HStack, Tooltip } from "@chakra-ui/react";
 import { TableProps } from "antd";
 import { ColumnsType } from "antd/es/table";
 import React, { useState } from "react";
 import TableContainer from "../common/TableContainer";
 import CreateFaqForm from "./CreateFaqForm";
+import { AiFillEye } from "react-icons/ai";
+import { FiEdit } from "react-icons/fi";
+import { MdDeleteOutline } from "react-icons/md";
 
 interface DataType {
   key: React.Key;
-  name: string;
-  age: number;
-  address: string;
+  title: string;
+  description: string;
+  files: Array<{ fileName: string; filePath: string }>;
 }
 function FaqDashboard() {
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "Name",
-      dataIndex: "name",
-      filters: [
-        {
-          text: "Joe",
-          value: "Joe",
-        },
-        {
-          text: "Category 1",
-          value: "Category 1",
-        },
-        {
-          text: "Category 2",
-          value: "Category 2",
-        },
-      ],
-      filterMode: "tree",
+      title: "Title",
+      dataIndex: "title",
       filterSearch: true,
-      onFilter: (value, record) => record.name.startsWith(value as any),
+      onFilter: (value, record) => record.title.startsWith(value as any),
       width: "30%",
     },
     {
-      title: "Age",
-      dataIndex: "age",
-      sorter: (a, b) => a.age - b.age,
+      title: "Description",
+      dataIndex: "description",
     },
     {
-      title: "Address",
-      dataIndex: "address",
-      filters: [
-        {
-          text: "London",
-          value: "London",
-        },
-        {
-          text: "New York",
-          value: "New York",
-        },
-      ],
-      onFilter: (value, record) => record.address.startsWith(value as any),
-      filterSearch: true,
-      width: "40%",
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <HStack gap={2}>
+          <AiFillEye size={24} style={{ cursor: "pointer" }} />
+          <FiEdit size={18} style={{ cursor: "pointer" }} />
+          <MdDeleteOutline size={22} style={{ cursor: "pointer" }} />
+        </HStack>
+      ),
     },
   ];
 
-  const data: DataType[] = [
+  const universityFAQs: DataType[] = [
     {
       key: "1",
-      name: "John Brown",
-      age: 32,
-      address: "New York No. 1 Lake Park",
+      title: "Admissions",
+      description: "Information about the admission process",
+      files: [
+        {
+          fileName: "Admission Guide",
+          filePath: "/path/to/admission_guide.pdf",
+        },
+        {
+          fileName: "Application Form",
+          filePath: "/path/to/application_form.pdf",
+        },
+      ],
     },
     {
       key: "2",
-      name: "Jim Green",
-      age: 42,
-      address: "London No. 1 Lake Park",
+      title: "Courses",
+      description: "Details about the available courses",
+      files: [
+        { fileName: "Course Catalog", filePath: "/path/to/course_catalog.pdf" },
+        {
+          fileName: "Course Schedule",
+          filePath: "/path/to/course_schedule.pdf",
+        },
+      ],
     },
     {
       key: "3",
-      name: "Joe Black",
-      age: 32,
-      address: "Sydney No. 1 Lake Park",
+      title: "Housing",
+      description: "Information about on-campus housing options",
+      files: [
+        { fileName: "Housing Guide", filePath: "/path/to/housing_guide.pdf" },
+        {
+          fileName: "Room Assignment",
+          filePath: "/path/to/room_assignment.pdf",
+        },
+      ],
     },
     {
       key: "4",
-      name: "Jim Red",
-      age: 32,
-      address: "London No. 2 Lake Park",
+      title: "Financial Aid",
+      description: "Details about available financial aid programs",
+      files: [
+        {
+          fileName: "Financial Aid FAQs",
+          filePath: "/path/to/financial_aid_faqs.pdf",
+        },
+        {
+          fileName: "Scholarship Opportunities",
+          filePath: "/path/to/scholarship_opportunities.pdf",
+        },
+      ],
+    },
+    {
+      key: "5",
+      title: "Student Life",
+      description: "Information about campus activities and organizations",
+      files: [
+        { fileName: "Student Clubs", filePath: "/path/to/student_clubs.pdf" },
+        {
+          fileName: "Events Calendar",
+          filePath: "/path/to/events_calendar.pdf",
+        },
+      ],
+    },
+    {
+      key: "6",
+      title: "Academic Support",
+      description: "Resources available for academic assistance",
+      files: [
+        {
+          fileName: "Tutoring Services",
+          filePath: "/path/to/tutoring_services.pdf",
+        },
+        {
+          fileName: "Library Resources",
+          filePath: "/path/to/library_resources.pdf",
+        },
+      ],
+    },
+    {
+      key: "7",
+      title: "Health Services",
+      description: "Information about on-campus health services",
+      files: [
+        {
+          fileName: "Health Center Hours",
+          filePath: "/path/to/health_center_hours.pdf",
+        },
+        {
+          fileName: "Medical Services",
+          filePath: "/path/to/medical_services.pdf",
+        },
+      ],
+    },
+    {
+      key: "8",
+      title: "Technology",
+      description: "Details about campus technology resources",
+      files: [
+        { fileName: "IT Support", filePath: "/path/to/it_support.pdf" },
+        { fileName: "Computer Labs", filePath: "/path/to/computer_labs.pdf" },
+      ],
+    },
+    {
+      key: "9",
+      title: "Dining Options",
+      description: "Information about on-campus dining facilities",
+      files: [
+        { fileName: "Dining Menus", filePath: "/path/to/dining_menus.pdf" },
+        { fileName: "Meal Plans", filePath: "/path/to/meal_plans.pdf" },
+      ],
+    },
+    {
+      key: "10",
+      title: "Transportation",
+      description: "Details about campus transportation services",
+      files: [
+        {
+          fileName: "Shuttle Schedule",
+          filePath: "/path/to/shuttle_schedule.pdf",
+        },
+        {
+          fileName: "Parking Information",
+          filePath: "/path/to/parking_information.pdf",
+        },
+      ],
     },
   ];
   const onChange: TableProps<DataType>["onChange"] = (
@@ -99,7 +185,7 @@ function FaqDashboard() {
     <Flex>
       <TableContainer
         columns={columns}
-        dataSource={data}
+        dataSource={universityFAQs}
         onChange={onChange}
         titleButtons={{
           name: "Create Faq",
@@ -108,7 +194,7 @@ function FaqDashboard() {
         }}
         titleName="Faq Dashboard"
       />
-      <CreateFaqForm showModal={showModal} setShowModal={setShowModal}/>
+      <CreateFaqForm showModal={showModal} setShowModal={setShowModal} />
     </Flex>
   );
 }
