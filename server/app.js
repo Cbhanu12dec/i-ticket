@@ -4,6 +4,8 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const AWS = require("aws-sdk");
+const mongoose = require("mongoose");
+
 const fs = require("fs");
 // const fileType = require("file-type");
 const multiparty = require("multiparty");
@@ -11,7 +13,8 @@ const multer = require("multer");
 const cors = require("cors");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
-
+var ticketRouter = require("./routes/tickets");
+var announcementRouter = require("./routes/announments-routes");
 var app = express();
 
 // view engine setup
@@ -25,36 +28,23 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+const uri =
+  "mongodb+srv://bcheryala:bhanucheryala@se-assignment-2.45lwac2.mongodb.net/i-ticket?retryWrites=true&w=majority";
+
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error: "));
+db.once("open", function () {
+  console.log("*********** Connected successfully..! ************");
+});
+
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
-
-AWS.config.update({
-  accessKeyId: "AKIAYULVJZAKYULF23YV",
-  secretAccessKey: "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",
-});
-
-const s3 = new AWS.S3();
-
-const upload = multer({ storage: multer.memoryStorage() });
-app.post("/test-upload", upload.any("files"), (req, res) => {
-  const file = req.files[0];
-  console.log("filename in req", file.buffer);
-  const params = {
-    Bucket: "i-ticket",
-    Key: file.originalname,
-    Body: file.buffer,
-  };
-
-  s3.upload(params, (err, data) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send("Error uploading file to S3");
-    }
-
-    // File uploaded successfully to S3
-    res.status(200).send("File uploaded to S3");
-  });
-});
+app.use("/ticket", ticketRouter);
+app.use("/announcement", announcementRouter);
 
 app.use(function (req, res, next) {
   next(createError(404));

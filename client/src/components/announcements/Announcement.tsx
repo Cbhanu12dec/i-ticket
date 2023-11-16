@@ -1,31 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TableContainer from "../common/TableContainer";
 import { Button, Flex, HStack, Text, Divider } from "@chakra-ui/react";
 import { ColumnsType, TableProps } from "antd/es/table";
 import CreatAnnouncement from "./CreateAnnouncement";
-import { universityAnnouncements } from "../data/Announcements";
 import { TbClockExclamation } from "react-icons/tb";
 import { TfiAlarmClock, TfiAnnouncement } from "react-icons/tfi";
 import { AiOutlineCodeSandbox } from "react-icons/ai";
-interface DataType {
-  key: React.Key;
-  title: string;
-  description: string;
-  status: string;
-  startDate: string;
-  completeDate: string;
-  accessLevel: string;
-}
-interface AnnouncementMetrics {
-  TOTAL: "Total";
-  PUBLISHED: "Published";
-  UPCOMING: "Upcoming";
-}
+import axios from "axios";
+import { PUBLIC_URL } from "../common/utils";
+import { prepareAnnouncements } from "../common/prepare-data";
+import { AnnouncementDataType } from "../common/data-types";
+import _ from "lodash";
 
 const Announcement = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [announcements, setAnnouncements] = useState([]);
 
-  const columns: ColumnsType<DataType> = [
+  const columns: ColumnsType<AnnouncementDataType> = [
     {
       title: "Title",
       dataIndex: "title",
@@ -63,6 +54,10 @@ const Announcement = () => {
           text: "Upcoming",
           value: "Upcoming",
         },
+        {
+          text: "Running",
+          value: "Running",
+        },
       ],
       onFilter: (value, record) => record.status.startsWith(value as any),
       filterSearch: true,
@@ -71,12 +66,28 @@ const Announcement = () => {
           <Flex
             bg="green"
             py="2"
-            px="3"
+            px="2"
             textColor={"white"}
             rounded={"full"}
             fontSize={"xs"}
             fontWeight={"semibold"}
             alignItems={"center"}
+            justifyContent={"center"}
+          >
+            <TfiAlarmClock size={16} />
+            <Text mx="1">{text}</Text>
+          </Flex>
+        ) : text === "Running" ? (
+          <Flex
+            bg="orange"
+            py="2"
+            px="2"
+            textColor={"white"}
+            rounded={"full"}
+            fontSize={"xs"}
+            fontWeight={"semibold"}
+            alignItems={"center"}
+            justifyContent={"center"}
           >
             <TfiAlarmClock size={16} />
             <Text mx="1">{text}</Text>
@@ -85,12 +96,13 @@ const Announcement = () => {
           <Flex
             bg="red"
             py="2"
-            px="3"
+            px="2"
             textColor={"white"}
             rounded={"full"}
             fontSize={"xs"}
             fontWeight={"semibold"}
             alignItems={"center"}
+            justifyContent={"center"}
           >
             <TbClockExclamation size={18} />
             <Text mx="1">{text}</Text>
@@ -98,20 +110,25 @@ const Announcement = () => {
         ),
     },
     {
-      title: "Start Date",
-      dataIndex: "startDate",
+      title: "Start Time",
+      dataIndex: "startTime",
     },
     {
-      title: "complete Date",
-      dataIndex: "completeDate",
+      title: "End time",
+      dataIndex: "endTime",
     },
     {
-      title: "Access Level",
-      dataIndex: "accessLevel",
+      title: "Published To",
+      dataIndex: "assignee",
+      render: (text, record) => (
+        <Text textColor={"purple.800"} fontWeight={"semibold"}>
+          {_.capitalize(text)}
+        </Text>
+      ),
     },
   ];
 
-  const onChange: TableProps<DataType>["onChange"] = (
+  const onChange: TableProps<AnnouncementDataType>["onChange"] = (
     pagination,
     filters,
     sorter,
@@ -161,6 +178,18 @@ const Announcement = () => {
       </Flex>
     );
   };
+
+  useEffect(() => {
+    axios
+      .get(PUBLIC_URL + "/announcement/announcements")
+      .then((response) => {
+        setAnnouncements(response.data.announcements);
+      })
+      .catch((error) => {
+        console.log("ERROR: ", error);
+      });
+  }, []);
+
   return (
     <Flex direction={"column"} mx="6">
       <Flex justifyContent={"space-between"} alignItems={"center"} my="4">
@@ -216,7 +245,7 @@ const Announcement = () => {
 
       <TableContainer
         columns={columns}
-        dataSource={universityAnnouncements as DataType[]}
+        dataSource={prepareAnnouncements(announcements)}
         onChange={onChange}
         pagination={{ pageSize: 5 }}
       />

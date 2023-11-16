@@ -39,7 +39,12 @@ interface TicketForm {
 const CreateTicketsForm = (props: CreateTicketForm) => {
   const { setShowModal, showModal } = props;
   const [file, setFile] = useState();
-  const [ticketPayload, setTicketPayload] = useState<TicketForm>();
+  const [ticketPayload, setTicketPayload] = useState<TicketForm>({
+    title: "",
+    description: "",
+    priority: "",
+    category: "",
+  });
   const { register, handleSubmit } = useForm();
 
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({});
@@ -47,14 +52,13 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
   const onSubmitClicked = (e: any) => {
     // e.preventDefault();
     const formData = new FormData();
-    // formData.append("title", ticketPayload?.title);
-    // formData.append("description", ticketPayload?.description);
-    // formData.append("category", ticketPayload?.category);
-    // formData.append("priority", ticketPayload?.priority);
-    console.log("***** file list:", file);
+    formData.append("title", ticketPayload?.title);
+    formData.append("description", ticketPayload?.description);
+    formData.append("category", ticketPayload?.category);
+    formData.append("priority", ticketPayload?.priority);
     formData.append("files", acceptedFiles[0]);
     axios
-      .post(`http://localhost:5001/test-upload`, formData, {
+      .post(`http://localhost:5001/ticket/create-ticket`, formData, {
         headers: {
           "content-type": "multipart/form-data",
         },

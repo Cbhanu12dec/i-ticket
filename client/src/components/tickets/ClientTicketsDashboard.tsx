@@ -7,6 +7,7 @@ import {
   Grid,
   GridItem,
   HStack,
+  Icon,
   Input,
   Modal,
   ModalBody,
@@ -21,17 +22,86 @@ import {
   Textarea,
   VStack,
 } from "@chakra-ui/react";
-import data from "./data.json";
-import { PiNotepadBold } from "react-icons/pi";
 import { FaListCheck, FaRegThumbsUp } from "react-icons/fa6";
 import { MdDeleteOutline } from "react-icons/md";
 import { GrInProgress } from "react-icons/gr";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateTicketsForm from "./CreateTicketsForm";
+import axios from "axios";
+import { PUBLIC_URL, getFileType } from "../common/utils";
+import { ImFilePdf } from "react-icons/im";
+import { IoMdDownload } from "react-icons/io";
 const ClientTicketsDashboard = () => {
   const [showticketModal, setShowTicketModal] = useState<boolean>(false);
   const [ticketData, setTicketData] = useState();
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [tickets, setTickets] = useState([]);
+
+  const handleDownload = async (filename: string) => {
+    try {
+      await axios
+        .get(PUBLIC_URL + "/ticket/download", {
+          responseType: "blob",
+          params: {
+            fileName: filename,
+          },
+        })
+        .then((response: any) => {
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        })
+        .catch((error) => {
+          console.error("Error downloading file:", error);
+        });
+    } catch (error) {
+      console.error("Error downloading file:", error);
+    }
+  };
+
+  useEffect(() => {
+    axios
+      .get(PUBLIC_URL + "/ticket/get-all-tickets")
+      .then((response) => {
+        setTickets(response.data.ticketInfo);
+      })
+      .catch((error) => {
+        console.log("ERROR: ", error);
+      });
+  }, []);
+
+  const getIcons = (type: string) => {
+    if (type?.toLowerCase() === "pdf") {
+      return ImFilePdf;
+    }
+  };
+
+  const getAttachmentComponent = (name: string) => {
+    const fileName = name?.split("/")[4];
+    return (
+      <Flex
+        mt="3"
+        mb="4"
+        border={"1px solid"}
+        borderColor={"gray.300"}
+        rounded={"md"}
+        py="3"
+        px="4"
+        alignItems={"center"}
+        cursor={"pointer"}
+      >
+        <Icon as={getIcons(getFileType(fileName))} />
+        <Text ml="2" mr="4" fontSize={"sm"} textColor={"gray.700"}>
+          {fileName}
+        </Text>
+        <IoMdDownload size={20} onClick={() => handleDownload(fileName)} />
+      </Flex>
+    );
+  };
 
   return (
     <>
@@ -78,8 +148,14 @@ const ClientTicketsDashboard = () => {
                     <FaListCheck />
                     <Text fontSize={"lg"}>{"Inbox"}</Text>
                   </Flex>
-                  <Text bg="blue.100" p="1" rounded={"md"} fontSize={"xs"}>
-                    24
+                  <Text
+                    bg="blue.100"
+                    py="1"
+                    px="2"
+                    rounded={"md"}
+                    fontSize={"xs"}
+                  >
+                    {tickets.length}
                   </Text>
                 </Flex>
                 <Flex
@@ -158,7 +234,7 @@ const ClientTicketsDashboard = () => {
               overflow={"scroll"}
               alignItems={"start"}
             >
-              {data?.map((item, index) => {
+              {tickets?.map((item: any, index) => {
                 return (
                   <Flex
                     //   direction={"column"}
@@ -178,19 +254,19 @@ const ClientTicketsDashboard = () => {
                   >
                     <VStack align={"start"}>
                       <Text textColor={"purple.800"} fontWeight={"semibold"}>
-                        {item.title}
+                        {item?.title}
                       </Text>
                       <Text
                         fontSize={"sm"}
                         fontWeight={"hairline"}
                         fontStyle={"italic"}
                       >
-                        {item.description}
+                        {item?.description}
                       </Text>
                     </VStack>
                     <Text mr="4" textColor={"purple.800"} fontWeight={"bold"}>
                       {" "}
-                      {item.ticketID}
+                      {item?.ticketNumber}
                     </Text>
                   </Flex>
                 );
@@ -207,7 +283,9 @@ const ClientTicketsDashboard = () => {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Ticket ID - {(ticketData as any)?.ticketID}</ModalHeader>
+          <ModalHeader>
+            Ticket ID - {(ticketData as any)?.ticketNumber}
+          </ModalHeader>
           <ModalCloseButton />
           <Divider />
           <ModalBody>
@@ -231,7 +309,7 @@ const ClientTicketsDashboard = () => {
                     fontSize={"xl"}
                     fontWeight={500}
                   >
-                    Detail Information about Ticket
+                    {(ticketData as any)?.title}
                   </Text>
                   <HStack>
                     <Tag size={"sm"} colorScheme="green">
@@ -240,15 +318,20 @@ const ClientTicketsDashboard = () => {
                     </Tag>
                     <Tag size={"md"} colorScheme="orange">
                       {" "}
-                      Low
+                      {(ticketData as any)?.priority}
                     </Tag>
                   </HStack>
                 </Flex>
                 <Text fontSize={"sm"}> {(ticketData as any)?.description}</Text>
                 <Divider />
+                <Text>Attachments:</Text>
+                {getAttachmentComponent((ticketData as any)?.files[0])}
+                <Divider />
                 <Text>Comments:</Text>
                 <VStack divider={<StackDivider />}>
-                  <Text>kjdfbsrkldjbferdfjbwejgfreblkgrqgbvue</Text>
+                  {(ticketData as any)?.comments?.map((item: string) => {
+                    return <Text>{item}</Text>;
+                  })}
                 </VStack>
               </VStack>
               <Flex
