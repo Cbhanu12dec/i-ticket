@@ -9,3 +9,11 @@ export interface AnnouncementDataType {
   endTime: string;
   assignee: string;
 }
+export interface FaqDataType {
+  key: React.Key;
+  title: string;
+  description: string;
+  isHidden: boolean;
+  createdAt: string;
+  assignee: string;
+}

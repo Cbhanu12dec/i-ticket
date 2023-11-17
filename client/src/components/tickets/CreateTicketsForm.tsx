@@ -15,13 +15,9 @@ import {
   ModalOverlay,
   Select,
   Textarea,
-  VStack,
 } from "@chakra-ui/react";
-import { UploadProps, message } from "antd";
-import Dragger from "antd/es/upload/Dragger";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { AiOutlineInbox } from "react-icons/ai/index";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
 

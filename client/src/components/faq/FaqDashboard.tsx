@@ -1,12 +1,16 @@
 import { Flex, HStack, Tooltip } from "@chakra-ui/react";
 import { TableProps } from "antd";
 import { ColumnsType } from "antd/es/table";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TableContainer from "../common/TableContainer";
 import CreateFaqForm from "./CreateFaqForm";
 import { AiFillEye } from "react-icons/ai";
 import { FiEdit } from "react-icons/fi";
 import { MdDeleteOutline } from "react-icons/md";
+import axios from "axios";
+import { PUBLIC_URL } from "../common/utils";
+import { prepareFaqs } from "../common/prepare-data";
+import { FaqDataType } from "../common/data-types";
 
 interface DataType {
   key: React.Key;
@@ -16,8 +20,9 @@ interface DataType {
 }
 function FaqDashboard() {
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [faq, setFaq] = useState([]);
 
-  const columns: ColumnsType<DataType> = [
+  const columns: ColumnsType<FaqDataType> = [
     {
       title: "Title",
       dataIndex: "title",
@@ -28,6 +33,18 @@ function FaqDashboard() {
     {
       title: "Description",
       dataIndex: "description",
+    },
+    {
+      title: "Active",
+      dataIndex: "isHidden",
+    },
+    {
+      title: "Created At",
+      dataIndex: "createdAt",
+    },
+    {
+      title:"Access",
+      dataIndex:"assignee"
     },
     {
       title: "Action",
@@ -181,11 +198,23 @@ function FaqDashboard() {
   ) => {
     console.log("params", pagination, filters, sorter, extra);
   };
+
+  useEffect(() => {
+    axios
+      .get(PUBLIC_URL + "/faq/faq-list")
+      .then((response) => {
+        setFaq(response.data.faq);
+      })
+      .catch((error) => {
+        console.log("ERROR: ", error);
+      });
+  }, []);
+
   return (
     <Flex>
       <TableContainer
-        columns={columns}
-        dataSource={universityFAQs}
+        columns={columns as any}
+        dataSource={prepareFaqs(faq) as any}
         onChange={onChange}
         titleButtons={{
           name: "Create Faq",

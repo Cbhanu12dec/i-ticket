@@ -15,6 +15,7 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var ticketRouter = require("./routes/tickets");
 var announcementRouter = require("./routes/announments-routes");
+var faqRouter = require("./routes/faq-routes")
 var app = express();
 
 // view engine setup
@@ -45,6 +46,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/ticket", ticketRouter);
 app.use("/announcement", announcementRouter);
+app.use("/faq",faqRouter)
 
 app.use(function (req, res, next) {
   next(createError(404));

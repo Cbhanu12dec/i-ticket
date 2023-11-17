@@ -1,4 +1,6 @@
 const FaqModel = require("../models/faq-model");
+const AWS = require("aws-sdk");
+const multer = require("multer");
 
 AWS.config.update({
   accessKeyId: "AKIAYULVJZAKYULF23YV",
@@ -23,8 +25,8 @@ exports.createFaq = async (faq, file) => {
       title: faq.title,
       faqNumber: faqNumber,
       description: faq.description,
-      isHidden: faq.isHidden,
-      assignee: ["all"],
+      isHidden: false,
+      assignee: faq.assignee,
       files: [data?.Location],
       comments: [],
     };

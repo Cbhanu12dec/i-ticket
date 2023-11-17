@@ -13,13 +13,12 @@ const faqSchema = new Schema({
     required: false,
   },
   isHidden: Boolean,
-  assignee: [String],
+  assignee: String,
   files: [String],
   createdAt: {
     type: Date,
     default: Date.now,
   },
-  comments: [String],
 });
 
 module.exports = mongoose.model("Faq", faqSchema);

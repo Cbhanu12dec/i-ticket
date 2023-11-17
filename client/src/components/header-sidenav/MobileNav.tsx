@@ -83,7 +83,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                   >
                     Bhanu Cheryala
                   </Text>
-                  <Text fontSize="xs" color="gray.600">
+                  <Text fontSize="xs" textColor="green.800" fontWeight={"semibold"}>
                     Admin
                   </Text>
                 </VStack>

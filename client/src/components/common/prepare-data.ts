@@ -1,4 +1,4 @@
-import { AnnouncementDataType } from "./data-types";
+import { AnnouncementDataType, FaqDataType } from "./data-types";
 import dayjs from "dayjs";
 import { timeDifference } from "./utils";
 export const prepareAnnouncements = (data: any) => {
@@ -11,6 +11,20 @@ export const prepareAnnouncements = (data: any) => {
       startTime: dayjs(announcement?.startTime).format("MM-DD-YYYY hh:MMa"),
       endTime: dayjs(announcement?.endTime).format("MM-DD-YYYY hh:MMa"),
       assignee: announcement?.assignee,
+    };
+  });
+  return toReturn;
+};
+
+export const prepareFaqs = (data: any) => {
+  const toReturn: FaqDataType[] = data?.map((faq: any) => {
+    return {
+      key: faq?._id,
+      title: faq?.title,
+      description: faq?.description,
+      isHidden: faq?.isHidden,
+      createdAt: dayjs(faq?.createdAt).format("MM-DD-YYYY hh:MMa"),
+      assignee: faq?.assignee,
     };
   });
   return toReturn;

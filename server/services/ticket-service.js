@@ -19,7 +19,6 @@ exports.createTicket = async (ticketPayload, file) => {
   };
 
   const ticketNumber = "INC" + Math.floor(100000 + Math.random() * 900000);
-
   await s3.upload(params, async (err, data) => {
     if (err) {
       console.error(err);

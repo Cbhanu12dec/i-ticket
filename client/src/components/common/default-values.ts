@@ -17,3 +17,11 @@ export const getDefaultAnnouncement = () => {
     endTime: "now",
   };
 };
+
+export const getDefaultFaq = () => {
+  return {
+    title: "",
+    description: "",
+    assignee: "all",
+  };
+};

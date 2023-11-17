@@ -1,8 +1,9 @@
 var express = require("express");
+const multer = require("multer");
 const faqService = require("../services/faq-service");
 var router = express.Router();
 
-router.get("/faq", async (req, res) => {
+router.get("/faq-list", async (req, res) => {
   try {
     const faqResponse = await faqService.getFaqs();
     res.json({ faq: faqResponse, status: "success" });
