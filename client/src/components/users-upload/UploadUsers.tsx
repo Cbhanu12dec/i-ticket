@@ -15,7 +15,7 @@ import {
   ModalCloseButton,
   Divider,
 } from "@chakra-ui/react";
-import { UploadProps } from "antd";
+import { UploadProps, message } from "antd";
 import Dragger from "antd/es/upload/Dragger";
 import React, { useEffect, useState } from "react";
 import {
@@ -27,6 +27,8 @@ import Upload from "../assets/upload.svg";
 import { useDropzone } from "react-dropzone";
 import Papa from "papaparse";
 import { Table } from "antd";
+import axios from "axios";
+import { PUBLIC_URL } from "../common/utils";
 
 const UploadUsers = () => {
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({});
@@ -58,6 +60,19 @@ const UploadUsers = () => {
       });
     }
   }, [acceptedFiles]);
+  const onSubmitClicked = () => {
+    axios
+      .post(`${PUBLIC_URL}/users/upload-users`, usersData)
+      .then((response) => {
+        message.success("Users data uploaded successfully..!");
+        setShowModal(false);
+      })
+      .catch((error) => {
+        console.log("ERROR: ", error);
+        message.success("Error while creating annoucement..!");
+      });
+  };
+  console.log("checking accepted files", acceptedFiles);
   return (
     <>
       <Grid templateColumns="repeat(2, 1fr)" gap={6}>
@@ -101,18 +116,34 @@ const UploadUsers = () => {
                   borderColor={"gray.400"}
                   px="6"
                   py="4"
+                  rounded={"md"}
+                  cursor={"pointer"}
                   _hover={{ borderColor: "purple.800" }}
                 >
                   <VStack gap={1}>
                     <input {...getInputProps()} />
                     <AiOutlineInbox size={"40px"} />
                     <Text>Click or drag file to this area to upload</Text>
-                    <Text fontWeight={"hairline"} textColor={"gray.700"} fontSize={"xs"} fontStyle={"italic"}>
+                    <Text
+                      fontWeight={"hairline"}
+                      textColor={"gray.700"}
+                      fontSize={"xs"}
+                      fontStyle={"italic"}
+                    >
                       Support for a single or bulk upload. Strictly prohibited
                       from uploading company data or other banned files.
                     </Text>
                   </VStack>
                 </Flex>
+                <VStack mt="4">
+                  {acceptedFiles?.map((file) => {
+                    return (
+                      <Flex py="1" px="4" border="1px solid" borderColor={"gray.100"} w={"full"} rounded={"md"}>
+                        <Text>File Name: {file.name}</Text>
+                      </Flex>
+                    );
+                  })}
+                </VStack>
               </section>
               <HStack mt={"3"} float={"right"}>
                 <Button
@@ -128,6 +159,7 @@ const UploadUsers = () => {
                   color={"white"}
                   _hover={{ bg: "purple.800" }}
                   leftIcon={<AiOutlineCloudUpload size={"20px"} />}
+                  onClick={onSubmitClicked}
                 >
                   Submit
                 </Button>
@@ -191,13 +223,13 @@ const UploadUsers = () => {
           <ModalCloseButton />
           <Divider />
           <ModalBody py={"4"}>
-            <Table dataSource={usersData} columns={tableColumns} />;
+            <Table dataSource={usersData} columns={tableColumns} />
           </ModalBody>
           <Divider />
         </ModalContent>
       </Modal>
     </>
   );
-};
+}
 
 export default UploadUsers;

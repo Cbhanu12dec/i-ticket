@@ -15,7 +15,7 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { DatePicker, message } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiOutlineClose } from "react-icons/ai";
 import { TfiAnnouncement } from "react-icons/tfi";
@@ -23,18 +23,32 @@ import dayjs from "dayjs";
 import axios from "axios";
 import { PUBLIC_URL } from "../common/utils";
 import { getDefaultAnnouncement } from "../common/default-values";
+import { AnnouncementDataType } from "../common/data-types";
+import { EditType } from "./Announcement";
 const { RangePicker } = DatePicker;
 
 interface CreateFaqFormProps {
   showModal: boolean;
   setShowModal: (_open: boolean) => void;
+  edit?: EditType;
+  setEdit?: React.Dispatch<React.SetStateAction<EditType>>;
 }
 const CreatAnnouncement = (props: CreateFaqFormProps) => {
-  const { setShowModal, showModal } = props;
+  const { setShowModal, showModal, edit, setEdit } = props;
   const [annnouncementData, setAnnouncementData] = useState(
     getDefaultAnnouncement()
   );
   const { register, handleSubmit, setValue } = useForm();
+
+  useEffect(() => {
+    setAnnouncementData({
+      title: edit?.data.title as string,
+      description: edit?.data?.description as string,
+      assignee: edit?.data?.assignee as string,
+      startTime: edit?.data?.startTime as any,
+      endTime: edit?.data?.endTime as any,
+    });
+  }, [edit?.data]);
 
   const onSubmitClicked = () => {
     axios
@@ -70,7 +84,7 @@ const CreatAnnouncement = (props: CreateFaqFormProps) => {
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmitClicked)}>
           <ModalHeader textColor={"purple.800"}>
-            Create Announcement Form
+            {edit?.forEdit ? "Edit Announcement" : "Create Announcement Form"}
           </ModalHeader>
           <ModalCloseButton />
           <Divider />

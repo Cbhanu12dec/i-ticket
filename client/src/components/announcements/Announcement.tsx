@@ -5,16 +5,25 @@ import { ColumnsType, TableProps } from "antd/es/table";
 import CreatAnnouncement from "./CreateAnnouncement";
 import { TbClockExclamation } from "react-icons/tb";
 import { TfiAlarmClock, TfiAnnouncement } from "react-icons/tfi";
-import { AiOutlineCodeSandbox } from "react-icons/ai";
+import { AiFillEye, AiOutlineCodeSandbox } from "react-icons/ai";
 import axios from "axios";
 import { PUBLIC_URL } from "../common/utils";
 import { prepareAnnouncements } from "../common/prepare-data";
 import { AnnouncementDataType } from "../common/data-types";
 import _ from "lodash";
-
+import { FiEdit } from "react-icons/fi";
+import { MdDeleteOutline } from "react-icons/md";
+export interface EditType {
+  forEdit: boolean;
+  data: Partial<AnnouncementDataType>;
+}
 const Announcement = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [announcements, setAnnouncements] = useState([]);
+  const [editAnnouncement, setEditAnnoucement] = useState<EditType>({
+    forEdit: false,
+    data: {},
+  });
 
   const columns: ColumnsType<AnnouncementDataType> = [
     {
@@ -124,6 +133,26 @@ const Announcement = () => {
         <Text textColor={"purple.800"} fontWeight={"semibold"}>
           {_.capitalize(text)}
         </Text>
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <HStack gap={2}>
+          <FiEdit
+            size={18}
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setShowModal(true);
+              setEditAnnoucement({
+                forEdit: true,
+                data: record,
+              });
+            }}
+          />
+          <MdDeleteOutline size={22} style={{ cursor: "pointer" }} />
+        </HStack>
       ),
     },
   ];
@@ -249,7 +278,7 @@ const Announcement = () => {
         onChange={onChange}
         pagination={{ pageSize: 5 }}
       />
-      <CreatAnnouncement showModal={showModal} setShowModal={setShowModal} />
+      <CreatAnnouncement showModal={showModal} setShowModal={setShowModal} edit={editAnnouncement} setEdit={setEditAnnoucement}/>
     </Flex>
   );
 };

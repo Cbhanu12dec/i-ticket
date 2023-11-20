@@ -13,13 +13,51 @@ import {
   ModalFooter,
   Select,
   Image,
+  HStack,
 } from "@chakra-ui/react";
 import access from "../assets/useraccess.svg";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { PUBLIC_URL } from "../common/utils";
+import axios from "axios";
+import _ from "lodash";
+import { message } from "antd";
 
 function UserAccess() {
   const [showUserAccess, setShowUserAccess] = useState<boolean>(false);
+  const [userAccessEmail, setUserAccessEmail] = useState<string>("");
+  const [userAccessInfo, setUserAccessInfo] = useState();
+
+  const getUserAccessByEmail = () => {
+    axios
+      .get(PUBLIC_URL + "/users/get-user-by-email", {
+        params: {
+          email: userAccessEmail,
+        },
+      })
+      .then((response) => {
+        setUserAccessInfo(response.data.userInfo[0]);
+      })
+      .catch((error) => {
+        console.log("ERROR: ", error);
+      });
+  };
+
+  const onSubmitClicked = () => {
+    axios
+      .put(PUBLIC_URL + "/users/update-user-access", {
+        userAccessInfo,
+      })
+      .then((response) => {
+        message.success("User access updated successfully...!");
+        setShowUserAccess(false);
+      })
+      .catch((error) => {
+        console.log("ERROR: ", error);
+        message.error("Error while updating user access...!");
+        setShowUserAccess(false);
+      });
+  };
   return (
     <Flex direction={"column"} alignItems={"start"} w="100%" mx="12" my="6">
       <Text fontSize={"2xl"} fontWeight={"semibold"}>
@@ -81,15 +119,19 @@ function UserAccess() {
               <Input
                 placeholder="Enter email"
                 maxW={"72"}
-                borderColor={"purple.800"}
+                borderColor={"gray.400"}
                 _placeholder={{ color: "purple.800" }}
-                opacity={0.2}
+                // opacity={0.2}
+                onChange={(e) => setUserAccessEmail(e.target.value)}
               />
               <Button
                 bg={"purple.800"}
                 _hover={{ bg: "purple.700" }}
                 color={"white"}
-                onClick={() => setShowUserAccess(true)}
+                onClick={() => {
+                  setShowUserAccess(true);
+                  getUserAccessByEmail();
+                }}
                 mx="4"
               >
                 Get Access
@@ -107,23 +149,50 @@ function UserAccess() {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>User Access - Bhanu Cheryala</ModalHeader>
+          <ModalHeader>
+            User Access - {_.capitalize((userAccessInfo as any)?.lastName)}{" "}
+            {_.capitalize((userAccessInfo as any)?.firstName)}
+          </ModalHeader>
           <ModalCloseButton />
           <Divider />
           <ModalBody bg="#f1f5fa" p="4" rounded={"md"} mx="6" my="6">
             <form>
-              <Text>Name: Bhanu Cheryala</Text>
-              <Text my="3">Email: bcheryala@albany.edu</Text>
-              <Text>Level: Student</Text>
+              <HStack my="3">
+                <Text>First Name: </Text>
+                <Text fontWeight={"semibold"} textColor={"purple.800"}>
+                  {_.capitalize((userAccessInfo as any)?.firstName)}
+                </Text>
+              </HStack>
+              <HStack>
+                <Text>Last Name:</Text>
+                <Text fontWeight={"semibold"} textColor={"purple.800"}>
+                  {_.capitalize((userAccessInfo as any)?.lastName)}
+                </Text>
+              </HStack>
+              <HStack my="3">
+                <Text>Email: </Text>
+                <Text fontWeight={"semibold"} textColor={"purple.800"}>
+                  {(userAccessInfo as any)?.email}
+                </Text>
+              </HStack>
+
+              <Text>Level:</Text>
               <Select
                 placeholder="Select access level"
                 size={"md"}
                 my="3"
                 defaultValue={"student"}
+                value={(userAccessInfo as any)?.role}
+                onChange={(e) =>
+                  setUserAccessInfo({
+                    ...(userAccessInfo as any),
+                    role: e.target.value,
+                  })
+                }
               >
                 <option value="super-admin">Super Admin</option>
                 <option value="admin">Admin</option>
-                <option value="student">Student</option>
+                <option value="user">User</option>
               </Select>
             </form>
           </ModalBody>
@@ -142,6 +211,7 @@ function UserAccess() {
               bg={"purple.800"}
               _hover={{ bg: "purple.700" }}
               color={"white"}
+              onClick={onSubmitClicked}
             >
               Update Access
             </Button>

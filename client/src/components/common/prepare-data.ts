@@ -23,6 +23,8 @@ export const prepareFaqs = (data: any) => {
       title: faq?.title,
       description: faq?.description,
       isHidden: faq?.isHidden,
+      faqNumber: faq?.faqNumber,
+      files: faq?.files,
       createdAt: dayjs(faq?.createdAt).format("MM-DD-YYYY hh:MMa"),
       assignee: faq?.assignee,
     };

@@ -16,25 +16,24 @@ import {
   Select,
   Textarea,
 } from "@chakra-ui/react";
-import Dragger from "antd/es/upload/Dragger";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
-import { AiOutlineInbox } from "react-icons/ai/index";
 import { getDefaultFaq } from "../common/default-values";
 import { PUBLIC_URL } from "../common/utils";
 import axios from "axios";
 import { message } from "antd";
+import { EditType } from "./FaqDashboard";
 interface CreateFaqFormProps {
   showModal: boolean;
   setShowModal: (_open: boolean) => void;
+  edit?: EditType;
+  setEdit?: React.Dispatch<React.SetStateAction<EditType | undefined>>;
 }
 const CreateFaqForm = (props: CreateFaqFormProps) => {
-  const { setShowModal, showModal } = props;
+  const { setShowModal, showModal, edit, setEdit } = props;
   const [faq, setFaq] = useState(getDefaultFaq());
-
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({});
-
   const { register, handleSubmit, setValue } = useForm();
 
   const onSubmitClicked = () => {
@@ -53,17 +52,35 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
         message.success("Created Faq successfully..!");
         setShowModal(false);
         resetValues();
-        setFaq(getDefaultFaq());
       })
       .catch((err) => {
         console.log("checking error", err);
+        setShowModal(false);
+        resetValues();
         message.success("Failed to create faq..!");
       });
   };
+
+  useEffect(() => {
+    setFaq({
+      title: edit?.data?.title as string,
+      description: edit?.data?.description as string,
+      assignee: edit?.data?.assignee as string,
+    });
+  }, [edit?.data?.assignee, edit?.data?.description, edit?.data?.title]);
+
+  console.log("checking data for faq eiditklnlndl", edit?.data);
+
   const resetValues = () => {
     setValue("title", "");
     setValue("description", "");
     setValue("assignee", "all");
+    setFaq(getDefaultFaq());
+    setEdit &&
+      setEdit({
+        forEdit: false,
+        data: getDefaultFaq(),
+      });
   };
   return (
     <Modal
@@ -78,7 +95,9 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
       <ModalOverlay />
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmitClicked)}>
-          <ModalHeader>Create Faq Form</ModalHeader>
+          <ModalHeader>
+            {edit?.forEdit ? "Edit Faq" : "Create Faq Form"}
+          </ModalHeader>
           <ModalCloseButton />
           <Divider />
           <ModalBody py={"4"}>
@@ -87,6 +106,7 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
               <Input
                 type="text"
                 placeholder="Enter Title here..."
+                value={faq.title}
                 {...register("title", { required: true })}
                 onChange={(e) =>
                   setFaq({
@@ -98,8 +118,10 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
             </FormControl>
             <FormControl mt="3">
               <FormLabel>Description</FormLabel>
+
               <Textarea
                 placeholder="Enter details here..."
+                value={faq.description}
                 {...register("description", { required: true })}
                 onChange={(e) =>
                   setFaq({
@@ -115,6 +137,7 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
               </FormLabel>
               <Select
                 placeholder="Select option"
+                value={faq.assignee}
                 {...register("assignee", { required: true })}
                 onChange={(e) =>
                   setFaq({

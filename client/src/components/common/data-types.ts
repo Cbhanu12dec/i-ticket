@@ -16,4 +16,6 @@ export interface FaqDataType {
   isHidden: boolean;
   createdAt: string;
   assignee: string;
+  faqNumber: string;
+  files: Array<string>
 }

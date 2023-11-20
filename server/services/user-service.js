@@ -1,14 +1,36 @@
-const UsersModel = require("../models/users-models.js");
+const UsersModel = require("../models/users-model");
 exports.createUsers = async (users) => {
-  return await UsersModel.create(users);
+  const usersData = {
+    userID: "USR" + Math.floor(100000 + Math.random() * 900000),
+    firstName: users.firstName,
+    lastName: users.lastName,
+    email: users.email,
+    phoneNumber: users.phoneNumber,
+    role: users.role,
+  };
+  return await UsersModel.create(usersData);
+};
+
+exports.uploadUsers = async (users) => {
+  const preparedData = users.map((item) => {
+    return {
+      userID: "USR" + Math.floor(100000 + Math.random() * 900000),
+      firstName: item.firstName,
+      lastName: item.lastName,
+      email: item.email,
+      phoneNumber: item.phoneNumber,
+      role: item.role,
+    };
+  });
+  return await UsersModel.insertMany(preparedData);
 };
 
 exports.getsUsers = async (users) => {
   return await UsersModel.find({});
 };
 
-exports.getUsersByID = async (id) => {
-  return await UsersModel.find({ email: id });
+exports.getUsersByEmail = async (email) => {
+  return await UsersModel.find({ email: email });
 };
 
 exports.deleteUserByID = async (id) => {
@@ -21,6 +43,30 @@ exports.deleteUserByID = async (id) => {
     });
 };
 
+exports.updateUserAccess = async (payload) => {
+  try {
+    const updatedDocument = await UsersModel.findOneAndUpdate(
+      { email: payload.email },
+      {
+        $set: {
+          role: payload.role,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    if (!updatedDocument) {
+      return "User access could not update";
+    }
+
+    return updatedDocument;
+  } catch (error) {
+    console.error(error);
+    return "Internal Server Error";
+  }
+};
 exports.updateUserByID = async (payload) => {
   return await UsersModel.findOneAndUpdate(
     { id: payload.id },
