@@ -13,7 +13,7 @@ interface TableContainerProps<R extends AnyObject> extends TableProps<R> {
 const TableContainer = <R extends AnyObject>(props: TableContainerProps<R>) => {
   const { titleName, titleButtons, ...rest } = props;
   return (
-    <Flex direction={"column"} px="2" w="100%">
+    <Flex direction={"column"} w="100%">
       <Flex justifyContent={"space-between"} alignItems={"center"} my="4">
         <Text fontSize={"lg"} fontWeight={600}>
           {titleName}

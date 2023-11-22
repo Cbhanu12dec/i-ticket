@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-var usersService  = require("../services/user-service")
+var usersService = require("../services/user-service");
 
 router.get("/", function (req, res, next) {
   res.send("respond with a resource");
@@ -15,10 +15,25 @@ router.get("/get-user-by-email", async (req, res, next) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+router.post("/login", async function (req, res, next) {
+  const payload = req.body;
+  try {
+    const users = await usersService.login(payload);
+    if (users === "FAILED_LOGIN") {
+      res.status(500).json({ error: "Failed to Login..!" });
+    } else {
+      res.json({ users: users, status: "success" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.post("/signup", async function (req, res, next) {
   const payload = req.body;
   try {
-    const users = await usersService.createUsers(payload); 
+    const users = await usersService.createUsers(payload);
     res.json({ users: users, status: "success" });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -28,7 +43,7 @@ router.post("/signup", async function (req, res, next) {
 router.post("/upload-users", async function (req, res, next) {
   const payload = req.body;
   try {
-    const users = await usersService.uploadUsers(payload); 
+    const users = await usersService.uploadUsers(payload);
     res.json({ users: users, status: "success" });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -38,7 +53,7 @@ router.post("/upload-users", async function (req, res, next) {
 router.put("/update-user-access", async function (req, res, next) {
   const payload = req.body.userAccessInfo;
   try {
-    const users = await usersService.updateUserAccess(payload); 
+    const users = await usersService.updateUserAccess(payload);
     res.json({ users: users, status: "success" });
   } catch (err) {
     res.status(500).json({ error: err.message });

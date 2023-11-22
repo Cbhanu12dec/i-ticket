@@ -12,6 +12,7 @@ import { PUBLIC_URL } from "../common/utils";
 import { prepareFaqs } from "../common/prepare-data";
 import { FaqDataType } from "../common/data-types";
 import PreviewFaq from "./PreviewFaq";
+import Dashboard from "../dashboard/Dashboard";
 
 export interface EditType {
   forEdit: boolean;
@@ -100,26 +101,32 @@ function FaqDashboard() {
   }, []);
 
   return (
-    <Flex>
-      <TableContainer
-        columns={columns as any}
-        dataSource={prepareFaqs(faq) as any}
-        onChange={onChange}
-        titleButtons={{
-          name: "Create Faq",
-          showTitleButton: true,
-          onButtonClicked: () => setShowModal(true),
-        }}
-        titleName="Faq Dashboard"
-      />
-      <CreateFaqForm
-        showModal={showModal}
-        setShowModal={setShowModal}
-        edit={edit}
-        setEdit={setEdit}
-      />
-      <PreviewFaq setShowModal={setPreviewFaq} showModal={previewFaq} data={previewData as FaqDataType} />
-    </Flex>
+    <Dashboard>
+      <Flex>
+        <TableContainer
+          columns={columns as any}
+          dataSource={prepareFaqs(faq) as any}
+          onChange={onChange}
+          titleButtons={{
+            name: "Create Faq",
+            showTitleButton: true,
+            onButtonClicked: () => setShowModal(true),
+          }}
+          titleName="Faq Dashboard"
+        />
+        <CreateFaqForm
+          showModal={showModal}
+          setShowModal={setShowModal}
+          edit={edit}
+          setEdit={setEdit}
+        />
+        <PreviewFaq
+          setShowModal={setPreviewFaq}
+          showModal={previewFaq}
+          data={previewData as FaqDataType}
+        />
+      </Flex>
+    </Dashboard>
   );
 }
 

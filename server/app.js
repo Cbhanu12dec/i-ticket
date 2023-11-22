@@ -15,7 +15,7 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var ticketRouter = require("./routes/tickets");
 var announcementRouter = require("./routes/announments-routes");
-var faqRouter = require("./routes/faq-routes")
+var faqRouter = require("./routes/faq-routes");
 var app = express();
 
 // view engine setup
@@ -42,11 +42,19 @@ db.once("open", function () {
   console.log("*********** Connected successfully..! ************");
 });
 
+app.get("/*", function (req, res) {
+  res.sendFile(path.join(__dirname, "public/index.html"), function (err) {
+    if (err) {
+      res.status(500).send(err);
+    }
+  });
+});
+
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/ticket", ticketRouter);
 app.use("/announcement", announcementRouter);
-app.use("/faq",faqRouter)
+app.use("/faq", faqRouter);
 
 app.use(function (req, res, next) {
   next(createError(404));

@@ -31,6 +31,7 @@ import axios from "axios";
 import { PUBLIC_URL, getFileType } from "../common/utils";
 import { ImFilePdf } from "react-icons/im";
 import { IoMdDownload } from "react-icons/io";
+import Dashboard from "../dashboard/Dashboard";
 const ClientTicketsDashboard = () => {
   const [showticketModal, setShowTicketModal] = useState<boolean>(false);
   const [ticketData, setTicketData] = useState();
@@ -104,7 +105,7 @@ const ClientTicketsDashboard = () => {
   };
 
   return (
-    <>
+    <Dashboard>
       <Flex direction={"column"} alignItems={"start"} mx="6" my="3" w="97%">
         <Flex
           alignItems={"center"}
@@ -115,12 +116,17 @@ const ClientTicketsDashboard = () => {
           <Text fontSize={"2xl"} fontWeight={"semibold"} mb="3">
             Tickets Dashboard
           </Text>
-          <Button colorScheme="green" onClick={() => setShowModal(true)}>
+          <Button
+            bg="purple.900"
+            color={"white"}
+            _hover={{ bg: "purple.800" }}
+            onClick={() => setShowModal(true)}
+          >
             Create Ticket
           </Button>
         </Flex>
-        <Grid templateColumns="repeat(8, 1fr)" gap={6} w={"full"}>
-          <GridItem colSpan={2} bg="white" p="4" rounded={"lg"} shadow={"lg"}>
+        <Grid templateColumns="repeat(9, 1fr)" gap={4} w={"full"}>
+          <GridItem colSpan={2} bg="white" p="4" rounded={"lg"}>
             <Flex w={"full"} direction={"column"} alignItems={"start"}>
               <Text
                 textColor={"purple.800"}
@@ -219,14 +225,7 @@ const ClientTicketsDashboard = () => {
               ></VStack>
             </Flex>
           </GridItem>
-          <GridItem
-            w="100%"
-            bg="white"
-            p="4"
-            rounded={"lg"}
-            shadow={"lg"}
-            colSpan={6}
-          >
+          <GridItem w="100%" bg="white" p="4" rounded={"lg"} colSpan={7}>
             <VStack
               divider={<StackDivider />}
               mt="2"
@@ -379,7 +378,7 @@ const ClientTicketsDashboard = () => {
         </ModalContent>
       </Modal>
       <CreateTicketsForm showModal={showModal} setShowModal={setShowModal} />
-    </>
+    </Dashboard>
 
     //  item preview of each inbox
   );

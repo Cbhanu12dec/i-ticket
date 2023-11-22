@@ -14,12 +14,22 @@ import {
   Menu,
   Avatar,
 } from "@chakra-ui/react";
+import _ from "lodash";
+import { useEffect, useState } from "react";
 import { FiBell, FiChevronDown, FiMenu } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 interface MobileProps extends FlexProps {
   onOpen: () => void;
 }
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+  const navigate = useNavigate();
+  const [userInfo, setUserInfo] = useState({});
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("userInfo") as string);
+    setUserInfo(user);
+  }, []);
+
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -81,10 +91,15 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                     fontWeight={"semibold"}
                     textColor={"purple.900"}
                   >
-                    Bhanu Cheryala
+                    {_.capitalize((userInfo as any)?.firstName)}{" "}
+                    {_.capitalize((userInfo as any)?.lastName)}
                   </Text>
-                  <Text fontSize="xs" textColor="green.800" fontWeight={"semibold"}>
-                    Admin
+                  <Text
+                    fontSize="xs"
+                    textColor="green.800"
+                    fontWeight={"semibold"}
+                  >
+                    {_.capitalize((userInfo as any)?.role)}
                   </Text>
                 </VStack>
                 <Box display={{ base: "none", md: "flex" }}>
@@ -98,7 +113,15 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
             >
               <MenuItem>Profile</MenuItem>
               <MenuDivider />
-              <MenuItem>Sign out</MenuItem>
+              <MenuItem
+                onClick={() => {
+                  localStorage.setItem("userInfo", JSON.stringify({}));
+                  localStorage.setItem("isActive", "INACTIVE");
+                  navigate("/");
+                }}
+              >
+                Logout
+              </MenuItem>
             </MenuList>
           </Menu>
         </Flex>

@@ -26,3 +26,7 @@ export const timeDifference = (time: string, time2: string) => {
     return "Upcoming";
   }
 };
+
+export const validateSignup = (password: string, confirmPassword: string) => {
+  return password === confirmPassword;
+};

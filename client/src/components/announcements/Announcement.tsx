@@ -5,7 +5,7 @@ import { ColumnsType, TableProps } from "antd/es/table";
 import CreatAnnouncement from "./CreateAnnouncement";
 import { TbClockExclamation } from "react-icons/tb";
 import { TfiAlarmClock, TfiAnnouncement } from "react-icons/tfi";
-import { AiFillEye, AiOutlineCodeSandbox } from "react-icons/ai";
+import { AiOutlineCodeSandbox } from "react-icons/ai";
 import axios from "axios";
 import { PUBLIC_URL } from "../common/utils";
 import { prepareAnnouncements } from "../common/prepare-data";
@@ -13,6 +13,7 @@ import { AnnouncementDataType } from "../common/data-types";
 import _ from "lodash";
 import { FiEdit } from "react-icons/fi";
 import { MdDeleteOutline } from "react-icons/md";
+import Dashboard from "../dashboard/Dashboard";
 export interface EditType {
   forEdit: boolean;
   data: Partial<AnnouncementDataType>;
@@ -172,15 +173,21 @@ const Announcement = () => {
           <AiOutlineCodeSandbox size={40} />
         </Flex>
       );
-    } else if (name === "Published") {
+    } else if (name === "Running") {
       return (
         <Flex bg="green.400" rounded={"full"} p="4">
           <TfiAlarmClock size={40} />
         </Flex>
       );
+    } else if (name === "Published") {
+      return (
+        <Flex bg="#3182ce" rounded={"full"} p="4">
+          <TbClockExclamation size={40} />
+        </Flex>
+      );
     } else {
       return (
-        <Flex bg="purple.500" rounded={"full"} p="4">
+        <Flex bg="orange.500" rounded={"full"} p="4">
           <TbClockExclamation size={40} />
         </Flex>
       );
@@ -199,8 +206,8 @@ const Announcement = () => {
       >
         {getIcons(name)}
         <Flex direction={"column"} alignItems={"start"} mx="4">
-          <Text textColor={"gray.300"}>{name}</Text>
-          <Text textColor={"gray.100"} fontSize={"5xl"} fontWeight={"bold"}>
+          <Text textColor={"gray.800"}>{name}</Text>
+          <Text textColor={"gray.600"} fontSize={"5xl"} fontWeight={"bold"}>
             100
           </Text>
         </Flex>
@@ -220,66 +227,73 @@ const Announcement = () => {
   }, []);
 
   return (
-    <Flex direction={"column"} mx="6">
-      <Flex justifyContent={"space-between"} alignItems={"center"} my="4">
-        <Text
-          fontSize={"2xl"}
-          fontWeight={600}
-          fontFamily={"Questrial', sans-serif"}
+    <Dashboard>
+      <Flex direction={"column"} mx="6">
+        <Flex justifyContent={"space-between"} alignItems={"center"} my="4">
+          <Text
+            fontSize={"2xl"}
+            fontWeight={600}
+            fontFamily={"Questrial', sans-serif"}
+          >
+            {"Announcements Dashboard"}
+          </Text>
+          <Button
+            bg="purple.900"
+            color={"white"}
+            _hover={{ bg: "purple.800" }}
+            onClick={() => setShowModal(true)}
+            leftIcon={<TfiAnnouncement />}
+          >
+            Create Announcements
+          </Button>
+        </Flex>
+        <Flex
+          width={"100%"}
+          justifyContent={"space-between"}
+          bg="white"
+          rounded={"lg"}
+          // border="1.5px solid"
+          // borderColor={"gray.200"}
+          px="6"
+          direction={"column"}
+          alignItems={"start"}
+          py="4"
+          // bgGradient="linear(to top, #09203f 0%, #537895 100%)"
+          // bgGradient="linear(to-br, #243949 10%, #517fa4 80%)"
+          bgGradient="linear(to bottom, #cfd9df 0%, #e2ebf0 100%);"
         >
-          {"Announcements Dashboard"}
-        </Text>
-        <Button
-          bg="purple.900"
-          color={"white"}
-          _hover={{ bg: "purple.800" }}
-          onClick={() => setShowModal(true)}
-          leftIcon={<TfiAnnouncement />}
-        >
-          Create Announcements
-        </Button>
-      </Flex>
-      <Flex
-        width={"100%"}
-        justifyContent={"space-between"}
-        bg="white"
-        rounded={"lg"}
-        // border="1.5px solid"
-        // borderColor={"gray.200"}
-        px="6"
-        direction={"column"}
-        alignItems={"start"}
-        py="4"
-        // bgGradient="linear(to top, #09203f 0%, #537895 100%)"
-        // bgGradient="linear(to-br, #243949 10%, #517fa4 80%)"
-        bgGradient="linear(to top, #868f96 0%, #596164 100%);"
-      >
-        <Text
-          // textColor={"white"}
-          textColor={"gray.300"}
-          fontSize={"lg"}
-          letterSpacing={"wide"}
-          fontWeight={"semibold"}
-          lineHeight={"tall"}
-        >
-          Announcement Metrics
-        </Text>
-        <Divider my="2" borderColor={"gray.200"} />
-        <HStack w="full">
-          {["Total", "Published", "Upcoming"]?.map((item) => {
-            return announcementStats(item);
-          })}
-        </HStack>
-      </Flex>
+          <Text
+            // textColor={"white"}
+            textColor={"gray.900"}
+            fontSize={"lg"}
+            letterSpacing={"wide"}
+            fontWeight={"semibold"}
+            lineHeight={"tall"}
+          >
+            Announcement Metrics
+          </Text>
+          <Divider my="2" borderColor={"gray.400"} />
+          <HStack w="full">
+            {["Total", "Running", "Published", "Upcoming"]?.map((item) => {
+              return announcementStats(item);
+            })}
+          </HStack>
+        </Flex>
 
-      <TableContainer
-        columns={columns}
-        dataSource={prepareAnnouncements(announcements)}
-        onChange={onChange}
-        pagination={{ pageSize: 5 }}
-      />
-      <CreatAnnouncement showModal={showModal} setShowModal={setShowModal} edit={editAnnouncement} setEdit={setEditAnnoucement}/>
-    </Flex>
+        <TableContainer
+          columns={columns}
+          dataSource={prepareAnnouncements(announcements)}
+          onChange={onChange}
+          pagination={{ pageSize: 5 }}
+        />
+        <CreatAnnouncement
+          showModal={showModal}
+          setShowModal={setShowModal}
+          edit={editAnnouncement}
+          setEdit={setEditAnnoucement}
+        />
+      </Flex>
+    </Dashboard>
   );
 };
 

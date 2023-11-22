@@ -16,19 +16,17 @@ import ClientTicketsDashboard from "./components/tickets/ClientTicketsDashboard"
 function App() {
   return (
     <div className="App">
-      <Dashboard>
-        <Router>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/" element={<AdminDashboard />} />
-            <Route path="/faq" element={<FaqDashboard />} />
-            <Route path="/announcements" element={<Announcement />} />
-            <Route path="/tickets" element={<ClientTicketsDashboard />} />
-            <Route path="/upload" element={<UploadUsers />} />
-            <Route path="/users" element={<UserAccess />} />
-          </Routes>
-        </Router>
-      </Dashboard>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/dashboard" element={<AdminDashboard />} />
+          <Route path="/faq" element={<FaqDashboard />} />
+          <Route path="/announcements" element={<Announcement />} />
+          <Route path="/tickets" element={<ClientTicketsDashboard />} />
+          <Route path="/upload" element={<UploadUsers />} />
+          <Route path="/users" element={<UserAccess />} />
+        </Routes>
+      </Router>
     </div>
   );
 }

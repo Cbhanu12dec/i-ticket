@@ -16,6 +16,9 @@ const usersSchema = new Schema({
     type: String,
     required: false,
   },
+  password: {
+    type: String,
+  },
 
   address: {
     addressLine1: String,

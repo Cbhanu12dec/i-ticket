@@ -29,6 +29,7 @@ import Papa from "papaparse";
 import { Table } from "antd";
 import axios from "axios";
 import { PUBLIC_URL } from "../common/utils";
+import Dashboard from "../dashboard/Dashboard";
 
 const UploadUsers = () => {
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({});
@@ -74,7 +75,7 @@ const UploadUsers = () => {
   };
   console.log("checking accepted files", acceptedFiles);
   return (
-    <>
+    <Dashboard>
       <Grid templateColumns="repeat(2, 1fr)" gap={6}>
         <GridItem
           w="100%"
@@ -138,7 +139,14 @@ const UploadUsers = () => {
                 <VStack mt="4">
                   {acceptedFiles?.map((file) => {
                     return (
-                      <Flex py="1" px="4" border="1px solid" borderColor={"gray.100"} w={"full"} rounded={"md"}>
+                      <Flex
+                        py="1"
+                        px="4"
+                        border="1px solid"
+                        borderColor={"gray.100"}
+                        w={"full"}
+                        rounded={"md"}
+                      >
                         <Text>File Name: {file.name}</Text>
                       </Flex>
                     );
@@ -228,8 +236,8 @@ const UploadUsers = () => {
           <Divider />
         </ModalContent>
       </Modal>
-    </>
+    </Dashboard>
   );
-}
+};
 
 export default UploadUsers;

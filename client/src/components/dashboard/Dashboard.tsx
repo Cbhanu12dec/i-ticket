@@ -1,26 +1,31 @@
 import {
   Box,
-  useColorModeValue,
   Drawer,
   DrawerContent,
   useDisclosure,
+  Flex,
 } from "@chakra-ui/react";
 import MobileNav from "../header-sidenav/MobileNav";
 import SideNav from "../header-sidenav/SideBar";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
-interface DashboardProps{
-  title?:ReactNode;
-  children?:ReactNode;
-
+interface DashboardProps {
+  title?: ReactNode;
+  children?: ReactNode;
 }
 
-const Dashboard = (props:DashboardProps) => {
+const Dashboard = (props: DashboardProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const {title, children} = props
+  const { children } = props;
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
-  return (
-    <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
+  useEffect(() => {
+    const loggedin = localStorage.getItem("isActive") === "ACTIVE";
+    setIsLoggedIn(loggedin);
+  }, [localStorage.getItem("isActive")]);
+
+  return isLoggedIn ? (
+    <Box minH="100vh" bg={"gray.100"}>
       <SideNav
         onClose={() => onClose}
         display={{ base: "none", md: "block" }}
@@ -42,6 +47,8 @@ const Dashboard = (props:DashboardProps) => {
         {children}
       </Box>
     </Box>
+  ) : (
+    <Flex w={"100%"}>{children}</Flex>
   );
 };
 

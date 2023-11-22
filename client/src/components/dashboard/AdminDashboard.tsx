@@ -12,6 +12,7 @@ import React, { useState } from "react";
 import { Line, LineChart, XAxis, YAxis } from "recharts";
 import { statsChartData } from "./test-data";
 import { IoIosStats } from "react-icons/io";
+import Dashboard from "./Dashboard";
 
 function AdminDashboard() {
   const [statsData, setStatsData] = useState({
@@ -103,9 +104,11 @@ function AdminDashboard() {
     });
   };
   return (
-    <Flex w="100%" gap={6}>
-      {getStatusComponent()}
-    </Flex>
+    <Dashboard>
+      <Flex w="100%" gap={6}>
+        {getStatusComponent()}
+      </Flex>
+    </Dashboard>
   );
 }
 
