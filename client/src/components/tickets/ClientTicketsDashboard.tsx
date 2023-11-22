@@ -161,7 +161,7 @@ const ClientTicketsDashboard = () => {
                     rounded={"md"}
                     fontSize={"xs"}
                   >
-                    {tickets.length}
+                    {tickets?.length}
                   </Text>
                 </Flex>
                 <Flex

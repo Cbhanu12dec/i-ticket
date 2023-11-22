@@ -77,14 +77,7 @@ const UploadUsers = () => {
   return (
     <Dashboard>
       <Grid templateColumns="repeat(2, 1fr)" gap={6}>
-        <GridItem
-          w="100%"
-          bg={"white"}
-          shadow={"lg"}
-          px="10"
-          py="6"
-          borderRadius={"lg"}
-        >
+        <GridItem w="100%" bg={"white"} px="10" py="6" borderRadius={"lg"}>
           <Flex direction={"column"} alignItems={"start"}>
             <Text
               mb="4"
@@ -117,6 +110,7 @@ const UploadUsers = () => {
                   borderColor={"gray.400"}
                   px="6"
                   py="4"
+                  w="full"
                   rounded={"md"}
                   cursor={"pointer"}
                   _hover={{ borderColor: "purple.800" }}
@@ -175,14 +169,7 @@ const UploadUsers = () => {
             </Flex>
           </Flex>
         </GridItem>
-        <GridItem
-          w="100%"
-          bg={"white"}
-          shadow={"lg"}
-          px="10"
-          py="6"
-          borderRadius={"lg"}
-        >
+        <GridItem w="100%" bg={"white"} px="10" py="6" borderRadius={"lg"}>
           <Flex direction={"column"} alignItems={"start"} w="100%">
             <Text
               mb="4"

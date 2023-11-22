@@ -42,6 +42,11 @@ db.once("open", function () {
   console.log("*********** Connected successfully..! ************");
 });
 
+app.use("/", indexRouter);
+app.use("/users", usersRouter);
+app.use("/ticket", ticketRouter);
+app.use("/announcement", announcementRouter);
+app.use("/faq", faqRouter);
 app.get("/*", function (req, res) {
   res.sendFile(path.join(__dirname, "public/index.html"), function (err) {
     if (err) {
@@ -49,13 +54,6 @@ app.get("/*", function (req, res) {
     }
   });
 });
-
-app.use("/", indexRouter);
-app.use("/users", usersRouter);
-app.use("/ticket", ticketRouter);
-app.use("/announcement", announcementRouter);
-app.use("/faq", faqRouter);
-
 app.use(function (req, res, next) {
   next(createError(404));
 });
