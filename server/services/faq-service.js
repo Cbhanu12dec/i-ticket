@@ -43,37 +43,41 @@ exports.getFaqByID = async (id) => {
 };
 
 exports.deleteFaqByID = async (id) => {
-  return await FaqModel.findOneAndDelete({ id: id })
+  return await FaqModel.findOneAndDelete({ faqNumber: id })
     .then(() => {
-      return FaqModel.find({ type: "employee" });
+      return FaqModel.find({});
     })
     .catch(() => {
       return "Failed to retreive updated employee data";
     });
 };
 
-exports.updateFaqByID = async (payload) => {
-  return await FaqModel.findOneAndUpdate(
-    { id: payload.id },
-    {
-      $set: {
-        firstName: payload.firstName,
-        lastName: payload.lastName,
-        email: payload.email,
-        phoneNumber: payload.phoneNumber,
-        credits: payload.credits,
-        address: payload.address,
-        type: payload.type,
-        subtype: payload.subtype,
-        salary: payload.salary,
-        about: payload.about,
-      },
+exports.updateFaq = async (faq, file) => {
+  const params = {
+    Bucket: "i-ticket/faqs",
+    Key: file.originalname,
+    Body: file.buffer,
+  };
+
+  await s3.upload(params, async (err, data) => {
+    if (err) {
+      console.error(err);
     }
-  )
-    .then(() => {
-      return FaqModel.find({ type: "employee" });
-    })
-    .catch(() => {
-      return "Failed to retreive updated employee data";
-    });
+
+    const doc = await FaqModel.findOneAndUpdate(
+      { faqNumber: faq.faqNumber },
+      {
+        $set: {
+          title: faq?.title,
+          faqNumber: faq?.faqNumber,
+          description: faq?.description,
+          isHidden: faq?.isHidden,
+          assignee: faq?.assignee,
+          files: [faq?.exsisting_files, data?.Location],
+        },
+      }
+    );
+
+    console.log("******** updated docuyments", doc);
+  });
 };

@@ -88,19 +88,6 @@ const UploadUsers = () => {
               Upload Users Data
             </Text>
             <Flex direction={"column"} alignItems={"end"}>
-              {/* <Dragger {...fileProps} style={{ padding: "40px" }}>
-              <VStack gap={1}>
-                <AiOutlineInbox size={"40px"} />
-                <p className="ant-upload-text">
-                  Click or drag file to this area to upload
-                </p>
-                text
-                <p className="ant-upload-hint">
-                  Support for a single or bulk upload. Strictly prohibited from
-                  uploading company data or other banned files.
-                </p>
-              </VStack>
-            </Dragger> */}
               <section className="container">
                 <Flex
                   alignItems={"center"}

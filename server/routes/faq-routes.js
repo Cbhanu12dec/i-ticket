@@ -25,4 +25,25 @@ router.post("/create-faq", upload.any("files"), async (req, res) => {
   }
 });
 
+router.put("/update-faq", upload.any("files"), async (req, res) => {
+  const payload = req.body;
+  const file = req.files[0];
+  try {
+    const faqResponse = await faqService.updateFaq(payload, file);
+    res.json({ faq: faqResponse, status: "success" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete("/delete-faq", async (req, res) => {
+  const id = req.query.id;
+  try {
+    const faqResponse = await faqService.deleteFaqByID(id);
+    res.json({ faq: faqResponse, status: "success" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

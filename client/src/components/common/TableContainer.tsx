@@ -15,7 +15,7 @@ const TableContainer = <R extends AnyObject>(props: TableContainerProps<R>) => {
   return (
     <Flex direction={"column"} w="100%">
       <Flex justifyContent={"space-between"} alignItems={"center"} my="4">
-        <Text fontSize={"lg"} fontWeight={600}>
+        <Text fontSize={"2xl"} fontWeight={"semibold"}>
           {titleName}
         </Text>
         {titleButtons?.showTitleButton && (

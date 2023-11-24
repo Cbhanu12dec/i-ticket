@@ -17,5 +17,5 @@ export interface FaqDataType {
   createdAt: string;
   assignee: string;
   faqNumber: string;
-  files: Array<string>
+  files: Array<string>;
 }

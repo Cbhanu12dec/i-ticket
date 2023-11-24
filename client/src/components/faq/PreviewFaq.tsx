@@ -111,7 +111,11 @@ function PreviewFaq(props: PreviewFaqProps) {
               <Text my="2">{data?.description}</Text>
               <Divider />
               <Text>Attachments:</Text>
-              {getAttachmentComponent(data?.files[0])}
+              <Flex gap={3}>
+                {data?.files?.map((item) => {
+                  return getAttachmentComponent(item);
+                })}
+              </Flex>
             </VStack>
           </Flex>{" "}
         </ModalBody>

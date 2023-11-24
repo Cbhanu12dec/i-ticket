@@ -16,7 +16,7 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import access from "../assets/useraccess.svg";
-
+import { BsPersonLock } from "react-icons/bs";
 import React, { useEffect, useState } from "react";
 import { PUBLIC_URL } from "../common/utils";
 import axios from "axios";
@@ -28,7 +28,7 @@ function UserAccess() {
   const [showUserAccess, setShowUserAccess] = useState<boolean>(false);
   const [userAccessEmail, setUserAccessEmail] = useState<string>("");
   const [userAccessInfo, setUserAccessInfo] = useState();
-
+  const [currentUserDeatials, setCurrentUserDetails] = useState({});
   const getUserAccessByEmail = () => {
     axios
       .get(PUBLIC_URL + "/users/get-user-by-email", {
@@ -59,9 +59,15 @@ function UserAccess() {
         setShowUserAccess(false);
       });
   };
+
+  useEffect(() => {
+    const info = JSON.parse(localStorage.getItem("userInfo") as string);
+    setCurrentUserDetails(info);
+  }, []);
+
   return (
     <Dashboard>
-      <Flex direction={"column"} alignItems={"start"} w="100%" mx="12" my="6">
+      <Flex direction={"column"} alignItems={"start"} w="100%" mx="6" my="2">
         <Text fontSize={"2xl"} fontWeight={"semibold"}>
           User Access Dashboard
         </Text>
@@ -69,7 +75,6 @@ function UserAccess() {
           mt="6"
           bg="white"
           rounded={"md"}
-          shadow={"md"}
           minW={"90%"}
           px="6"
           py="6"
@@ -94,9 +99,15 @@ function UserAccess() {
                 variant={"dashed"}
                 borderWidth={0.2}
               />
-              <Text>Name: Bhanu Cheryala</Text>
-              <Text my="3">Email: bcheryala@albany.edu</Text>
-              <Text>My Acccess: ADMIN</Text>
+              <Text>
+                Name: {_.capitalize((currentUserDeatials as any)?.firstName)}
+                {"   "}
+                {_.capitalize((currentUserDeatials as any)?.lastName)}{" "}
+              </Text>
+              <Text my="3">Email: {(currentUserDeatials as any)?.email}</Text>
+              <Text>
+                My Acccess: {_.upperCase((currentUserDeatials as any)?.role)}
+              </Text>
             </Flex>
             <Flex
               mt="6"
@@ -135,6 +146,8 @@ function UserAccess() {
                     getUserAccessByEmail();
                   }}
                   mx="4"
+                  isDisabled={userAccessEmail?.length === 0}
+                  leftIcon={<BsPersonLock size={20} />}
                 >
                   Get Access
                 </Button>

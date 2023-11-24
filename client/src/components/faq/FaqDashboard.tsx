@@ -1,4 +1,4 @@
-import { Flex, HStack, Tooltip } from "@chakra-ui/react";
+import { Flex, HStack, Tooltip, Text } from "@chakra-ui/react";
 import { TableProps } from "antd";
 import { ColumnsType } from "antd/es/table";
 import React, { useEffect, useState } from "react";
@@ -13,6 +13,8 @@ import { prepareFaqs } from "../common/prepare-data";
 import { FaqDataType } from "../common/data-types";
 import PreviewFaq from "./PreviewFaq";
 import Dashboard from "../dashboard/Dashboard";
+import { BsPersonFillGear } from "react-icons/bs";
+import _ from "lodash";
 
 export interface EditType {
   forEdit: boolean;
@@ -32,7 +34,6 @@ function FaqDashboard() {
       dataIndex: "title",
       filterSearch: true,
       onFilter: (value, record) => record.title.startsWith(value as any),
-      width: "30%",
     },
     {
       title: "Description",
@@ -41,6 +42,16 @@ function FaqDashboard() {
     {
       title: "Active",
       dataIndex: "isHidden",
+      render: (text, record) =>
+        text === false ? (
+          <Text fontWeight={"semibold"} textColor={"red.500"}>
+            {"NOT ACTIVE"}
+          </Text>
+        ) : (
+          <Text fontWeight={"semibold"} textColor={"green.500"}>
+            {"ACTIVE"}
+          </Text>
+        ),
     },
     {
       title: "Created At",
@@ -49,6 +60,66 @@ function FaqDashboard() {
     {
       title: "Access",
       dataIndex: "assignee",
+      filters: [
+        {
+          text: "All",
+          value: "all",
+        },
+        {
+          text: "Admin",
+          value: "admin",
+        },
+        {
+          text: "User",
+          value: "user",
+        },
+      ],
+      onFilter: (value, record) => record.assignee.startsWith(value as any),
+      filterSearch: true,
+      render: (text, record) =>
+        text === "all" ? (
+          <Flex
+            border={"1.5px solid"}
+            borderColor={"green.800"}
+            py="1"
+            textColor={"green.800"}
+            rounded={"full"}
+            fontSize={"xs"}
+            fontWeight={"semibold"}
+            alignItems={"center"}
+            justifyContent={"center"}
+          >
+            <Text fontWeight={"semibold"}>{_.upperCase(text)}</Text>
+          </Flex>
+        ) : text === "admin" ? (
+          <Flex
+            border={"1.5px solid"}
+            borderColor={"orange.800"}
+            py="1"
+            textColor={"orange.800"}
+            rounded={"full"}
+            fontSize={"xs"}
+            fontWeight={"semibold"}
+            alignItems={"center"}
+            justifyContent={"center"}
+          >
+            <Text fontWeight={"semibold"}>{_.upperCase(text)}</Text>
+          </Flex>
+        ) : (
+          <Flex
+            border={"1.5px solid"}
+            borderColor={"purple.800"}
+            py="1"
+            textColor={"purple.800"}
+            rounded={"full"}
+            fontSize={"xs"}
+            fontWeight={"semibold"}
+            alignItems={"center"}
+            justifyContent={"center"}
+          >
+            <Text fontWeight={"semibold"}>{_.upperCase(text)}</Text>
+          </Flex>
+        ),
     },
     {
       title: "Action",
@@ -74,7 +145,13 @@ function FaqDashboard() {
               setShowModal(true);
             }}
           />
-          <MdDeleteOutline size={22} style={{ cursor: "pointer" }} />
+          <MdDeleteOutline
+            size={22}
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              onDeleteClicked(record?.faqNumber);
+            }}
+          />
         </HStack>
       ),
     },
@@ -100,9 +177,24 @@ function FaqDashboard() {
       });
   }, []);
 
+  const onDeleteClicked = (faqID: string) => {
+    axios
+      .delete(PUBLIC_URL + "/faq/delete-faq", {
+        params: {
+          id: faqID,
+        },
+      })
+      .then((response) => {
+        setFaq(response.data.faq);
+      })
+      .catch((error) => {
+        console.log("ERROR: ", error);
+      });
+  };
+
   return (
     <Dashboard>
-      <Flex>
+      <Flex mx="4">
         <TableContainer
           columns={columns as any}
           dataSource={prepareFaqs(faq) as any}
