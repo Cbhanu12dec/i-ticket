@@ -53,17 +53,7 @@ exports.deleteFaqByID = async (id) => {
 };
 
 exports.updateFaq = async (faq, file) => {
-  const params = {
-    Bucket: "i-ticket/faqs",
-    Key: file.originalname,
-    Body: file.buffer,
-  };
-
-  await s3.upload(params, async (err, data) => {
-    if (err) {
-      console.error(err);
-    }
-
+  if (file === undefined) {
     const doc = await FaqModel.findOneAndUpdate(
       { faqNumber: faq.faqNumber },
       {
@@ -73,11 +63,37 @@ exports.updateFaq = async (faq, file) => {
           description: faq?.description,
           isHidden: faq?.isHidden,
           assignee: faq?.assignee,
-          files: [faq?.exsisting_files, data?.Location],
+          files: [faq?.exsisting_files],
         },
       }
     );
+  } else {
+    const params = {
+      Bucket: "i-ticket/faqs",
+      Key: file?.originalname,
+      Body: file?.buffer,
+    };
 
-    console.log("******** updated docuyments", doc);
-  });
+    await s3.upload(params, async (err, data) => {
+      if (err) {
+        console.error(err);
+      }
+
+      const doc = await FaqModel.findOneAndUpdate(
+        { faqNumber: faq.faqNumber },
+        {
+          $set: {
+            title: faq?.title,
+            faqNumber: faq?.faqNumber,
+            description: faq?.description,
+            isHidden: faq?.isHidden,
+            assignee: faq?.assignee,
+            files: [faq?.exsisting_files, data?.Location],
+          },
+        }
+      );
+
+      console.log("******** updated docuyments", doc);
+    });
+  }
 };

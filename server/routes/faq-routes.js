@@ -26,8 +26,10 @@ router.post("/create-faq", upload.any("files"), async (req, res) => {
 });
 
 router.put("/update-faq", upload.any("files"), async (req, res) => {
-  const payload = req.body;
-  const file = req.files[0];
+  const payload = req?.body;
+  console.log("********* payload", payload);
+  const file = req?.files[0];
+  console.log("files, asksdnkl", file);
   try {
     const faqResponse = await faqService.updateFaq(payload, file);
     res.json({ faq: faqResponse, status: "success" });

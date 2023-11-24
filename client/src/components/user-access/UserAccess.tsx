@@ -52,6 +52,8 @@ function UserAccess() {
       .then((response) => {
         message.success("User access updated successfully...!");
         setShowUserAccess(false);
+        localStorage.setItem("userInfo", JSON.stringify(response.data.users));
+        setCurrentUserDetails(response.data.users);
       })
       .catch((error) => {
         console.log("ERROR: ", error);
