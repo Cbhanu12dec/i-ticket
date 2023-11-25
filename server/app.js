@@ -5,6 +5,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const AWS = require("aws-sdk");
 const mongoose = require("mongoose");
+const { MongoClient } = require("mongodb");
 
 const fs = require("fs");
 // const fileType = require("file-type");
