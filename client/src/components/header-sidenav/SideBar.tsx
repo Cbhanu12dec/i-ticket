@@ -34,6 +34,7 @@ const LinkItems: Array<LinkItemProps> = [
   { name: "Tickets", icon: FiCompass, path: "/tickets" },
   { name: "User Access", icon: FiStar, path: "/users" },
   { name: "Upload Data", icon: FiSettings, path: "/upload" },
+  { name: "User FAQ", icon: FiTrendingUp, path: "/user-faq" },
 ];
 
 const SideNav = ({ onClose, ...rest }: SideNavProps) => {

@@ -4,10 +4,13 @@ import {
   DrawerContent,
   useDisclosure,
   Flex,
+  Text,
 } from "@chakra-ui/react";
 import MobileNav from "../header-sidenav/MobileNav";
 import SideNav from "../header-sidenav/SideBar";
 import { ReactNode, useEffect, useState } from "react";
+import { TbInfoTriangle } from "react-icons/tb";
+import { RxCross2 } from "react-icons/rx";
 
 interface DashboardProps {
   title?: ReactNode;
@@ -26,6 +29,24 @@ const Dashboard = (props: DashboardProps) => {
 
   return isLoggedIn ? (
     <Box minH="100vh" bg={"gray.100"}>
+      <Flex
+        minH={"14"}
+        bg="purple.800"
+        alignItems={"center"}
+        justifyContent={"space-between"}
+      >
+        <Flex alignItems={"center"} mx="4">
+          <TbInfoTriangle color="#fff" />
+          <Text textColor={"white"} mx="2">
+            Testing annoucement...!
+          </Text>
+        </Flex>
+        <RxCross2
+          color="#fff"
+          style={{ margin: "0 20px", cursor: "pointer" }}
+          size={22}
+        />
+      </Flex>
       <SideNav
         onClose={() => onClose}
         display={{ base: "none", md: "block" }}

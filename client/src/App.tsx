@@ -13,6 +13,7 @@ import Login from "./components/login/Login";
 import UserAccess from "./components/user-access/UserAccess";
 import AdminDashboard from "./components/dashboard/AdminDashboard";
 import ClientTicketsDashboard from "./components/tickets/ClientTicketsDashboard";
+import UserFaq from "./components/faq/UserFaq";
 function App() {
   return (
     <div className="App">
@@ -24,7 +25,8 @@ function App() {
           <Route path="/announcements" element={<Announcement />} />
           <Route path="/tickets" element={<ClientTicketsDashboard />} />
           <Route path="/upload" element={<UploadUsers />} />
-          <Route path="/users" element={<UserAccess />} />
+          <Route path="/users" element={<UserAccess />} />{" "}
+          <Route path="/user-faq" element={<UserFaq />} />
         </Routes>
       </Router>
     </div>
