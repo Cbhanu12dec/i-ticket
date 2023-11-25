@@ -14,7 +14,7 @@ import React, { useEffect, useState } from "react";
 import TableContainer from "../common/TableContainer";
 import CreateFaqForm from "./CreateFaqForm";
 import { AiFillEye, AiOutlineSync, AiTwotoneBulb } from "react-icons/ai";
-import { FaEllipsisV } from "react-icons/fa";
+import { FaEllipsisV, FaRegEyeSlash } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
 import { MdDeleteOutline } from "react-icons/md";
 import axios from "axios";
@@ -148,7 +148,7 @@ function FaqDashboard() {
       key: "action",
       render: (_, record) => (
         <HStack gap={1}>
-          <Tooltip title="Preview Faq" placement="left">
+          <Tooltip title="Preview faq" placement="left">
             <LuFileBox
               size={18}
               style={{ cursor: "pointer" }}
@@ -189,9 +189,22 @@ function FaqDashboard() {
                 <MdDeleteOutline size={20} />
                 <Text mx="1">Delete</Text>
               </MenuItem>
-              <MenuItem>
-                <AiFillEye size={20} style={{ margin: "0 2px" }} />
-                <Text mx="1">Hide</Text>
+              <MenuItem
+                onClick={() => {
+                  onHideClicked(record);
+                }}
+              >
+                {record?.isHidden ? (
+                  <>
+                    <FaRegEyeSlash size={20} style={{ margin: "0 2px" }} />
+                    <Text mx="1">Hide</Text>
+                  </>
+                ) : (
+                  <>
+                    <AiFillEye size={20} style={{ margin: "0 2px" }} />
+                    <Text mx="1">UnHide</Text>
+                  </>
+                )}
               </MenuItem>
             </MenuList>
           </Menu>
@@ -229,6 +242,21 @@ function FaqDashboard() {
       })
       .then((response) => {
         setFaq(response.data.faq);
+      })
+      .catch((error) => {
+        console.log("ERROR: ", error);
+      });
+  };
+
+  const onHideClicked = (faqData: any) => {
+    const payload = {
+      faqId: faqData.faqNumber,
+      isHidden: !faqData.isHidden,
+    };
+    axios
+      .put(PUBLIC_URL + "/faq/hide", payload)
+      .then((response) => {
+        setFaq(response.data.faqs);
       })
       .catch((error) => {
         console.log("ERROR: ", error);

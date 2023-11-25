@@ -101,3 +101,17 @@ exports.updateFaq = async (faq, file) => {
     });
   }
 };
+
+exports.hideFaq = async (faq) => {
+  const doc = await FaqModel.findOneAndUpdate(
+    { faqNumber: faq.faqId },
+    {
+      $set: {
+        isHidden: faq?.isHidden,
+      },
+    }
+  );
+  if (doc) {
+    return await FaqModel.find({});
+  }
+};

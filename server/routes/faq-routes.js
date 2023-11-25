@@ -35,6 +35,15 @@ router.put("/update-faq", upload.any("files"), async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+router.put("/hide", async (req, res) => {
+  const payload = req?.body;
+  try {
+    const faqResponse = await faqService.hideFaq(payload);
+    res.json({ faqs: faqResponse, status: "success" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 router.delete("/delete-faq", async (req, res) => {
   const id = req.query.id;
