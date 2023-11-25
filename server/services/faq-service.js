@@ -48,7 +48,7 @@ exports.deleteFaqByID = async (id) => {
       return FaqModel.find({});
     })
     .catch(() => {
-      return "Failed to retreive updated employee data";
+      return "Failed to delete faq.";
     });
 };
 
@@ -67,6 +67,9 @@ exports.updateFaq = async (faq, file) => {
         },
       }
     );
+    if (doc) {
+      return await FaqModel.find({});
+    }
   } else {
     const params = {
       Bucket: "i-ticket/faqs",
@@ -92,8 +95,9 @@ exports.updateFaq = async (faq, file) => {
           },
         }
       );
-
-      console.log("******** updated docuyments", doc);
+      if (doc) {
+        return await FaqModel.find({});
+      }
     });
   }
 };

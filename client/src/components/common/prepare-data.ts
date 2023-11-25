@@ -1,4 +1,8 @@
-import { AnnouncementDataType, FaqDataType } from "./data-types";
+import {
+  AnnouncementDataType,
+  AnnouncementsStats,
+  FaqDataType,
+} from "./data-types";
 import dayjs from "dayjs";
 import { timeDifference } from "./utils";
 export const prepareAnnouncements = (data: any) => {
@@ -8,8 +12,10 @@ export const prepareAnnouncements = (data: any) => {
       title: announcement?.title,
       description: announcement?.description,
       status: timeDifference(announcement?.startTime, announcement?.endTime),
-      startTime: dayjs(announcement?.startTime).format("MM-DD-YYYY hh:MMa"),
-      endTime: dayjs(announcement?.endTime).format("MM-DD-YYYY hh:MMa"),
+      // startTime: dayjs(announcement?.startTime).format("MM-DD-YYYY hh:MMa"),
+      // endTime: dayjs(announcement?.endTime).format("MM-DD-YYYY hh:MMa"),
+      startTime: announcement?.startTime,
+      endTime: announcement?.endTime,
       assignee: announcement?.assignee,
     };
   });
@@ -29,5 +35,23 @@ export const prepareFaqs = (data: any) => {
       assignee: faq?.assignee,
     };
   });
+  return toReturn;
+};
+
+export const prepareAnnouncementsStats = (data: any) => {
+  const toReturn: AnnouncementsStats = data?.reduce(
+    (accumulator: any, currentValue: any) => {
+      if (currentValue.status === "Running") {
+        accumulator.running += 1;
+      } else if (currentValue.status === "Upcoming") {
+        accumulator.upcoming += 1;
+      } else if (currentValue.status === "Published") {
+        accumulator.published += 1;
+      }
+      accumulator.total += 1;
+      return accumulator;
+    },
+    { total: 0, running: 0, published: 0, upcoming: 0 }
+  );
   return toReturn;
 };

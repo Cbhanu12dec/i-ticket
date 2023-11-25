@@ -23,4 +23,25 @@ router.post("/create-announcement", async (req, res) => {
   }
 });
 
+router.put("/update-announcement", async (req, res) => {
+  const payload = req.body;
+  try {
+    const announcementResponse =
+      await announcementService.updateAnnouncementByID(payload);
+    res.json({ announcement: announcementResponse, status: "success" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete("/delete-announcement", async (req, res) => {
+  const id = req.query.id;
+  try {
+    const announcementResponse =
+      await announcementService.deleteAnnouncementByID(id);
+    res.json({ announcements: announcementResponse, status: "success" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 module.exports = router;

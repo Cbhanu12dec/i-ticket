@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export interface appDefaultValues {
   ANNOUNCEMENT: {
     title: "";
@@ -10,11 +12,12 @@ export interface appDefaultValues {
 
 export const getDefaultAnnouncement = () => {
   return {
+    id: "",
     title: "",
     description: "",
     assignee: "all",
-    startTime: "now",
-    endTime: "now",
+    startTime: dayjs().toISOString(),
+    endTime: dayjs().toISOString(),
   };
 };
 

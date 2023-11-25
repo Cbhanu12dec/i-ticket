@@ -211,6 +211,7 @@ function FaqDashboard() {
           setShowModal={setShowModal}
           edit={edit}
           setEdit={setEdit}
+          setFaqs={setFaq}
         />
         <PreviewFaq
           setShowModal={setPreviewFaq}

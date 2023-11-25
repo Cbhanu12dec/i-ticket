@@ -19,3 +19,10 @@ export interface FaqDataType {
   faqNumber: string;
   files: Array<string>;
 }
+
+export interface AnnouncementsStats {
+  total: number;
+  running: number;
+  published: number;
+  upcomming: number;
+}

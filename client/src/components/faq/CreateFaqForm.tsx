@@ -29,15 +29,16 @@ import { EditType } from "./FaqDashboard";
 import { AiOutlineInbox } from "react-icons/ai";
 import { IoMdDownload } from "react-icons/io";
 import { ImFilePdf } from "react-icons/im";
-import { MdDelete, MdDeleteOutline } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
 interface CreateFaqFormProps {
   showModal: boolean;
   setShowModal: (_open: boolean) => void;
+  setFaqs: React.Dispatch<React.SetStateAction<any>>;
   edit?: EditType;
   setEdit?: React.Dispatch<React.SetStateAction<EditType | undefined>>;
 }
 const CreateFaqForm = (props: CreateFaqFormProps) => {
-  const { setShowModal, showModal, edit, setEdit } = props;
+  const { setShowModal, showModal, edit, setEdit, setFaqs } = props;
   const [faq, setFaq] = useState(getDefaultFaq());
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({});
   const { register, handleSubmit, setValue } = useForm();
@@ -61,16 +62,17 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
             "content-type": "multipart/form-data",
           },
         })
-        .then((res) => {
+        .then((response) => {
           message.success("Updated Faq successfully..!");
           setShowModal(false);
           resetValues();
+          setFaqs(response.data.faqs);
         })
         .catch((err) => {
-          console.log("checking error", err);
+          console.log("ERROR: ", err);
           setShowModal(false);
           resetValues();
-          message.success("Failed to update faq..!");
+          message.error("Failed to update faq..!");
         });
     } else {
       axios
@@ -79,16 +81,17 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
             "content-type": "multipart/form-data",
           },
         })
-        .then((res) => {
+        .then((response) => {
           message.success("Created Faq successfully..!");
           setShowModal(false);
           resetValues();
+          setFaqs(response.data.faqs);
         })
         .catch((err) => {
           console.log("checking error", err);
           setShowModal(false);
           resetValues();
-          message.success("Failed to create faq..!");
+          message.error("Failed to create faq..!");
         });
     }
   };
@@ -99,15 +102,17 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
       description: edit?.data?.description as string,
       assignee: edit?.data?.assignee as string,
     });
+    setValue("title", edit?.data?.title as string);
+    setValue("description", edit?.data?.description as string);
+    setValue("assignee", edit?.data?.assignee as string);
     setUpdateFiles((edit?.data as any)?.files);
   }, [
     edit?.data,
     edit?.data?.assignee,
     edit?.data?.description,
     edit?.data?.title,
+    setValue,
   ]);
-
-  console.log("checking data for faq e", updateFiles);
 
   const resetValues = () => {
     setValue("title", "");

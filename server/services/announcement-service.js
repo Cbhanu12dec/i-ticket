@@ -14,35 +14,30 @@ exports.getAnnouncementByID = async (id) => {
 exports.deleteAnnouncementByID = async (id) => {
   return await AnnouncementModel.findOneAndDelete({ id: id })
     .then(() => {
-      return AnnouncementModel.find({ type: "employee" });
+      return AnnouncementModel.find({});
     })
     .catch(() => {
-      return "Failed to retreive updated employee data";
+      return "Failed to delete announcement.";
     });
 };
 
 exports.updateAnnouncementByID = async (payload) => {
   return await AnnouncementModel.findOneAndUpdate(
-    { id: payload.id },
+    { _id: payload.id },
     {
       $set: {
-        firstName: payload.firstName,
-        lastName: payload.lastName,
-        email: payload.email,
-        phoneNumber: payload.phoneNumber,
-        credits: payload.credits,
-        address: payload.address,
-        type: payload.type,
-        subtype: payload.subtype,
-        salary: payload.salary,
-        about: payload.about,
+        title: payload?.title,
+        description: payload?.description,
+        assignee: payload?.assignee,
+        startTime: payload?.startTime,
+        endTime: payload?.endTime,
       },
     }
   )
     .then(() => {
-      return AnnouncementModel.find({ type: "employee" });
+      return AnnouncementModel.find({});
     })
     .catch(() => {
-      return "Failed to retreive updated employee data";
+      return "Failed to updated announcement.";
     });
 };

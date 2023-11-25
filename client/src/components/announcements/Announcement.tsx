@@ -8,12 +8,17 @@ import { TfiAlarmClock, TfiAnnouncement } from "react-icons/tfi";
 import { AiOutlineCodeSandbox } from "react-icons/ai";
 import axios from "axios";
 import { PUBLIC_URL } from "../common/utils";
-import { prepareAnnouncements } from "../common/prepare-data";
-import { AnnouncementDataType } from "../common/data-types";
+import {
+  prepareAnnouncements,
+  prepareAnnouncementsStats,
+} from "../common/prepare-data";
+import { AnnouncementDataType, AnnouncementsStats } from "../common/data-types";
 import _ from "lodash";
 import { FiEdit } from "react-icons/fi";
 import { MdDeleteOutline } from "react-icons/md";
 import Dashboard from "../dashboard/Dashboard";
+import { message } from "antd";
+import dayjs from "dayjs";
 export interface EditType {
   forEdit: boolean;
   data: Partial<AnnouncementDataType>;
@@ -25,6 +30,13 @@ const Announcement = () => {
     forEdit: false,
     data: {},
   });
+  const [announcementsStatsData, setAnnouncementsStats] =
+    useState<AnnouncementsStats>({
+      total: 0,
+      running: 0,
+      published: 0,
+      upcomming: 0,
+    });
 
   const columns: ColumnsType<AnnouncementDataType> = [
     {
@@ -122,10 +134,16 @@ const Announcement = () => {
     {
       title: "Start Time",
       dataIndex: "startTime",
+      render: (text, record) => (
+        <Text>{dayjs(text).format("MM-DD-YYYY hh:MMA")}</Text>
+      ),
     },
     {
       title: "End time",
       dataIndex: "endTime",
+      render: (text, record) => (
+        <Text>{dayjs(text).format("MM-DD-YYYY hh:MMA")}</Text>
+      ),
     },
     {
       title: "Published To",
@@ -139,7 +157,7 @@ const Announcement = () => {
     {
       title: "Action",
       key: "action",
-      render: (_, record) => (
+      render: (_, record: any) => (
         <HStack gap={2}>
           <FiEdit
             size={18}
@@ -152,7 +170,11 @@ const Announcement = () => {
               });
             }}
           />
-          <MdDeleteOutline size={22} style={{ cursor: "pointer" }} />
+          <MdDeleteOutline
+            size={22}
+            style={{ cursor: "pointer" }}
+            onClick={() => onDeleteClicked(record.id)}
+          />
         </HStack>
       ),
     },
@@ -167,19 +189,19 @@ const Announcement = () => {
     console.log("params", pagination, filters, sorter, extra);
   };
   const getIcons = (name: string) => {
-    if (name === "Total") {
+    if (name === "total") {
       return (
         <Flex bg="orange.400" rounded={"full"} p="4">
           <AiOutlineCodeSandbox size={40} />
         </Flex>
       );
-    } else if (name === "Running") {
+    } else if (name === "running") {
       return (
         <Flex bg="green.400" rounded={"full"} p="4">
           <TfiAlarmClock size={40} />
         </Flex>
       );
-    } else if (name === "Published") {
+    } else if (name === "published") {
       return (
         <Flex bg="#3182ce" rounded={"full"} p="4">
           <TbClockExclamation size={40} />
@@ -194,7 +216,7 @@ const Announcement = () => {
     }
   };
 
-  const announcementStats = (name: string) => {
+  const announcementStats = (name: string, value: number) => {
     return (
       <Flex
         px="10"
@@ -206,13 +228,30 @@ const Announcement = () => {
       >
         {getIcons(name)}
         <Flex direction={"column"} alignItems={"start"} mx="4">
-          <Text textColor={"gray.800"}>{name}</Text>
+          <Text textColor={"gray.800"}>{_.capitalize(name)}</Text>
           <Text textColor={"gray.600"} fontSize={"5xl"} fontWeight={"bold"}>
-            100
+            {value}
           </Text>
         </Flex>
       </Flex>
     );
+  };
+
+  const onDeleteClicked = (id: string) => {
+    axios
+      .delete(PUBLIC_URL + "/announcement/delete-announcement", {
+        params: {
+          id: id,
+        },
+      })
+      .then((response) => {
+        setAnnouncements(response.data.announcements);
+        message.success("Deleted Announcement successfully..!");
+      })
+      .catch((error) => {
+        console.log("ERROR: ", error);
+        message.error("Failed to delete Announcement..!");
+      });
   };
 
   useEffect(() => {
@@ -220,6 +259,11 @@ const Announcement = () => {
       .get(PUBLIC_URL + "/announcement/announcements")
       .then((response) => {
         setAnnouncements(response.data.announcements);
+        setAnnouncementsStats(
+          prepareAnnouncementsStats(
+            prepareAnnouncements(response.data.announcements)
+          ) as AnnouncementsStats
+        );
       })
       .catch((error) => {
         console.log("ERROR: ", error);
@@ -252,8 +296,6 @@ const Announcement = () => {
           justifyContent={"space-between"}
           bg="white"
           rounded={"lg"}
-          // border="1.5px solid"
-          // borderColor={"gray.200"}
           px="6"
           direction={"column"}
           alignItems={"start"}
@@ -274,8 +316,8 @@ const Announcement = () => {
           </Text>
           <Divider my="2" borderColor={"gray.400"} />
           <HStack w="full">
-            {["Total", "Running", "Published", "Upcoming"]?.map((item) => {
-              return announcementStats(item);
+            {Object.entries(announcementsStatsData).map(([key, value]) => {
+              return announcementStats(key, value);
             })}
           </HStack>
         </Flex>
@@ -291,6 +333,7 @@ const Announcement = () => {
           setShowModal={setShowModal}
           edit={editAnnouncement}
           setEdit={setEditAnnoucement}
+          setAnnouncements={setAnnouncements}
         />
       </Flex>
     </Dashboard>
