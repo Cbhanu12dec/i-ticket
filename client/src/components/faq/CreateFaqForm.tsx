@@ -26,10 +26,11 @@ import { PUBLIC_URL, getFileType } from "../common/utils";
 import axios from "axios";
 import { message } from "antd";
 import { EditType } from "./FaqDashboard";
-import { AiOutlineInbox } from "react-icons/ai";
+import { AiOutlineCheck, AiOutlineInbox } from "react-icons/ai";
 import { IoMdDownload } from "react-icons/io";
 import { ImFilePdf } from "react-icons/im";
 import { MdDelete } from "react-icons/md";
+import { RxCross2 } from "react-icons/rx";
 interface CreateFaqFormProps {
   showModal: boolean;
   setShowModal: (_open: boolean) => void;
@@ -218,7 +219,9 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
           <Divider />
           <ModalBody py={"4"}>
             <FormControl>
-              <FormLabel>Title</FormLabel>
+              <FormLabel fontSize={"sm"} textColor={"gray.700"}>
+                Title
+              </FormLabel>
               <Input
                 type="text"
                 placeholder="Enter Title here..."
@@ -233,7 +236,9 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
               />
             </FormControl>
             <FormControl mt="3">
-              <FormLabel>Description</FormLabel>
+              <FormLabel fontSize={"sm"} textColor={"gray.700"}>
+                Description
+              </FormLabel>
 
               <Textarea
                 placeholder="Enter details here..."
@@ -342,6 +347,7 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
                 resetValues();
                 setFaq(getDefaultFaq());
               }}
+              leftIcon={<RxCross2 />}
             >
               Close
             </Button>
@@ -350,6 +356,7 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
               color={"white"}
               _hover={{ bg: "purple.800" }}
               type="submit"
+              leftIcon={<AiOutlineCheck />}
             >
               Update FAQ
             </Button>

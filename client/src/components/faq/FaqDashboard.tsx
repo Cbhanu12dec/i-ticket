@@ -1,10 +1,20 @@
-import { Flex, HStack, Tooltip, Text } from "@chakra-ui/react";
-import { TableProps } from "antd";
+import {
+  Flex,
+  HStack,
+  Text,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Menu,
+  IconButton,
+} from "@chakra-ui/react";
+import { TableProps, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
 import React, { useEffect, useState } from "react";
 import TableContainer from "../common/TableContainer";
 import CreateFaqForm from "./CreateFaqForm";
-import { AiFillEye } from "react-icons/ai";
+import { AiFillEye, AiOutlineSync, AiTwotoneBulb } from "react-icons/ai";
+import { FaEllipsisV } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
 import { MdDeleteOutline } from "react-icons/md";
 import axios from "axios";
@@ -13,7 +23,7 @@ import { prepareFaqs } from "../common/prepare-data";
 import { FaqDataType } from "../common/data-types";
 import PreviewFaq from "./PreviewFaq";
 import Dashboard from "../dashboard/Dashboard";
-import { BsPersonFillGear } from "react-icons/bs";
+import { LuFileBox } from "react-icons/lu";
 import _ from "lodash";
 
 export interface EditType {
@@ -88,8 +98,12 @@ function FaqDashboard() {
             fontWeight={"semibold"}
             alignItems={"center"}
             justifyContent={"center"}
+            maxW="16"
           >
-            <Text fontWeight={"semibold"}>{_.upperCase(text)}</Text>
+            <AiOutlineSync />
+            <Text fontWeight={"semibold"} letterSpacing={"wide"} mx="1">
+              {_.upperCase(text)}
+            </Text>
           </Flex>
         ) : text === "admin" ? (
           <Flex
@@ -102,8 +116,12 @@ function FaqDashboard() {
             fontWeight={"semibold"}
             alignItems={"center"}
             justifyContent={"center"}
+            maxW="20"
           >
-            <Text fontWeight={"semibold"}>{_.upperCase(text)}</Text>
+            <AiOutlineSync style={{ fontWeight: 800 }} />
+            <Text fontWeight={"semibold"} mx="2">
+              {_.upperCase(text)}
+            </Text>
           </Flex>
         ) : (
           <Flex
@@ -116,8 +134,12 @@ function FaqDashboard() {
             fontWeight={"semibold"}
             alignItems={"center"}
             justifyContent={"center"}
+            maxW="20"
           >
-            <Text fontWeight={"semibold"}>{_.upperCase(text)}</Text>
+            <AiOutlineSync />
+            <Text fontWeight={"semibold"} mx="2">
+              {_.upperCase(text)}
+            </Text>
           </Flex>
         ),
     },
@@ -125,33 +147,54 @@ function FaqDashboard() {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <HStack gap={2}>
-          <AiFillEye
-            size={24}
-            style={{ cursor: "pointer" }}
-            onClick={() => {
-              setPreviewFaq(true);
-              setPreviewData(record);
-            }}
-          />
-          <FiEdit
-            size={18}
-            style={{ cursor: "pointer" }}
-            onClick={() => {
-              setEdit({
-                forEdit: true,
-                data: record,
-              });
-              setShowModal(true);
-            }}
-          />
-          <MdDeleteOutline
-            size={22}
-            style={{ cursor: "pointer" }}
-            onClick={() => {
-              onDeleteClicked(record?.faqNumber);
-            }}
-          />
+        <HStack gap={1}>
+          <Tooltip title="Preview Faq" placement="left">
+            <LuFileBox
+              size={18}
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                setPreviewFaq(true);
+                setPreviewData(record);
+              }}
+            />
+          </Tooltip>
+
+          <Menu>
+            <MenuButton
+              as={IconButton}
+              colorScheme="white"
+              aria-label="Options"
+              color={"black"}
+              size={"sm"}
+              icon={<FaEllipsisV />}
+            />
+            <MenuList>
+              <MenuItem
+                onClick={() => {
+                  setEdit({
+                    forEdit: true,
+                    data: record,
+                  });
+                  setShowModal(true);
+                }}
+              >
+                <FiEdit style={{ margin: "0 2px" }} />
+                <Text mx="2">Edit</Text>
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  onDeleteClicked(record?.faqNumber);
+                }}
+              >
+                <MdDeleteOutline size={20} />
+                <Text mx="1">Delete</Text>
+              </MenuItem>
+              <MenuItem>
+                <AiFillEye size={20} style={{ margin: "0 2px" }} />
+                <Text mx="1">Hide</Text>
+              </MenuItem>
+            </MenuList>
+          </Menu>
         </HStack>
       ),
     },
@@ -203,6 +246,7 @@ function FaqDashboard() {
             name: "Create Faq",
             showTitleButton: true,
             onButtonClicked: () => setShowModal(true),
+            leftIcons: <AiTwotoneBulb />,
           }}
           titleName="Faq Dashboard"
         />

@@ -8,6 +8,7 @@ interface TableContainerProps<R extends AnyObject> extends TableProps<R> {
     name: String;
     showTitleButton: boolean;
     onButtonClicked?: MouseEventHandler<HTMLButtonElement>;
+    leftIcons?: any;
   };
 }
 const TableContainer = <R extends AnyObject>(props: TableContainerProps<R>) => {
@@ -24,6 +25,7 @@ const TableContainer = <R extends AnyObject>(props: TableContainerProps<R>) => {
             color={"white"}
             _hover={{ bg: "purple.800" }}
             onClick={titleButtons.onButtonClicked}
+            leftIcon={titleButtons.leftIcons}
           >
             {titleButtons?.name}
           </Button>

@@ -219,6 +219,7 @@ const Announcement = () => {
   const announcementStats = (name: string, value: number) => {
     return (
       <Flex
+        key={name}
         px="10"
         py="4"
         minH={"32"}
