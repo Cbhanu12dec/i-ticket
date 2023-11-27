@@ -26,3 +26,22 @@ export interface AnnouncementsStats {
   published: number;
   upcomming: number;
 }
+
+export interface CommentsDataType {
+  id: number,
+  parentId: number| null,
+  text: string,
+  author: string,
+  children: null,
+  commentTime: string
+}
+export interface ticketDataType {
+  ticketNumber: string;
+  title: string;
+  description: string;
+  priority: string;
+  category: string;
+  assignee: string;
+  files: string;
+  comments: CommentsDataType
+}

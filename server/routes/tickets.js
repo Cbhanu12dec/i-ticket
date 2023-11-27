@@ -23,6 +23,17 @@ router.post("/create-ticket", upload.any("files"), async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+router.put("/update-comments", async (req, res) => {
+  const payload = req.body;
+  // console.log("******** ticket info,:", payload);
+  try {
+    const ticketResponse = await ticketService.updateComments(payload);
+    res.json({ ticketInfo: ticketResponse, status: "success" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 router.get("/get-all-tickets", async (req, res) => {
   try {
     const ticketResponse = await ticketService.getAllTickets();

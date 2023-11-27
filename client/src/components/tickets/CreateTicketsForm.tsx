@@ -52,6 +52,7 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
     formData.append("description", ticketPayload?.description);
     formData.append("category", ticketPayload?.category);
     formData.append("priority", ticketPayload?.priority);
+    formData.append("assignee", JSON.stringify(["all"]));
     formData.append("files", acceptedFiles[0]);
     axios
       .post(`http://localhost:5001/ticket/create-ticket`, formData, {

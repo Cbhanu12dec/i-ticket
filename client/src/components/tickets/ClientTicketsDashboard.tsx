@@ -32,6 +32,11 @@ import { PUBLIC_URL, getFileType } from "../common/utils";
 import { ImFilePdf } from "react-icons/im";
 import { IoMdDownload } from "react-icons/io";
 import Dashboard from "../dashboard/Dashboard";
+import CommentSection from "./CommentSection";
+import { CommentsDataType } from "../common/data-types";
+import { AiOutlineSend } from "react-icons/ai";
+import dayjs from "dayjs";
+
 const ClientTicketsDashboard = () => {
   const [showticketModal, setShowTicketModal] = useState<boolean>(false);
   const [ticketData, setTicketData] = useState();
@@ -39,6 +44,22 @@ const ClientTicketsDashboard = () => {
   const [tickets, setTickets] = useState([]);
   const [filteredTickets, setFilteredTickets] = useState([]);
   const [activeStep, setActiveStep] = useState<string>("inbox");
+  const [comments, setComments] = useState<CommentsDataType[]>([]);
+  const [commentTree, setCommentTree] = useState([]);
+  const [commentTyped, setCommentTyped] = useState<string>("");
+  const [userInfo, setUserInfo] = useState({});
+
+  const handleCommentCollapse = (id: any) => {
+    const updatedComments = comments.map((c: any) => {
+      if (c.id === id) {
+        return {
+          ...c,
+          expanded: !c.expanded,
+        };
+      } else return c;
+    });
+    setComments(updatedComments);
+  };
 
   const handleDownload = async (filename: string) => {
     try {
@@ -75,6 +96,8 @@ const ClientTicketsDashboard = () => {
       .catch((error) => {
         console.log("ERROR: ", error);
       });
+    const user = JSON.parse(localStorage.getItem("userInfo") as string);
+    setUserInfo(user);
   }, []);
 
   const getMenuIcons = (itemName: string) => {
@@ -96,7 +119,6 @@ const ClientTicketsDashboard = () => {
 
   const menyItems = ["Inbox", "In-Progress", "Done", "Discard"];
 
-  console.log("************** filtered tickets", filteredTickets);
   const getIcons = (type: string) => {
     if (type?.toLowerCase() === "pdf") {
       return ImFilePdf;
@@ -125,6 +147,42 @@ const ClientTicketsDashboard = () => {
       </Flex>
     );
   };
+
+  const createTree = (list: any) => {
+    var map: any = {},
+      node,
+      roots = [],
+      i;
+
+    for (i = 0; i < list.length; i += 1) {
+      map[list[i].id] = i; // initialize the map
+      list[i].children = []; // initialize the children
+    }
+
+    for (i = 0; i < list.length; i += 1) {
+      node = list[i];
+      if (node.parentId) {
+        // if you have dangling branches check that map[node.parentId] exists
+        list[map[node.parentId]].children.push(node);
+      } else {
+        roots.push(node);
+      }
+    }
+    return roots;
+  };
+  useEffect(() => {
+    const updatedTree = createTree(comments);
+    setCommentTree(updatedTree as any);
+    // axios
+    //   .put(PUBLIC_URL + "/ticket/update-comments",{
+    //     ticketNumber: (ticketData as any)?.ticketNumber,
+    //     comments: comments
+    //   })
+    //   .then((response) => {
+    //     console.log("*********** comments");
+    //   })
+    //   .catch((error) => {});
+  }, [comments]);
 
   return (
     <Dashboard>
@@ -191,82 +249,6 @@ const ClientTicketsDashboard = () => {
                     </Flex>
                   );
                 })}
-                {/* <Flex
-                  mt="4"
-                  p="1"
-                  _hover={{ bg: "gray.50" }}
-                  rounded={"md"}
-                  width={"100%"}
-                  align={"start"}
-                  justifyContent={"space-between"}
-                  cursor={"pointer"}
-                  onClick={() => setActiveStep("inbox")}
-                >
-                  <Flex alignItems={"center"} gap={3}>
-                    <FaListCheck />
-                    <Text fontSize={"lg"}>{"Inbox"}</Text>
-                  </Flex>
-                  <Text
-                    bg="blue.100"
-                    py="1"
-                    px="2"
-                    rounded={"md"}
-                    fontSize={"xs"}
-                  >
-                    {tickets?.length}
-                  </Text>
-                </Flex>
-                <Flex
-                  p="1"
-                  _hover={{ bg: "gray.50" }}
-                  rounded={"md"}
-                  width={"100%"}
-                  align={"start"}
-                  justifyContent={"space-between"}
-                  cursor={"pointer"}
-                >
-                  <Flex alignItems={"center"}>
-                    <GrInProgress size={18} />
-                    <Text mx="2" fontSize={"lg"}>
-                      {"In-Progress"}
-                    </Text>
-                  </Flex>
-                  <Text bg="blue.100" p="1" rounded={"md"} fontSize={"xs"}>
-                    10
-                  </Text>{" "}
-                </Flex>
-                <Flex
-                  p="1"
-                  _hover={{ bg: "gray.50" }}
-                  rounded={"md"}
-                  width={"100%"}
-                  align={"start"}
-                  justifyContent={"space-between"}
-                  cursor={"pointer"}
-                >
-                  <Flex alignItems={"center"} gap={3}>
-                    <FaRegThumbsUp size={20} />
-                    <Text fontSize={"lg"}>{"Done"}</Text>
-                  </Flex>
-                  <Text></Text>
-                </Flex>
-                <Flex
-                  p="1"
-                  _hover={{ bg: "gray.50" }}
-                  rounded={"md"}
-                  width={"100%"}
-                  align={"start"}
-                  justifyContent={"space-between"}
-                  cursor={"pointer"}
-                >
-                  <Flex alignItems={"center"}>
-                    <MdDeleteOutline size={24} />
-                    <Text fontSize={"lg"} mx="2">
-                      {"Discard"}
-                    </Text>
-                  </Flex>
-                  <Text></Text>
-                </Flex> */}
               </VStack>
               <VStack
                 divider={<StackDivider />}
@@ -301,6 +283,9 @@ const ClientTicketsDashboard = () => {
                     onClick={() => {
                       setShowTicketModal(true);
                       setTicketData(item as any);
+                      setComments(item?.comments)
+                      const updatedTree = createTree(item?.comments);
+                      setCommentTree(updatedTree as any);
                     }}
                   >
                     <VStack align={"start"}>
@@ -378,12 +363,57 @@ const ClientTicketsDashboard = () => {
                 <Text>Attachments:</Text>
                 {getAttachmentComponent((ticketData as any)?.files[0])}
                 <Divider />
-                <Text>Comments:</Text>
-                <VStack divider={<StackDivider />}>
-                  {(ticketData as any)?.comments?.map((item: string) => {
-                    return <Text>{item}</Text>;
+                <Text fontWeight={"semibold"}>Comments:</Text>
+
+                <Flex direction={"column"} ml="-4" mt="-4">
+                  {commentTree.map((comment: any) => {
+                    return (
+                      <CommentSection
+                        key={comment.id}
+                        id={comment.id}
+                        comment={comment}
+                        comments={comments}
+                        setComments={setComments}
+                        collapse={handleCommentCollapse}
+                        userInfo={userInfo}
+                      />
+                    );
                   })}
-                </VStack>
+                </Flex>
+                <Divider my="3" />
+                <Text> Add new comment</Text>
+                <Flex>
+                  <Input
+                    placeholder="Add your comment here"
+                    onChange={(e) => setCommentTyped(e.target.value)}
+                  />
+                  <Button
+                    mx="2"
+                    bg="purple.900"
+                    color={"white"}
+                    leftIcon={<AiOutlineSend />}
+                    minW={"32"}
+                    _hover={{ bg: "purple.800" }}
+                    onClick={() => {
+                      setComments([
+                        ...comments,
+                        {
+                          id: Math.floor(Math.random() * 900000) + 100000,
+                          parentId: null,
+                          text: commentTyped,
+                          author:
+                            (userInfo as any)?.firstName +
+                            " " +
+                            (userInfo as any)?.lastName,
+                          children: null,
+                          commentTime: dayjs().toISOString(),
+                        },
+                      ]);
+                    }}
+                  >
+                    comment
+                  </Button>
+                </Flex>
               </VStack>
               <Flex
                 bg="#f1f5fa"
@@ -392,7 +422,7 @@ const ClientTicketsDashboard = () => {
                 direction={"column"}
                 rounded={"lg"}
               >
-                <VStack align={"start"}>
+                {/* <VStack align={"start"}>
                   <FormControl>
                     <FormLabel fontSize={"sm"} textColor={"gray.500"}>
                       Write your comment
@@ -406,7 +436,7 @@ const ClientTicketsDashboard = () => {
                   >
                     Comment
                   </Button>
-                </VStack>
+                </VStack> */}
               </Flex>
             </Flex>{" "}
           </ModalBody>

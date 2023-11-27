@@ -1,4 +1,6 @@
-const TicketsModel = require("../models/tickets-model");
+// const TicketModel = require("../models//tickets-model");
+const { TicketModel } = require('../models/tickets-model');
+
 const AWS = require("aws-sdk");
 const multer = require("multer");
 
@@ -30,14 +32,30 @@ exports.createTicket = async (ticketPayload, file) => {
       description: ticketPayload.description,
       priority: ticketPayload.priority,
       category: ticketPayload.category,
-      assignee: ["all"],
+      assignee: ticketPayload.assignee,
       files: [data?.Location],
-      comments: [],
+      // comments: [],
     };
-    return await TicketsModel.create(payload);
+    return await TicketModel.create(payload);
   });
 };
 
+exports.updateComments = async(ticketPayload) =>{
+  console.log("************ finding data:", ticketPayload)
+  const doc = await TicketModel.findOneAndUpdate(
+    { ticketNumber: ticketPayload.ticketNumber },
+    {
+      $set: {
+        comments: ticketPayload.comments,
+      },
+    }
+  );
+  if (doc) {
+    return await TicketModel.find({});
+  }
+
+}
+
 exports.getAllTickets = async () => {
-  return await TicketsModel.find({});
+  return await TicketModel.find({});
 };

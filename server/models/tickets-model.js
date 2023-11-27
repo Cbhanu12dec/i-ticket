@@ -1,9 +1,19 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const commentsSchema = new mongoose.Schema({
+  id: Number,
+  parentId: Number,
+  text: String,
+  author: String,
+  children: [this],
+  commentTime: String,
+});
 
-const ticketSchema = new Schema({
-  id: String,
-  ticketNumber: String,
+const ticketSchema = new mongoose.Schema({
+  ticketNumber: {
+    type: String,
+    required: true,
+  },
   title: {
     type: String,
     required: false,
@@ -12,18 +22,25 @@ const ticketSchema = new Schema({
     type: String,
     required: false,
   },
-  priority: String,
+  priority: {
+    type: String,
+    required: false,
+  },
   category: {
     type: String,
     required: false,
   },
-  assignee: [String],
-  files: [String],
-  createdAt: {
-    type: Date,
-    default: Date.now,
+  assignee: {
+    type: String,
+    required: false,
   },
-  comments: [String],
+  files: [String],
+  comments: [commentsSchema],
 });
 
-module.exports = mongoose.model("Ticket", ticketSchema);
+const CommentsModel = mongoose.model("Comments", commentsSchema);
+const TicketModel = mongoose.model("Ticket", ticketSchema);
+
+module.exports = { CommentsModel, TicketModel };
+
+// module.exports = mongoose.model("Ticket", ticketSchema);
