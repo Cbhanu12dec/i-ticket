@@ -18,6 +18,7 @@ import _ from "lodash";
 import { useEffect, useState } from "react";
 import { FiBell, FiChevronDown, FiMenu } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import Profile from "../profile/Profile";
 
 interface MobileProps extends FlexProps {
   onOpen: () => void;
@@ -25,6 +26,7 @@ interface MobileProps extends FlexProps {
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState({});
+  const [showProfileModal, setShowProfileModal] = useState<boolean>(false)
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("userInfo") as string);
     setUserInfo(user);
@@ -111,7 +113,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               bg={useColorModeValue("white", "gray.900")}
               borderColor={useColorModeValue("gray.200", "gray.700")}
             >
-              <MenuItem>Profile</MenuItem>
+              <MenuItem onClick={()=> setShowProfileModal(true)}>Profile</MenuItem>
               <MenuDivider />
               <MenuItem
                 onClick={() => {
@@ -126,6 +128,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
           </Menu>
         </Flex>
       </HStack>
+      <Profile showModal={showProfileModal} setShowModal={setShowProfileModal}/>
     </Flex>
   );
 };
