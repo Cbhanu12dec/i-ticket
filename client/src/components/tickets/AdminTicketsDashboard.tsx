@@ -10,10 +10,11 @@ import {
 } from "@chakra-ui/react";
 import { Segmented } from "antd";
 import data from "./data.json";
+import { useState } from "react";
 
 const AdminTicketsDashboard = () => {
   return (
-    <Flex direction={"column"} alignItems={"start"} mx="8" my="3">
+    <Flex direction={"column"} alignItems={"start"} mx="4" my="3">
       <Text fontSize={"2xl"} fontWeight={"semibold"} mb="3">
         Tickets Dashboard
       </Text>

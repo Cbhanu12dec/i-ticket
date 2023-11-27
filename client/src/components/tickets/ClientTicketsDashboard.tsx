@@ -37,6 +37,8 @@ const ClientTicketsDashboard = () => {
   const [ticketData, setTicketData] = useState();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [tickets, setTickets] = useState([]);
+  const [filteredTickets, setFilteredTickets] = useState([]);
+  const [activeStep, setActiveStep] = useState<string>("inbox");
 
   const handleDownload = async (filename: string) => {
     try {
@@ -75,6 +77,26 @@ const ClientTicketsDashboard = () => {
       });
   }, []);
 
+  const getMenuIcons = (itemName: string) => {
+    if (itemName === "Inbox") {
+      return <FaListCheck />;
+    } else if (itemName === "In-Progress") {
+      return <GrInProgress size={18} />;
+    } else if (itemName === "Discard") {
+      return <MdDeleteOutline size={24} />;
+    } else {
+      return <FaRegThumbsUp size={20} />;
+    }
+  };
+
+  useEffect(() => {
+    const preparedData = tickets?.filter((item) => item === activeStep);
+    setFilteredTickets(preparedData);
+  }, [activeStep, tickets]);
+
+  const menyItems = ["Inbox", "In-Progress", "Done", "Discard"];
+
+  console.log("************** filtered tickets", filteredTickets);
   const getIcons = (type: string) => {
     if (type?.toLowerCase() === "pdf") {
       return ImFilePdf;
@@ -140,7 +162,36 @@ const ClientTicketsDashboard = () => {
 
               <Divider />
               <VStack w={"full"}>
-                <Flex
+                {menyItems?.map((item) => {
+                  return (
+                    <Flex
+                      mt="2"
+                      p="1"
+                      _hover={{ bg: "gray.50" }}
+                      rounded={"md"}
+                      width={"100%"}
+                      align={"start"}
+                      justifyContent={"space-between"}
+                      cursor={"pointer"}
+                      onClick={() => setActiveStep("inbox")}
+                    >
+                      <Flex alignItems={"center"} gap={3}>
+                        {getMenuIcons(item)}
+                        <Text fontSize={"lg"}>{item}</Text>
+                      </Flex>
+                      <Text
+                        bg="blue.100"
+                        py="1"
+                        px="2"
+                        rounded={"md"}
+                        fontSize={"xs"}
+                      >
+                        {tickets?.length}
+                      </Text>
+                    </Flex>
+                  );
+                })}
+                {/* <Flex
                   mt="4"
                   p="1"
                   _hover={{ bg: "gray.50" }}
@@ -149,6 +200,7 @@ const ClientTicketsDashboard = () => {
                   align={"start"}
                   justifyContent={"space-between"}
                   cursor={"pointer"}
+                  onClick={() => setActiveStep("inbox")}
                 >
                   <Flex alignItems={"center"} gap={3}>
                     <FaListCheck />
@@ -214,7 +266,7 @@ const ClientTicketsDashboard = () => {
                     </Text>
                   </Flex>
                   <Text></Text>
-                </Flex>
+                </Flex> */}
               </VStack>
               <VStack
                 divider={<StackDivider />}
