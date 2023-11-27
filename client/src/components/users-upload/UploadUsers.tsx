@@ -128,7 +128,9 @@ const UploadUsers = () => {
                   <VStack gap={1}>
                     <input {...getInputProps()} />
                     <AiOutlineInbox size={"40px"} />
-                    <Text>Click or drag file to this area to upload</Text>
+                    <Text mb="0">
+                      Click or drag file to this area to upload
+                    </Text>
                     <Text
                       fontWeight={"hairline"}
                       textColor={"gray.700"}

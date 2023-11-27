@@ -26,7 +26,7 @@ interface MobileProps extends FlexProps {
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState({});
-  const [showProfileModal, setShowProfileModal] = useState<boolean>(false)
+  const [showProfileModal, setShowProfileModal] = useState<boolean>(false);
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("userInfo") as string);
     setUserInfo(user);
@@ -92,6 +92,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                     fontSize="sm"
                     fontWeight={"semibold"}
                     textColor={"purple.900"}
+                    mb="0"
                   >
                     {_.capitalize((userInfo as any)?.firstName)}{" "}
                     {_.capitalize((userInfo as any)?.lastName)}
@@ -113,7 +114,9 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               bg={useColorModeValue("white", "gray.900")}
               borderColor={useColorModeValue("gray.200", "gray.700")}
             >
-              <MenuItem onClick={()=> setShowProfileModal(true)}>Profile</MenuItem>
+              <MenuItem onClick={() => setShowProfileModal(true)}>
+                Profile
+              </MenuItem>
               <MenuDivider />
               <MenuItem
                 onClick={() => {
@@ -128,7 +131,10 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
           </Menu>
         </Flex>
       </HStack>
-      <Profile showModal={showProfileModal} setShowModal={setShowProfileModal}/>
+      <Profile
+        showModal={showProfileModal}
+        setShowModal={setShowProfileModal}
+      />
     </Flex>
   );
 };

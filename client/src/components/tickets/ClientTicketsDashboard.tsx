@@ -36,7 +36,6 @@ import CommentSection from "./CommentSection";
 import { CommentsDataType } from "../common/data-types";
 import { AiOutlineSend } from "react-icons/ai";
 import dayjs from "dayjs";
-import "semantic-ui-css/semantic.min.css";
 
 const ClientTicketsDashboard = () => {
   const [showticketModal, setShowTicketModal] = useState<boolean>(false);

@@ -17,6 +17,10 @@ import Dashboard from "../dashboard/Dashboard";
 import { ImFilePdf } from "react-icons/im";
 import { IoMdDownload } from "react-icons/io";
 import NoData from "../common/NoData";
+import { PiFileJpgFill, PiFilePng } from "react-icons/pi";
+import { FaFileCsv } from "react-icons/fa6";
+import { MdOutlineAttachFile } from "react-icons/md";
+import { SiJpeg } from "react-icons/si";
 // import data from "./data.json";
 
 const UserFaq = () => {
@@ -39,6 +43,16 @@ const UserFaq = () => {
   const getIcons = (type: string) => {
     if (type?.toLowerCase() === "pdf") {
       return ImFilePdf;
+    } else if (type?.toLocaleLowerCase() === "png") {
+      return PiFilePng;
+    } else if (type?.toLocaleLowerCase() === "jpg") {
+      return PiFileJpgFill;
+    } else if (type?.toLocaleLowerCase() === "jpeg") {
+      return SiJpeg;
+    } else if (type?.toLocaleLowerCase() === "csv") {
+      return FaFileCsv;
+    } else {
+      return MdOutlineAttachFile;
     }
   };
   const handleDownload = async (filename: string) => {
@@ -87,7 +101,7 @@ const UserFaq = () => {
         }}
       >
         <Icon as={getIcons(getFileType(fileName))} />
-        <Text ml="2" mr="4" fontSize={"sm"}>
+        <Text ml="2" mr="4" fontSize={"sm"} mb="0">
           {fileName}
         </Text>
         <IoMdDownload size={20} onClick={() => handleDownload(fileName)} />

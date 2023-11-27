@@ -65,7 +65,13 @@ const SideNav = ({ onClose, ...rest }: SideNavProps) => {
       h="full"
       {...rest}
     >
-      <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
+      <Flex
+        h="20"
+        alignItems="center"
+        mx="8"
+        justifyContent="space-between"
+        mt="6"
+      >
         <Text
           fontSize="3xl"
           fontFamily="'Great Vibes', cursive"

@@ -18,6 +18,10 @@ import { IoMdDownload } from "react-icons/io";
 import { PUBLIC_URL, getFileType } from "../common/utils";
 import { ImFilePdf } from "react-icons/im";
 import axios from "axios";
+import { PiFileJpgFill, PiFilePng } from "react-icons/pi";
+import { SiJpeg } from "react-icons/si";
+import { FaFileCsv } from "react-icons/fa6";
+import { MdOutlineAttachFile } from "react-icons/md";
 
 interface PreviewFaqProps {
   showModal: boolean;
@@ -56,6 +60,16 @@ function PreviewFaq(props: PreviewFaqProps) {
   const getIcons = (type: string) => {
     if (type?.toLowerCase() === "pdf") {
       return ImFilePdf;
+    } else if (type?.toLocaleLowerCase() === "png") {
+      return PiFilePng;
+    } else if (type?.toLocaleLowerCase() === "jpg") {
+      return PiFileJpgFill;
+    } else if (type?.toLocaleLowerCase() === "jpeg") {
+      return SiJpeg;
+    } else if (type?.toLocaleLowerCase() === "csv") {
+      return FaFileCsv;
+    } else {
+      return MdOutlineAttachFile;
     }
   };
 
@@ -80,7 +94,7 @@ function PreviewFaq(props: PreviewFaqProps) {
         }}
       >
         <Icon as={getIcons(getFileType(fileName))} />
-        <Text ml="2" mr="4" fontSize={"sm"}>
+        <Text ml="2" mr="4" fontSize={"sm"} mb="0">
           {fileName}
         </Text>
         <IoMdDownload size={20} onClick={() => handleDownload(fileName)} />
@@ -109,8 +123,8 @@ function PreviewFaq(props: PreviewFaqProps) {
                 {(data as any)?.title}
               </Text>
               <Text my="2">{data?.description}</Text>
-              <Divider />
-              <Text>Attachments:</Text>
+              <Divider borderColor={"gray.300"} />
+              <Text mb="0">Attachments:</Text>
               <Flex gap={3}>
                 {data?.files?.map((item) => {
                   return getAttachmentComponent(item);

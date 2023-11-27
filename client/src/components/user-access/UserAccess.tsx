@@ -198,7 +198,7 @@ function UserAccess() {
                   placeholder="Select access level"
                   size={"md"}
                   my="3"
-                  defaultValue={"student"}
+                  defaultValue={"user"}
                   value={(userAccessInfo as any)?.role}
                   onChange={(e) =>
                     setUserAccessInfo({

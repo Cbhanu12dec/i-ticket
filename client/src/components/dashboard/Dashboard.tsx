@@ -40,7 +40,7 @@ const Dashboard = (props: DashboardProps) => {
           const announcementData = data?.filter(
             (item: any) =>
               (item?.assignee === "user" || item?.assignee === "all") &&
-              item?.status !== "Published" &&
+              item?.status === "Running" &&
               localAnnouncements.indexOf(item.key) === -1
           );
           setAnnouncements(announcementData[0] as any);
@@ -51,7 +51,7 @@ const Dashboard = (props: DashboardProps) => {
           const data = prepareAnnouncements(response.data.announcements);
           const announcementData = data?.filter(
             (item: any) =>
-              item?.status !== "Published" &&
+              item?.status === "Running" &&
               localAnnouncements.indexOf(item.key) === -1
           );
           setAnnouncements(announcementData[0] as any);

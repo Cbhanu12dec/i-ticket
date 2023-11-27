@@ -29,8 +29,11 @@ import { EditType } from "./FaqDashboard";
 import { AiOutlineCheck, AiOutlineInbox } from "react-icons/ai";
 import { IoMdDownload } from "react-icons/io";
 import { ImFilePdf } from "react-icons/im";
-import { MdDelete } from "react-icons/md";
+import { MdDelete, MdOutlineAttachFile } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
+import { PiFileJpgFill, PiFilePng } from "react-icons/pi";
+import { SiJpeg } from "react-icons/si";
+import { FaFileCsv } from "react-icons/fa6";
 interface CreateFaqFormProps {
   showModal: boolean;
   setShowModal: (_open: boolean) => void;
@@ -156,6 +159,16 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
   const getIcons = (type: string) => {
     if (type?.toLowerCase() === "pdf") {
       return ImFilePdf;
+    } else if (type?.toLocaleLowerCase() === "png") {
+      return PiFilePng;
+    } else if (type?.toLocaleLowerCase() === "jpg") {
+      return PiFileJpgFill;
+    } else if (type?.toLocaleLowerCase() === "jpeg") {
+      return SiJpeg;
+    } else if (type?.toLocaleLowerCase() === "csv") {
+      return FaFileCsv;
+    } else {
+      return MdOutlineAttachFile;
     }
   };
 
@@ -180,7 +193,7 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
         }}
       >
         <Icon as={getIcons(getFileType(fileName))} />
-        <Text ml="2" mr="4" fontSize={"sm"}>
+        <Text ml="2" mr="4" fontSize={"sm"} mb="0">
           {fileName}
         </Text>
         <IoMdDownload
@@ -268,8 +281,8 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
                 }
               >
                 <option value="all">All</option>
-                <option value="student">Student</option>
-                <option value="faculty">Faculty</option>
+                <option value="user">Users</option>
+                <option value="admin">Admin</option>
               </Select>
             </FormControl>
             {updateFiles?.length > 0 && (
@@ -306,7 +319,9 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
                   <VStack gap={1}>
                     <input {...getInputProps()} />
                     <AiOutlineInbox size={"40px"} />
-                    <Text>Click or drag file to this area to upload</Text>
+                    <Text mb="0">
+                      Click or drag file to this area to upload
+                    </Text>
                     <Text
                       fontWeight={"hairline"}
                       textColor={"gray.700"}

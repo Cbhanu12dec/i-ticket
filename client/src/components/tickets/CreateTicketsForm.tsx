@@ -15,11 +15,14 @@ import {
   ModalOverlay,
   Select,
   Textarea,
+  VStack,
+  Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
+import { AiOutlineInbox } from "react-icons/ai";
 
 interface CreateTicketForm {
   showModal: boolean;
@@ -155,10 +158,44 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
                   borderColor={"gray.400"}
                   px="6"
                   py="4"
+                  w="full"
+                  rounded={"md"}
+                  cursor={"pointer"}
+                  _hover={{ borderColor: "purple.800" }}
                 >
-                  <input {...getInputProps()} />
-                  <p>Drag 'n' drop some files here, or click to select files</p>
+                  <VStack gap={1}>
+                    <input {...getInputProps()} />
+                    <AiOutlineInbox size={"40px"} />
+                    <Text mb="0">
+                      Click or drag file to this area to upload
+                    </Text>
+                    <Text
+                      fontWeight={"hairline"}
+                      textColor={"gray.700"}
+                      fontSize={"xs"}
+                      fontStyle={"italic"}
+                    >
+                      Support for a single or bulk upload. Strictly prohibited
+                      from uploading company data or other banned files.
+                    </Text>
+                  </VStack>
                 </Flex>
+                <VStack mt="4">
+                  {acceptedFiles?.map((file) => {
+                    return (
+                      <Flex
+                        py="1"
+                        px="4"
+                        border="1px solid"
+                        borderColor={"gray.100"}
+                        w={"full"}
+                        rounded={"md"}
+                      >
+                        <Text>File Name: {file.name}</Text>
+                      </Flex>
+                    );
+                  })}
+                </VStack>
               </section>
             </FormControl>
           </ModalBody>

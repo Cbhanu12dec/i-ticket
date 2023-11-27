@@ -182,8 +182,8 @@ const CreatAnnouncement = (props: CreateFaqFormProps) => {
                 }
               >
                 <option value="all">All</option>
-                <option value="student">Student</option>
-                <option value="faculty">Faculty</option>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
               </Select>
               <FormErrorMessage>Announce is required.</FormErrorMessage>
             </FormControl>
