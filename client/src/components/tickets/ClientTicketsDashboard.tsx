@@ -36,6 +36,7 @@ import CommentSection from "./CommentSection";
 import { CommentsDataType } from "../common/data-types";
 import { AiOutlineSend } from "react-icons/ai";
 import dayjs from "dayjs";
+import "semantic-ui-css/semantic.min.css";
 
 const ClientTicketsDashboard = () => {
   const [showticketModal, setShowTicketModal] = useState<boolean>(false);
@@ -283,7 +284,7 @@ const ClientTicketsDashboard = () => {
                     onClick={() => {
                       setShowTicketModal(true);
                       setTicketData(item as any);
-                      setComments(item?.comments)
+                      setComments(item?.comments);
                       const updatedTree = createTree(item?.comments);
                       setCommentTree(updatedTree as any);
                     }}
@@ -352,10 +353,13 @@ const ClientTicketsDashboard = () => {
                       {" "}
                       OPEN
                     </Tag>
-                    <Tag size={"md"} colorScheme="orange">
+                    {/* <Tag size={"md"} colorScheme="orange">
                       {" "}
                       {(ticketData as any)?.priority}
-                    </Tag>
+                    </Tag> */}
+                    <div className="ui green tag label">
+                      {(ticketData as any)?.priority}
+                    </div>
                   </HStack>
                 </Flex>
                 <Text fontSize={"sm"}> {(ticketData as any)?.description}</Text>
@@ -437,6 +441,35 @@ const ClientTicketsDashboard = () => {
                     Comment
                   </Button>
                 </VStack> */}
+                <Text
+                  textColor={"purple.800"}
+                  fontSize={"lg"}
+                  fontWeight={"semibold"}
+                >
+                  Ticket Status
+                </Text>
+                <div className="ui ordered steps mini">
+                  <div className="completed step">
+                    <div className="content">
+                      <div className="title">Created</div>
+                      <div className="description">Ticket has been created</div>
+                    </div>
+                  </div>
+                  <div className="completed step">
+                    <div className="content">
+                      <div className="title">Pending for documents</div>
+                      <div className="description">
+                        please read the comments.
+                      </div>
+                    </div>
+                  </div>
+                  <div className="active step">
+                    <div className="content">
+                      <div className="title">Completed</div>
+                      <div className="description">Provided the solution</div>
+                    </div>
+                  </div>
+                </div>
               </Flex>
             </Flex>{" "}
           </ModalBody>

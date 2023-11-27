@@ -51,6 +51,7 @@ const Login = () => {
             JSON.stringify(response.data.users[0])
           );
           localStorage.setItem("isActive", "ACTIVE");
+          localStorage.setItem("announcements", JSON.stringify([]));
 
           if (response.data.users[0]?.role === "user") {
             navigate("/tickets");
