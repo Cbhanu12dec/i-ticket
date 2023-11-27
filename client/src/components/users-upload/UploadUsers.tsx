@@ -110,8 +110,8 @@ const UploadUsers = () => {
             >
               Upload Users Data
             </Text>
-            <Flex direction={"column"} alignItems={"end"}>
-              <section className="container">
+            <Flex direction={"column"} alignItems={"end"} w="full">
+              <section className="container" style={{ width: "100%" }}>
                 <Flex
                   alignItems={"center"}
                   justifyContent={"center"}
@@ -192,18 +192,25 @@ const UploadUsers = () => {
               Instructions
             </Text>
             <Flex justifyContent={"space-between"} w="100%">
-              <VStack
+              <Flex
                 gap={1}
-                textColor={"gray"}
+                direction={"column"}
+                textColor={"gray.700"}
                 fontWeight={"hairline"}
                 fontSize={"sm"}
                 fontStyle={"italic"}
-                align={"start"}
-                justify={"start"}
+                alignItems={"start"}
+                justifyContent={"start"}
               >
-                <Text>
+                <Text mb="0">
+                  1){" "}
                   <b
-                    style={{ cursor: "pointer" }}
+                    style={{
+                      cursor: "pointer",
+                      color: "#322659",
+                      fontWeight: 600,
+                      textDecoration: "underline",
+                    }}
                     onClick={downloadTemplateFile}
                   >
                     Click here
@@ -211,10 +218,11 @@ const UploadUsers = () => {
                   to download the template.{" "}
                 </Text>
                 <Text>
-                  Template contains set of instructions which need to be
+                  2) Template contains set of instructions which need to be
                   followed in order to create users accounts.
                 </Text>
-              </VStack>
+                <Text>3) Specify role as user or admin.</Text>
+              </Flex>
               <Image src={Upload} maxW={"52"} mr="10" />
             </Flex>
           </Flex>

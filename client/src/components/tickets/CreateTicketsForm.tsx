@@ -23,6 +23,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
 import { AiOutlineInbox } from "react-icons/ai";
+import { PUBLIC_URL } from "../common/utils";
 
 interface CreateTicketForm {
   showModal: boolean;
@@ -58,7 +59,7 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
     formData.append("assignee", JSON.stringify(["all"]));
     formData.append("files", acceptedFiles[0]);
     axios
-      .post(`http://localhost:5001/ticket/create-ticket`, formData, {
+      .post(PUBLIC_URL + `/ticket/create-ticket`, formData, {
         headers: {
           "content-type": "multipart/form-data",
         },
