@@ -15,9 +15,8 @@ import {
   ModalCloseButton,
   Divider,
 } from "@chakra-ui/react";
-import { UploadProps, message } from "antd";
-import Dragger from "antd/es/upload/Dragger";
-import React, { useEffect, useState } from "react";
+import { message } from "antd";
+import { useEffect, useState } from "react";
 import {
   AiFillEye,
   AiOutlineCloudUpload,
@@ -70,13 +69,37 @@ const UploadUsers = () => {
       })
       .catch((error) => {
         console.log("ERROR: ", error);
-        message.success("Error while creating annoucement..!");
+        message.error("Error while data uploading..!");
       });
   };
-  console.log("checking accepted files", acceptedFiles);
+  const downloadTemplateFile = async () => {
+    try {
+      await axios
+        .get(PUBLIC_URL + "/users/download-template", {
+          responseType: "blob",
+          params: {
+            fileName: "users-template.csv",
+          },
+        })
+        .then((response: any) => {
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "users-template.csv";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        })
+        .catch((error) => {
+          console.error("Error downloading file:", error);
+        });
+    } catch (error) {
+      console.error("Error downloading file:", error);
+    }
+  };
   return (
     <Dashboard>
-      <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+      <Grid templateColumns="repeat(2, 1fr)" gap={4}>
         <GridItem w="100%" bg={"white"} px="10" py="6" borderRadius={"lg"}>
           <Flex direction={"column"} alignItems={"start"}>
             <Text
@@ -173,20 +196,21 @@ const UploadUsers = () => {
                 fontWeight={"hairline"}
                 fontSize={"sm"}
                 fontStyle={"italic"}
+                align={"start"}
+                justify={"start"}
               >
                 <Text>
-                  Files should contains with fields firstName, lastname...
+                  <b
+                    style={{ cursor: "pointer" }}
+                    onClick={downloadTemplateFile}
+                  >
+                    Click here
+                  </b>{" "}
+                  to download the template.{" "}
                 </Text>
                 <Text>
-                  Files should contains with fields firstName, lastname...
-                </Text>
-
-                <Text>
-                  Files should contains with fields firstName, lastname...
-                </Text>
-
-                <Text>
-                  Files should contains with fields firstName, lastname...
+                  Template contains set of instructions which need to be
+                  followed in order to create users accounts.
                 </Text>
               </VStack>
               <Image src={Upload} maxW={"52"} mr="10" />

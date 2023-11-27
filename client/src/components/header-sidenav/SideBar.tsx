@@ -6,7 +6,7 @@ import {
   CloseButton,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IconType } from "react-icons";
 import {
   FiCompass,
@@ -27,18 +27,33 @@ interface LinkItemProps {
   icon: IconType;
   path: string;
 }
-const LinkItems: Array<LinkItemProps> = [
-  { name: "Dashboard", icon: FiHome, path: "/dashboard" },
-  { name: "Announcements", icon: TfiAnnouncement, path: "/announcements" },
-  { name: "Faq's", icon: FiTrendingUp, path: "/faq" },
-  { name: "Tickets", icon: FiCompass, path: "/tickets" },
-  { name: "User Access", icon: FiStar, path: "/users" },
-  { name: "Upload Data", icon: FiSettings, path: "/upload" },
-  { name: "User FAQ", icon: FiTrendingUp, path: "/user-faq" },
-];
 
 const SideNav = ({ onClose, ...rest }: SideNavProps) => {
   const [activeStep, setActiveStep] = useState(1);
+  const [navItems, setNavItems] = useState([]);
+
+  const [userInfo, setUserInfo] = useState({});
+  const AdminLinks = [
+    { name: "Dashboard", icon: FiHome, path: "/dashboard" },
+    { name: "Announcements", icon: TfiAnnouncement, path: "/announcements" },
+    { name: "Faq's", icon: FiTrendingUp, path: "/faq" },
+    { name: "Tickets", icon: FiCompass, path: "/tickets" },
+    { name: "User Access", icon: FiStar, path: "/users" },
+    { name: "Upload Data", icon: FiSettings, path: "/upload" },
+  ];
+
+  const UserItems: Array<LinkItemProps> = [
+    { name: "Tickets", icon: FiCompass, path: "/tickets" },
+    { name: "FAQ's", icon: FiTrendingUp, path: "/user-faq" },
+  ];
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("userInfo") as string);
+    setUserInfo(user);
+    const nav = user?.role === "user" ? UserItems : AdminLinks;
+    setNavItems(nav as any);
+  }, []);
+
   return (
     <Box
       transition="3s ease"
@@ -61,7 +76,7 @@ const SideNav = ({ onClose, ...rest }: SideNavProps) => {
         </Text>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
-      {LinkItems.map((link, index) => (
+      {navItems.map((link: any, index) => (
         <NavItem
           key={link.name}
           index={index}

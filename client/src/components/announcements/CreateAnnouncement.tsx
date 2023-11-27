@@ -2,6 +2,7 @@ import {
   Button,
   Divider,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Input,
   Modal,
@@ -119,7 +120,10 @@ const CreatAnnouncement = (props: CreateFaqFormProps) => {
           <ModalCloseButton />
           <Divider />
           <ModalBody py={"4"}>
-            <FormControl>
+            <FormControl
+              isRequired
+              isInvalid={annnouncementData?.title?.length === 0}
+            >
               <FormLabel fontSize={"sm"} textColor={"gray.700"}>
                 Title
               </FormLabel>
@@ -135,8 +139,13 @@ const CreatAnnouncement = (props: CreateFaqFormProps) => {
                   })
                 }
               />
+              <FormErrorMessage>Title is required.</FormErrorMessage>
             </FormControl>
-            <FormControl mt="3">
+            <FormControl
+              mt="3"
+              isRequired
+              isInvalid={annnouncementData?.description?.length === 0}
+            >
               <FormLabel fontSize={"sm"} textColor={"gray.700"}>
                 Description
               </FormLabel>
@@ -151,8 +160,13 @@ const CreatAnnouncement = (props: CreateFaqFormProps) => {
                   })
                 }
               />
+              <FormErrorMessage>Description is required.</FormErrorMessage>
             </FormControl>
-            <FormControl mt="3">
+            <FormControl
+              mt="3"
+              isRequired
+              isInvalid={annnouncementData?.assignee?.length === 0}
+            >
               <FormLabel fontSize={"sm"} textColor={"gray.700"}>
                 Announce To
               </FormLabel>
@@ -171,6 +185,7 @@ const CreatAnnouncement = (props: CreateFaqFormProps) => {
                 <option value="student">Student</option>
                 <option value="faculty">Faculty</option>
               </Select>
+              <FormErrorMessage>Announce is required.</FormErrorMessage>
             </FormControl>
             <FormControl mt="3">
               <FormLabel fontSize={"sm"} textColor={"gray.700"}>

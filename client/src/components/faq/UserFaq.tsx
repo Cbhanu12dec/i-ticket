@@ -96,11 +96,11 @@ const UserFaq = () => {
   };
   return (
     <Dashboard>
-      <Flex direction={"column"} alignItems={"start"} mx="6" my="2" w="full">
+      <Flex direction={"column"} alignItems={"start"} mx="4" my="2" w="full">
         <Text fontSize={"2xl"} fontWeight={"semibold"} mb="3">
           Faq's Dashboard
         </Text>
-        <Grid templateColumns="repeat(6, 1fr)" gap={6} w="95%">
+        <Grid templateColumns="repeat(6, 1fr)" gap={4} w="95%">
           <GridItem
             colSpan={2}
             w="100%"
@@ -161,7 +161,7 @@ const UserFaq = () => {
           <GridItem
             w="100%"
             bg="white"
-            p="4"
+            p="6"
             rounded={"lg"}
             // shadow={"lg"}
             colSpan={4}

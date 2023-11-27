@@ -77,7 +77,7 @@ function UserAccess() {
           mt="6"
           bg="white"
           rounded={"md"}
-          minW={"90%"}
+          minW={"95%"}
           px="6"
           py="6"
           direction={"row"}

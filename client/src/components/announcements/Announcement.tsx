@@ -42,23 +42,6 @@ const Announcement = () => {
     {
       title: "Title",
       dataIndex: "title",
-      filters: [
-        {
-          text: "Joe",
-          value: "Joe",
-        },
-        {
-          text: "Category 1",
-          value: "Category 1",
-        },
-        {
-          text: "Category 2",
-          value: "Category 2",
-        },
-      ],
-      filterMode: "tree",
-      filterSearch: true,
-      onFilter: (value, record) => record.title.startsWith(value as any),
     },
     {
       title: "Description",
