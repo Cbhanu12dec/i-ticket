@@ -1,6 +1,9 @@
 const AnnouncementModel = require("../models/annoucement-model");
 exports.createAnnouncement = async (announcement) => {
-  return await AnnouncementModel.create(announcement);
+  const doc = await AnnouncementModel.create(announcement);
+  if (doc) {
+    return await AnnouncementModel.find({});
+  }
 };
 
 exports.getAnnouncements = async () => {

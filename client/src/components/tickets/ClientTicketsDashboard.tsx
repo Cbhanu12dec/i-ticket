@@ -8,7 +8,12 @@ import {
   GridItem,
   HStack,
   Icon,
+  IconButton,
   Input,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -22,13 +27,25 @@ import {
   Textarea,
   VStack,
 } from "@chakra-ui/react";
-import { FaListCheck, FaRegThumbsUp } from "react-icons/fa6";
-import { MdDeleteOutline } from "react-icons/md";
+import {
+  FaCheck,
+  FaFileCsv,
+  FaListCheck,
+  FaRegThumbsUp,
+  FaTicket,
+} from "react-icons/fa6";
+import { MdDeleteOutline, MdOutlineAttachFile } from "react-icons/md";
 import { GrInProgress } from "react-icons/gr";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CreateTicketsForm from "./CreateTicketsForm";
 import axios from "axios";
-import { PUBLIC_URL, getFileType } from "../common/utils";
+import {
+  PUBLIC_URL,
+  getFileType,
+  getStatusIndex,
+  ticketProgress,
+  ticketStatuses,
+} from "../common/utils";
 import { ImFilePdf } from "react-icons/im";
 import { IoMdDownload } from "react-icons/io";
 import Dashboard from "../dashboard/Dashboard";
@@ -36,6 +53,13 @@ import CommentSection from "./CommentSection";
 import { CommentsDataType } from "../common/data-types";
 import { AiOutlineSend } from "react-icons/ai";
 import dayjs from "dayjs";
+import _ from "lodash";
+import { PiFileJpgFill, PiFilePng } from "react-icons/pi";
+import { SiJpeg } from "react-icons/si";
+import { BsBookmarkCheck, BsDatabaseX } from "react-icons/bs";
+import { FaEllipsisV } from "react-icons/fa";
+import { IoCheckmarkDone } from "react-icons/io5";
+import { message } from "antd";
 
 const ClientTicketsDashboard = () => {
   const [showticketModal, setShowTicketModal] = useState<boolean>(false);
@@ -48,7 +72,7 @@ const ClientTicketsDashboard = () => {
   const [commentTree, setCommentTree] = useState([]);
   const [commentTyped, setCommentTyped] = useState<string>("");
   const [userInfo, setUserInfo] = useState({});
-
+  const [status, setStatus] = useState("new");
   const handleCommentCollapse = (id: any) => {
     const updatedComments = comments.map((c: any) => {
       if (c.id === id) {
@@ -87,7 +111,7 @@ const ClientTicketsDashboard = () => {
     }
   };
 
-  useEffect(() => {
+  const getTickets = useCallback(() => {
     axios
       .get(PUBLIC_URL + "/ticket/get-all-tickets")
       .then((response) => {
@@ -96,6 +120,10 @@ const ClientTicketsDashboard = () => {
       .catch((error) => {
         console.log("ERROR: ", error);
       });
+  }, [tickets]);
+
+  useEffect(() => {
+    getTickets();
     const user = JSON.parse(localStorage.getItem("userInfo") as string);
     setUserInfo(user);
   }, []);
@@ -122,6 +150,16 @@ const ClientTicketsDashboard = () => {
   const getIcons = (type: string) => {
     if (type?.toLowerCase() === "pdf") {
       return ImFilePdf;
+    } else if (type?.toLocaleLowerCase() === "png") {
+      return PiFilePng;
+    } else if (type?.toLocaleLowerCase() === "jpg") {
+      return PiFileJpgFill;
+    } else if (type?.toLocaleLowerCase() === "jpeg") {
+      return SiJpeg;
+    } else if (type?.toLocaleLowerCase() === "csv") {
+      return FaFileCsv;
+    } else {
+      return MdOutlineAttachFile;
     }
   };
 
@@ -129,7 +167,7 @@ const ClientTicketsDashboard = () => {
     const fileName = name?.split("/")[4];
     return (
       <Flex
-        mt="3"
+        mt="2"
         mb="4"
         border={"1px solid"}
         borderColor={"gray.300"}
@@ -140,7 +178,7 @@ const ClientTicketsDashboard = () => {
         cursor={"pointer"}
       >
         <Icon as={getIcons(getFileType(fileName))} />
-        <Text ml="2" mr="4" fontSize={"sm"} textColor={"gray.700"}>
+        <Text ml="2" mr="4" fontSize={"md"} textColor={"gray.700"} mb="0">
           {fileName}
         </Text>
         <IoMdDownload size={20} onClick={() => handleDownload(fileName)} />
@@ -173,17 +211,55 @@ const ClientTicketsDashboard = () => {
   useEffect(() => {
     const updatedTree = createTree(comments);
     setCommentTree(updatedTree as any);
-    // axios
-    //   .put(PUBLIC_URL + "/ticket/update-comments",{
-    //     ticketNumber: (ticketData as any)?.ticketNumber,
-    //     comments: comments
-    //   })
-    //   .then((response) => {
-    //     console.log("*********** comments");
-    //   })
-    //   .catch((error) => {});
   }, [comments]);
 
+  const updateCommentApi = (updatedComments: any) => {
+    axios
+      .put(PUBLIC_URL + "/ticket/update-comments", {
+        ticketNumber: (ticketData as any)?.ticketNumber,
+        comments: updatedComments,
+      })
+      .then((response) => {})
+      .catch((error) => {
+        message.error("Failed to add comments..!");
+      });
+  };
+
+  const getPriorityComponent = (priority: string) => {
+    if (priority?.toLowerCase() === "low") {
+      return (
+        <div className="ui green basic label mini">
+          {_.upperCase((ticketData as any)?.priority)}
+        </div>
+      );
+    } else if (priority?.toLowerCase() === "medium") {
+      return (
+        <div className="ui orange basic label mini">
+          {_.upperCase((ticketData as any)?.priority)}
+        </div>
+      );
+    } else {
+      return (
+        <div className="ui red basic label mini">
+          {_.upperCase((ticketData as any)?.priority)}
+        </div>
+      );
+    }
+  };
+
+  const updateTicketStatus = (tStatus: string) => {
+    axios
+      .put(PUBLIC_URL + "/ticket/update-ticket-status", {
+        ticketNumber: (ticketData as any)?.ticketNumber,
+        status: tStatus,
+      })
+      .then((response) => {
+        setTicketData(response.data.ticketInfo);
+      })
+      .catch((error) => {
+        message.error("Failed to update ticket status..!");
+      });
+  };
   return (
     <Dashboard>
       <Flex direction={"column"} alignItems={"start"} mx="6" my="3" w="97%">
@@ -201,6 +277,7 @@ const ClientTicketsDashboard = () => {
             color={"white"}
             _hover={{ bg: "purple.800" }}
             onClick={() => setShowModal(true)}
+            leftIcon={<FaTicket />}
           >
             Create Ticket
           </Button>
@@ -315,7 +392,7 @@ const ClientTicketsDashboard = () => {
       <Modal
         isOpen={showticketModal}
         onClose={() => setShowTicketModal(false)}
-        size={"3xl"}
+        size={"5xl"}
       >
         <ModalOverlay />
         <ModalContent>
@@ -345,49 +422,63 @@ const ClientTicketsDashboard = () => {
                     fontSize={"xl"}
                     fontWeight={500}
                   >
-                    {(ticketData as any)?.title}
+                    {_.capitalize((ticketData as any)?.title)}
                   </Text>
-                  <HStack>
-                    <Tag size={"sm"} colorScheme="green">
-                      {" "}
-                      OPEN
-                    </Tag>
-                    {/* <Tag size={"md"} colorScheme="orange">
-                      {" "}
-                      {(ticketData as any)?.priority}
-                    </Tag> */}
-                    <div className="ui green tag label">
-                      {(ticketData as any)?.priority}
+                  <HStack align={"center"}>
+                    <div className="ui violet basic label mini">
+                      {_.upperCase((ticketData as any)?.status)}
                     </div>
+                    {getPriorityComponent((ticketData as any)?.priority)}
                   </HStack>
                 </Flex>
                 <Text fontSize={"sm"}> {(ticketData as any)?.description}</Text>
-                <Divider />
-                <Text>Attachments:</Text>
+                <Divider borderColor={"gray.400"} borderStyle={"dashed"} />
+                <Text mb="0" fontWeight={"semibold"} textColor={"purple.800"}>
+                  Attachments:
+                </Text>
                 {getAttachmentComponent((ticketData as any)?.files[0])}
-                <Divider />
-                <Text fontWeight={"semibold"}>Comments:</Text>
+                <Divider borderColor={"gray.400"} borderStyle={"dashed"} />
+                <Text mb="0" fontWeight={"semibold"} textColor={"purple.800"}>
+                  Comments:
+                </Text>
 
-                <Flex direction={"column"} ml="-4" mt="-4">
-                  {commentTree.map((comment: any) => {
-                    return (
-                      <CommentSection
-                        key={comment.id}
-                        id={comment.id}
-                        comment={comment}
-                        comments={comments}
-                        setComments={setComments}
-                        collapse={handleCommentCollapse}
-                        userInfo={userInfo}
-                      />
-                    );
-                  })}
-                </Flex>
-                <Divider my="3" />
-                <Text> Add new comment</Text>
+                {comments?.length > 0 ? (
+                  <Flex direction={"column"} ml="-4" mt="-4">
+                    {commentTree.map((comment: any) => {
+                      return (
+                        <CommentSection
+                          key={comment.id}
+                          id={comment.id}
+                          comment={comment}
+                          comments={comments}
+                          setComments={setComments}
+                          collapse={handleCommentCollapse}
+                          userInfo={userInfo}
+                          ticketNumber={(ticketData as any)?.ticketNumber}
+                        />
+                      );
+                    })}
+                  </Flex>
+                ) : (
+                  <Flex
+                    alignItems={"center"}
+                    direction={"column"}
+                    width={"full"}
+                  >
+                    <BsDatabaseX size={30} />
+                    <Text>No comments available.</Text>
+                  </Flex>
+                )}
+                <Divider
+                  my="3"
+                  borderColor={"gray.400"}
+                  borderStyle={"dashed"}
+                />
+                <Text mb="0"> Add your comments</Text>
                 <Flex>
                   <Input
-                    placeholder="Add your comment here"
+                    minW={"64"}
+                    placeholder="Add your comment here.."
                     onChange={(e) => setCommentTyped(e.target.value)}
                   />
                   <Button
@@ -412,6 +503,21 @@ const ClientTicketsDashboard = () => {
                           commentTime: dayjs().toISOString(),
                         },
                       ]);
+                      const updatedComments = [
+                        ...comments,
+                        {
+                          id: Math.floor(Math.random() * 900000) + 100000,
+                          parentId: null,
+                          text: commentTyped,
+                          author:
+                            (userInfo as any)?.firstName +
+                            " " +
+                            (userInfo as any)?.lastName,
+                          children: null,
+                          commentTime: dayjs().toISOString(),
+                        },
+                      ];
+                      updateCommentApi(updatedComments);
                     }}
                   >
                     comment
@@ -425,49 +531,99 @@ const ClientTicketsDashboard = () => {
                 direction={"column"}
                 rounded={"lg"}
               >
-                {/* <VStack align={"start"}>
-                  <FormControl>
-                    <FormLabel fontSize={"sm"} textColor={"gray.500"}>
-                      Write your comment
-                    </FormLabel>
-                    <Textarea placeholder="Type here.." />
-                  </FormControl>
-                  <Button
-                    bg="purple.900"
-                    color={"white"}
-                    _hover={{ bg: "purple.800" }}
+                <Flex justifyContent={"space-between"} alignItems={"center"}>
+                  <Text
+                    textColor={"purple.800"}
+                    fontSize={"lg"}
+                    fontWeight={"semibold"}
                   >
-                    Comment
-                  </Button>
-                </VStack> */}
-                <Text
-                  textColor={"purple.800"}
-                  fontSize={"lg"}
-                  fontWeight={"semibold"}
-                >
-                  Ticket Status
-                </Text>
+                    Ticket Status
+                  </Text>
+                  <Menu>
+                    <MenuButton
+                      as={IconButton}
+                      colorScheme="white"
+                      aria-label="Options"
+                      color={"black"}
+                      size={"md"}
+                      mt="-2"
+                      icon={<FaEllipsisV />}
+                    />
+                    <MenuList>
+                      <MenuItem
+                        isDisabled={
+                          (ticketData as any)?.status?.toLowerCase() ===
+                            "open" ||
+                          (ticketData as any)?.status?.toLowerCase() ===
+                            "pending" ||
+                          (ticketData as any)?.status?.toLowerCase() ===
+                            "completed"
+                        }
+                        onClick={() => {
+                          setStatus("open");
+                          updateTicketStatus("open");
+                        }}
+                      >
+                        <BsBookmarkCheck style={{ margin: "0 2px" }} />
+                        <Text mx="2">Accept</Text>
+                      </MenuItem>
+                      <Divider />
+                      <MenuItem
+                        isDisabled={
+                          (ticketData as any)?.status?.toLowerCase() !==
+                            "new" &&
+                          (ticketData as any)?.status?.toLowerCase() !== "open"
+                        }
+                        onClick={() => {
+                          setStatus("pending");
+                          updateTicketStatus("pending");
+                        }}
+                      >
+                        <GrInProgress style={{ margin: "0 2px" }} />
+                        <Text mx="2">Pending Items</Text>
+                      </MenuItem>
+                      <Divider />
+                      <MenuItem
+                        isDisabled={
+                          (ticketData as any)?.status?.toLowerCase() !==
+                            "new" &&
+                          (ticketData as any)?.status?.toLowerCase() !==
+                            "open" &&
+                          (ticketData as any)?.status?.toLowerCase() !==
+                            "pending"
+                        }
+                        onClick={() => {
+                          setStatus("completed");
+                          updateTicketStatus("completed");
+                        }}
+                      >
+                        <IoCheckmarkDone size={18} />
+                        <Text mx="2">Done</Text>
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
+                </Flex>
+
                 <div className="ui ordered steps mini">
-                  <div className="completed step">
-                    <div className="content">
-                      <div className="title">Created</div>
-                      <div className="description">Ticket has been created</div>
-                    </div>
-                  </div>
-                  <div className="completed step">
-                    <div className="content">
-                      <div className="title">Pending for documents</div>
-                      <div className="description">
-                        please read the comments.
+                  {ticketProgress?.map((item: any, index) => {
+                    return (
+                      <div
+                        className={`${
+                          getStatusIndex((ticketData as any)?.status) === index
+                            ? "active"
+                            : getStatusIndex((ticketData as any)?.status) >
+                              index
+                            ? "completed"
+                            : "disabled"
+                        } step`}
+                      >
+                        <div className="content">
+                          <div className="title">{item?.title}</div>
+                          <div className="description">{item?.description}</div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="active step">
-                    <div className="content">
-                      <div className="title">Completed</div>
-                      <div className="description">Provided the solution</div>
-                    </div>
-                  </div>
+                    );
+                  })}
                 </div>
               </Flex>
             </Flex>{" "}
@@ -491,7 +647,12 @@ const ClientTicketsDashboard = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <CreateTicketsForm showModal={showModal} setShowModal={setShowModal} />
+      <CreateTicketsForm
+        showModal={showModal}
+        setShowModal={setShowModal}
+        setTickets={setTickets}
+        getTickets={getTickets}
+      />
     </Dashboard>
 
     //  item preview of each inbox

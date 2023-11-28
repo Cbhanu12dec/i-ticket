@@ -18,6 +18,7 @@ router.post("/create-ticket", upload.any("files"), async (req, res) => {
   const file = req.files[0];
   try {
     const ticketResponse = await ticketService.createTicket(payload, file);
+    // const tickets = await ticketService.getAllTickets();
     res.json({ ticketInfo: ticketResponse, status: "success" });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -26,9 +27,18 @@ router.post("/create-ticket", upload.any("files"), async (req, res) => {
 
 router.put("/update-comments", async (req, res) => {
   const payload = req.body;
-  // console.log("******** ticket info,:", payload);
   try {
     const ticketResponse = await ticketService.updateComments(payload);
+    res.json({ ticketInfo: ticketResponse, status: "success" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put("/update-ticket-status", async (req, res) => {
+  const payload = req.body;
+  try {
+    const ticketResponse = await ticketService.updateTicketStatus(payload);
     res.json({ ticketInfo: ticketResponse, status: "success" });
   } catch (err) {
     res.status(500).json({ error: err.message });

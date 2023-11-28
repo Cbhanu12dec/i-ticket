@@ -25,6 +25,11 @@ import axios from "axios";
 import { PUBLIC_URL } from "../common/utils";
 import { getDefaultAnnouncement } from "../common/default-values";
 import { EditType } from "./Announcement";
+import {
+  prepareAnnouncements,
+  prepareAnnouncementsStats,
+} from "../common/prepare-data";
+import { AnnouncementsStats } from "../common/data-types";
 const { RangePicker } = DatePicker;
 
 interface CreateFaqFormProps {
@@ -33,9 +38,18 @@ interface CreateFaqFormProps {
   edit?: EditType;
   setEdit?: React.Dispatch<React.SetStateAction<EditType>>;
   setAnnouncements?: React.Dispatch<React.SetStateAction<any>>;
+  setAnnouncementsStats?: any;
+  setEditAnnoucement: any;
 }
 const CreatAnnouncement = (props: CreateFaqFormProps) => {
-  const { setShowModal, showModal, edit, setAnnouncements } = props;
+  const {
+    setShowModal,
+    showModal,
+    edit,
+    setAnnouncements,
+    setAnnouncementsStats,
+    setEditAnnoucement,
+  } = props;
   const [annnouncementData, setAnnouncementData] = useState(
     getDefaultAnnouncement()
   );
@@ -69,6 +83,12 @@ const CreatAnnouncement = (props: CreateFaqFormProps) => {
           setAnnouncementData(getDefaultAnnouncement());
           setAnnouncements &&
             setAnnouncements(response.data.announcement as any);
+          setAnnouncementsStats(
+            prepareAnnouncementsStats(
+              prepareAnnouncements(response.data.announcement)
+            ) as AnnouncementsStats
+          );
+          setEditAnnoucement({ forEdit: false, data: {} });
           resetValues();
         })
         .catch((error) => {
@@ -87,6 +107,11 @@ const CreatAnnouncement = (props: CreateFaqFormProps) => {
           setAnnouncementData(getDefaultAnnouncement());
           setAnnouncements &&
             setAnnouncements(response.data.announcement as any);
+          setAnnouncementsStats(
+            prepareAnnouncementsStats(
+              prepareAnnouncements(response.data.announcement)
+            ) as AnnouncementsStats
+          );
           resetValues();
         })
         .catch((error) => {
@@ -108,6 +133,7 @@ const CreatAnnouncement = (props: CreateFaqFormProps) => {
         setShowModal(false);
         setAnnouncementData(getDefaultAnnouncement());
         resetValues();
+        setEditAnnoucement({ forEdit: false, data: {} });
       }}
       size={"2xl"}
     >
@@ -218,6 +244,7 @@ const CreatAnnouncement = (props: CreateFaqFormProps) => {
                 setShowModal(false);
                 setAnnouncementData(getDefaultAnnouncement());
                 resetValues();
+                setEditAnnoucement({ forEdit: false, data: {} });
               }}
               leftIcon={<AiOutlineClose />}
             >

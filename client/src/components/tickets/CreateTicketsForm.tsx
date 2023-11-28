@@ -24,10 +24,13 @@ import axios from "axios";
 import { useDropzone } from "react-dropzone";
 import { AiOutlineInbox } from "react-icons/ai";
 import { PUBLIC_URL } from "../common/utils";
+import { message } from "antd";
 
 interface CreateTicketForm {
   showModal: boolean;
   setShowModal: (_open: boolean) => void;
+  setTickets: any;
+  getTickets: any;
 }
 
 interface TicketForm {
@@ -37,7 +40,7 @@ interface TicketForm {
   priority: string;
 }
 const CreateTicketsForm = (props: CreateTicketForm) => {
-  const { setShowModal, showModal } = props;
+  const { setShowModal, showModal, setTickets, getTickets } = props;
   const [file, setFile] = useState();
   const [ticketPayload, setTicketPayload] = useState<TicketForm>({
     title: "",
@@ -64,9 +67,19 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
           "content-type": "multipart/form-data",
         },
       })
-      .then((res) => {})
-      .catch((err) => console.log("checking error", err));
+      .then((response) => {
+        setShowModal(false);
+        message.success("Ticket got created..!");
+        getTickets();
+        // setTickets(response.data.ticketInfo);
+      })
+      .catch((err) => {
+        console.log("checking error", err);
+        message.error("Error while creating ticket..!");
+        setShowModal(false);
+      });
   };
+
   return (
     <Modal isOpen={showModal} onClose={() => setShowModal(false)} size={"4xl"}>
       <ModalOverlay />
@@ -138,18 +151,6 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
             </HStack>
             <FormControl mt="3">
               <FormLabel>Supporting Documents</FormLabel>
-              {/* <Dragger {...fileProps}>
-                <VStack gap={1}>
-                  <AiOutlineInbox size={"24px"} />
-                  <p className="ant-upload-text">
-                    Click or drag file to this area to upload
-                  </p>
-                  <p className="ant-upload-hint">
-                    Support for a single or bulk upload. Strictly prohibited
-                    from uploading company data or other banned files.
-                  </p>
-                </VStack>
-              </Dragger> */}
               <section className="container">
                 <Flex
                   alignItems={"center"}

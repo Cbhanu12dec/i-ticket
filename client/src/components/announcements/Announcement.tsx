@@ -230,6 +230,11 @@ const Announcement = () => {
       })
       .then((response) => {
         setAnnouncements(response.data.announcements);
+        setAnnouncementsStats(
+          prepareAnnouncementsStats(
+            prepareAnnouncements(response.data.announcements)
+          ) as AnnouncementsStats
+        );
         message.success("Deleted Announcement successfully..!");
       })
       .catch((error) => {
@@ -318,6 +323,8 @@ const Announcement = () => {
           edit={editAnnouncement}
           setEdit={setEditAnnoucement}
           setAnnouncements={setAnnouncements}
+          setAnnouncementsStats={setAnnouncementsStats}
+          setEditAnnoucement={setEditAnnoucement}
         />
       </Flex>
     </Dashboard>

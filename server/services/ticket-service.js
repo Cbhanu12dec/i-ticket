@@ -31,6 +31,7 @@ exports.createTicket = async (ticketPayload, file) => {
       ticketNumber: ticketNumber,
       description: ticketPayload.description,
       priority: ticketPayload.priority,
+      status: "new",
       category: ticketPayload.category,
       assignee: ticketPayload.assignee,
       files: [data?.Location],
@@ -41,7 +42,8 @@ exports.createTicket = async (ticketPayload, file) => {
 };
 
 exports.updateComments = async (ticketPayload) => {
-  const doc = await TicketModel.findOneAndUpdate(
+  console.log("****** comments", ticketPayload);
+  return await TicketModel.findOneAndUpdate(
     { ticketNumber: ticketPayload.ticketNumber },
     {
       $set: {
@@ -49,9 +51,20 @@ exports.updateComments = async (ticketPayload) => {
       },
     }
   );
-  if (doc) {
-    return await TicketModel.find({});
-  }
+};
+exports.updateTicketStatus = async (ticketPayload) => {
+  console.log("******* ticket payload", ticketPayload);
+  return await TicketModel.findOneAndUpdate(
+    { ticketNumber: ticketPayload.ticketNumber },
+    {
+      $set: {
+        status: ticketPayload.status,
+      },
+    }
+  );
+  // if (doc) {
+  //   return await TicketModel.find({});
+  // }
 };
 
 exports.getAllTickets = async () => {

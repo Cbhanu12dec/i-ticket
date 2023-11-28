@@ -108,7 +108,11 @@ function TicketsDashboard() {
         }}
         titleName="Tickets Dashboard"
       />
-      <CreateTicketsForm showModal={showModal} setShowModal={setShowModal} />
+      {/* <CreateTicketsForm
+        showModal={showModal}
+        setShowModal={setShowModal}
+        setTickets={setTickets}
+      /> */}
     </Flex>
   );
 }

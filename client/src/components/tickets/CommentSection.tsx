@@ -1,9 +1,12 @@
 import { Avatar, Button, Flex, Input, Text } from "@chakra-ui/react";
+import axios from "axios";
 import dayjs from "dayjs";
 import fromnow from "fromnow";
 import _ from "lodash";
 import { useState } from "react";
 import { AiOutlineSend } from "react-icons/ai";
+import { PUBLIC_URL } from "../common/utils";
+import { message } from "antd";
 
 const CommentSection = ({
   comment,
@@ -12,6 +15,7 @@ const CommentSection = ({
   setComments,
   comments,
   userInfo,
+  ticketNumber,
 }: any) => {
   const [commentTyped, setCommentTyped] = useState<string>("");
   const [showcommentInbox, setShowCommentInbox] = useState<boolean>(false);
@@ -26,10 +30,22 @@ const CommentSection = ({
         setComments={setComments}
         comments={comments}
         userInfo={userInfo}
+        ticketNumber={ticketNumber}
       />
     );
   });
 
+  const updateCommentApi = (updatedComments: any) => {
+    axios
+      .put(PUBLIC_URL + "/ticket/update-comments", {
+        ticketNumber: ticketNumber,
+        comments: updatedComments,
+      })
+      .then((response) => {})
+      .catch((error) => {
+        message.error("Failed to add comments..!");
+      });
+  };
   return (
     <Flex mt="4" ml="6" direction={"column"}>
       <Flex alignItems={"center"}>
@@ -38,11 +54,13 @@ const CommentSection = ({
           <Text fontWeight={"semibold"} ml="2" fontSize={"md"}>
             {_.capitalize(comment.author)}
           </Text>
-          <Text mt="1" ml="1" fontSize={"xs"} textColor={"gray.500"}>
+          <Text mt="1" ml="1" fontSize={"10px"} textColor={"gray.500"}>
+            (
             {fromnow(comment.commentTime as string, {
               and: true,
               suffix: true,
             })}
+            )
           </Text>
         </Flex>
 
@@ -50,7 +68,7 @@ const CommentSection = ({
           onClick={() => collapse(comment.id)}
           cursor={"pointer"}
           ml="5"
-          mt="-1"
+          mt="-4"
           fontSize={"lg"}
         >
           {comment.expanded ? `[-]` : `[+]`}
@@ -61,7 +79,7 @@ const CommentSection = ({
         <Flex direction={"column"} ml="8" mt="-2">
           <div>{comment.text}</div>
           <div
-            style={{ cursor: "pointer" }}
+            style={{ cursor: "pointer", color: "gray", margin: "5px 0" }}
             onClick={() => setShowCommentInbox(!showcommentInbox)}
           >
             reply
@@ -98,6 +116,8 @@ const CommentSection = ({
                     },
                   ];
                   setComments(cdata);
+                  updateCommentApi(cdata);
+                  setCommentTyped("");
                 }}
               >
                 comment
