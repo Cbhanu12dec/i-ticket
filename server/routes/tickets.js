@@ -25,6 +25,29 @@ router.post("/create-ticket", upload.any("files"), async (req, res) => {
   }
 });
 
+router.put("/update-ticket", upload.any("files"), async (req, res) => {
+  const payload = req.body;
+  const file = req.files[0];
+  try {
+    const ticketResponse = await ticketService.updateTicket(payload, file);
+    // const tickets = await ticketService.getAllTickets();
+    res.json({ ticketInfo: ticketResponse, status: "success" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete("/delete-ticket", async (req, res) => {
+  const id = req.query.id;
+  console.log("******* checking id", id);
+  try {
+    const ticketResponse = await ticketService.deleteTicket(id);
+    res.json({ ticketInfo: ticketResponse, status: "success" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.put("/update-comments", async (req, res) => {
   const payload = req.body;
   try {

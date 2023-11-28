@@ -138,7 +138,7 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
   const handleDownload = async (filename: string) => {
     try {
       await axios
-        .get(PUBLIC_URL + "/ticket/download", {
+        .get(PUBLIC_URL + "/faq/download", {
           responseType: "blob",
           params: {
             fileName: filename,

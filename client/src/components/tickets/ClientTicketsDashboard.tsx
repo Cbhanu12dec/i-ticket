@@ -34,7 +34,11 @@ import {
   FaRegThumbsUp,
   FaTicket,
 } from "react-icons/fa6";
-import { MdDeleteOutline, MdOutlineAttachFile } from "react-icons/md";
+import {
+  MdDeleteOutline,
+  MdModeEditOutline,
+  MdOutlineAttachFile,
+} from "react-icons/md";
 import { GrInProgress } from "react-icons/gr";
 import { useCallback, useEffect, useState } from "react";
 import CreateTicketsForm from "./CreateTicketsForm";
@@ -64,7 +68,12 @@ import { IoCheckmarkDone } from "react-icons/io5";
 import { message } from "antd";
 import NoData from "../common/NoData";
 import { BiSolidTagAlt } from "react-icons/bi";
+import { FiEdit } from "react-icons/fi";
 
+export interface EditType {
+  forEdit: boolean;
+  data: Partial<any>;
+}
 const ClientTicketsDashboard = () => {
   const [showticketModal, setShowTicketModal] = useState<boolean>(false);
   const [ticketData, setTicketData] = useState();
@@ -77,6 +86,8 @@ const ClientTicketsDashboard = () => {
   const [commentTyped, setCommentTyped] = useState<string>("");
   const [userInfo, setUserInfo] = useState({});
   const [status, setStatus] = useState("new");
+  const [edit, setEdit] = useState<EditType>();
+
   const [ticketCounts, setTicketCounts] = useState<{
     all: number;
     inProgress: number;
@@ -141,7 +152,14 @@ const ClientTicketsDashboard = () => {
     axios
       .get(PUBLIC_URL + "/ticket/get-all-tickets")
       .then((response) => {
-        setTickets(response.data.ticketInfo);
+        if ((userInfo as any)?.role === "user") {
+          const updatedTickets = response.data.ticketInfo?.filter(
+            (item: any) => item.userCreated === (userInfo as any)?.userID
+          );
+          setTickets(updatedTickets);
+        } else {
+          setTickets(response.data.ticketInfo);
+        }
       })
       .catch((error) => {
         console.log("ERROR: ", error);
@@ -334,7 +352,24 @@ const ClientTicketsDashboard = () => {
     );
     setPriorityCounts(priorityStats);
   }, [tickets]);
-
+  const onDeleteClicked = (ticketNum: string) => {
+    axios
+      .delete(PUBLIC_URL + `/ticket/delete-ticket`, {
+        params: {
+          id: ticketNum,
+        },
+      })
+      .then((response) => {
+        setShowModal(false);
+        message.success("Ticket got deleted..!");
+        getTickets();
+      })
+      .catch((err) => {
+        console.log("checking error", err);
+        message.error("Error while deleting ticket..!");
+        setShowModal(false);
+      });
+  };
   return (
     <Dashboard>
       <Flex direction={"column"} alignItems={"start"} mx="6" my="3" w="97%">
@@ -495,10 +530,37 @@ const ClientTicketsDashboard = () => {
                           {item?.description}
                         </Text>
                       </VStack>
-                      <Text mr="4" textColor={"purple.800"} fontWeight={"bold"}>
-                        {" "}
-                        {item?.ticketNumber}
-                      </Text>
+                      <Flex alignItems={"start"}>
+                        <Text
+                          mr="4"
+                          textColor={"purple.800"}
+                          fontWeight={"bold"}
+                        >
+                          {" "}
+                          {item?.ticketNumber}
+                        </Text>
+                        <MdModeEditOutline
+                          onClick={(e: any) => {
+                            e.stopPropagation();
+                            setShowTicketModal(false);
+                            setEdit({
+                              forEdit: true,
+                              data: item,
+                            });
+                            setShowModal(true);
+                          }}
+                          style={{ margin: "0 2px", cursor: "pointer" }}
+                          size={20}
+                        />
+                        <MdDeleteOutline
+                          size={20}
+                          style={{ margin: "0 5px", cursor: "pointer" }}
+                          onClick={(e: any) => {
+                            e.stopPropagation();
+                            onDeleteClicked(item?.ticketNumber);
+                          }}
+                        />
+                      </Flex>
                     </Flex>
                   );
                 })
@@ -768,6 +830,8 @@ const ClientTicketsDashboard = () => {
         setShowModal={setShowModal}
         setTickets={setTickets}
         getTickets={getTickets}
+        edit={edit}
+        setEdit={setEdit}
       />
     </Dashboard>
 

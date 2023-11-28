@@ -17,20 +17,30 @@ import {
   Textarea,
   VStack,
   Text,
+  Icon,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
 import { AiOutlineInbox } from "react-icons/ai";
-import { PUBLIC_URL } from "../common/utils";
+import { PUBLIC_URL, getFileType } from "../common/utils";
 import { message } from "antd";
+import { EditType } from "./ClientTicketsDashboard";
+import { IoMdDownload } from "react-icons/io";
+import { MdDelete, MdOutlineAttachFile } from "react-icons/md";
+import { ImFilePdf } from "react-icons/im";
+import { PiFileJpgFill, PiFilePng } from "react-icons/pi";
+import { SiJpeg } from "react-icons/si";
+import { FaFileCsv } from "react-icons/fa6";
 
 interface CreateTicketForm {
   showModal: boolean;
   setShowModal: (_open: boolean) => void;
   setTickets: any;
   getTickets: any;
+  edit?: EditType;
+  setEdit?: React.Dispatch<React.SetStateAction<EditType | undefined>>;
 }
 
 interface TicketForm {
@@ -40,7 +50,8 @@ interface TicketForm {
   priority: string;
 }
 const CreateTicketsForm = (props: CreateTicketForm) => {
-  const { setShowModal, showModal, setTickets, getTickets } = props;
+  const { setShowModal, showModal, setTickets, getTickets, edit, setEdit } =
+    props;
   const [file, setFile] = useState();
   const [ticketPayload, setTicketPayload] = useState<TicketForm>({
     title: "",
@@ -48,7 +59,35 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
     priority: "",
     category: "",
   });
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, setValue } = useForm();
+  const [updateFiles, setUpdateFiles] = useState([]);
+  const [userInfo, setUserInfo] = useState({});
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("userInfo") as string);
+    setUserInfo(user);
+  }, []);
+
+  useEffect(() => {
+    setTicketPayload({
+      title: edit?.data?.title as string,
+      description: edit?.data?.description as string,
+      priority: edit?.data?.priority as string,
+      category: edit?.data?.category as string,
+    });
+    setValue("title", edit?.data?.title as string);
+    setValue("description", edit?.data?.description as string);
+    setValue("priority", edit?.data?.assignee as string);
+    setValue("priority", edit?.data?.category as string);
+
+    setUpdateFiles((edit?.data as any)?.files);
+  }, [
+    edit?.data,
+    edit?.data?.assignee,
+    edit?.data?.description,
+    edit?.data?.title,
+    setValue,
+  ]);
 
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({});
 
@@ -59,25 +98,130 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
     formData.append("description", ticketPayload?.description);
     formData.append("category", ticketPayload?.category);
     formData.append("priority", ticketPayload?.priority);
-    formData.append("assignee", JSON.stringify(["all"]));
+    formData.append("assignee", "admin");
+    formData.append("userCreated", (userInfo as any)?.userID);
     formData.append("files", acceptedFiles[0]);
-    axios
-      .post(PUBLIC_URL + `/ticket/create-ticket`, formData, {
-        headers: {
-          "content-type": "multipart/form-data",
-        },
-      })
-      .then((response) => {
-        setShowModal(false);
-        message.success("Ticket got created..!");
-        getTickets();
-        // setTickets(response.data.ticketInfo);
-      })
-      .catch((err) => {
-        console.log("checking error", err);
-        message.error("Error while creating ticket..!");
-        setShowModal(false);
-      });
+
+    if (edit?.forEdit) {
+      formData.append("exsisting_files", JSON.stringify(updateFiles) as any);
+      formData.append("ticketNumber", (edit?.data as any)?.ticketNumber);
+      axios
+        .put(PUBLIC_URL + `/ticket/update-ticket`, formData, {
+          headers: {
+            "content-type": "multipart/form-data",
+          },
+        })
+        .then((response) => {
+          setShowModal(false);
+          message.success("Ticket got created..!");
+          getTickets();
+          // setTickets(response.data.ticketInfo);
+        })
+        .catch((err) => {
+          console.log("checking error", err);
+          message.error("Error while creating ticket..!");
+          setShowModal(false);
+        });
+    } else {
+      axios
+        .post(PUBLIC_URL + `/ticket/create-ticket`, formData, {
+          headers: {
+            "content-type": "multipart/form-data",
+          },
+        })
+        .then((response) => {
+          setShowModal(false);
+          message.success("Ticket got created..!");
+          getTickets();
+          // setTickets(response.data.ticketInfo);
+        })
+        .catch((err) => {
+          console.log("checking error", err);
+          message.error("Error while creating ticket..!");
+          setShowModal(false);
+        });
+    }
+  };
+
+  const handleDownload = async (filename: string) => {
+    try {
+      await axios
+        .get(PUBLIC_URL + "/ticket/download", {
+          responseType: "blob",
+          params: {
+            fileName: filename,
+          },
+        })
+        .then((response: any) => {
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        })
+        .catch((error) => {
+          console.error("Error downloading file:", error);
+        });
+    } catch (error) {
+      console.error("Error downloading file:", error);
+    }
+  };
+  const getIcons = (type: string) => {
+    if (type?.toLowerCase() === "pdf") {
+      return ImFilePdf;
+    } else if (type?.toLocaleLowerCase() === "png") {
+      return PiFilePng;
+    } else if (type?.toLocaleLowerCase() === "jpg") {
+      return PiFileJpgFill;
+    } else if (type?.toLocaleLowerCase() === "jpeg") {
+      return SiJpeg;
+    } else if (type?.toLocaleLowerCase() === "csv") {
+      return FaFileCsv;
+    } else {
+      return MdOutlineAttachFile;
+    }
+  };
+  const getAttachmentComponent = (name: string, index: number) => {
+    const fileName = name?.split("/")[4];
+    return (
+      <Flex
+        mt="3"
+        mb="4"
+        border={"1px solid"}
+        borderColor={"gray.300"}
+        rounded={"md"}
+        py="3"
+        px="4"
+        textColor={"gray.700"}
+        alignItems={"center"}
+        cursor={"pointer"}
+        _hover={{
+          color: "purple.800",
+          borderColor: "purple.800",
+          textColor: "purple.800",
+        }}
+      >
+        <Icon as={getIcons(getFileType(fileName))} />
+        <Text ml="2" mr="4" fontSize={"sm"} mb="0">
+          {fileName}
+        </Text>
+        <IoMdDownload
+          size={20}
+          onClick={() => handleDownload(fileName)}
+          style={{ color: "#322625" }}
+        />
+        <MdDelete
+          size={20}
+          style={{ color: "red", margin: "0 5px" }}
+          onClick={() => {
+            const files = updateFiles.filter((_, ind) => ind !== index);
+            setUpdateFiles(files);
+          }}
+        />
+      </Flex>
+    );
   };
 
   return (
@@ -85,7 +229,9 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
       <ModalOverlay />
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmitClicked)}>
-          <ModalHeader>Create Ticket Form</ModalHeader>
+          <ModalHeader>
+            {edit?.forEdit ? "Edit Ticket" : "Create Ticket Form"}
+          </ModalHeader>
           <ModalCloseButton />
           <Divider />
           <ModalBody py={"4"}>
@@ -124,6 +270,7 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
                   type="text"
                   placeholder="Enter category here..."
                   {...register("category", { required: true })}
+                  value={ticketPayload?.category}
                   onChange={(e) =>
                     setTicketPayload({
                       ...ticketPayload,
@@ -135,6 +282,7 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
               <FormControl>
                 <FormLabel>Priority</FormLabel>
                 <Select
+                  value={ticketPayload?.priority}
                   placeholder="Select option"
                   onChange={(e) =>
                     setTicketPayload({
@@ -149,6 +297,18 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
                 </Select>
               </FormControl>
             </HStack>
+            {updateFiles?.length > 0 && (
+              <FormControl mt="3">
+                <FormLabel fontSize={"sm"} textColor={"gray.700"}>
+                  Files
+                </FormLabel>
+                <Flex gap={3}>
+                  {updateFiles?.map((item: any, index: number) =>
+                    getAttachmentComponent(item, index)
+                  )}
+                </Flex>
+              </FormControl>
+            )}
             <FormControl mt="3">
               <FormLabel>Supporting Documents</FormLabel>
               <section className="container">
@@ -216,7 +376,7 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
               _hover={{ bg: "purple.800" }}
               type="submit"
             >
-              Create Ticket
+              {edit?.forEdit ? "Update Ticket" : "Create Ticket"}
             </Button>
           </ModalFooter>
         </form>

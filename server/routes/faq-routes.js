@@ -26,7 +26,6 @@ router.post("/create-faq", upload.any("files"), async (req, res) => {
   const file = req.files[0];
   try {
     const faqResponse = await faqService.createFaq(payload, file);
-    console.log("******* router response", faqResponse);
     res.json({ faqs: faqResponse, status: "success" });
   } catch (err) {
     res.status(500).json({ error: err.message });

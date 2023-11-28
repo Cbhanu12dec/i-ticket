@@ -12,7 +12,7 @@ const commentsSchema = new mongoose.Schema({
 const ticketSchema = new mongoose.Schema({
   ticketNumber: {
     type: String,
-    required: true,
+    required: false,
   },
   title: {
     type: String,
@@ -22,6 +22,7 @@ const ticketSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  userCreated: String,
   description: {
     type: String,
     required: false,
