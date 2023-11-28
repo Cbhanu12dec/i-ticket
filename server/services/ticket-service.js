@@ -14,18 +14,8 @@ const s3 = new AWS.S3();
 const upload = multer({ storage: multer.memoryStorage() });
 
 exports.createTicket = async (ticketPayload, file) => {
-  const params = {
-    Bucket: "i-ticket/tickets",
-    Key: file.originalname,
-    Body: file.buffer,
-  };
-
-  const ticketNumber = "INC" + Math.floor(100000 + Math.random() * 900000);
-  await s3.upload(params, async (err, data) => {
-    if (err) {
-      console.error(err);
-    }
-    getS3Object = data;
+  if (file === undefined) {
+    const ticketNumber = "INC" + Math.floor(100000 + Math.random() * 900000);
     const payload = {
       title: ticketPayload.title,
       ticketNumber: ticketNumber,
@@ -35,11 +25,38 @@ exports.createTicket = async (ticketPayload, file) => {
       status: "new",
       category: ticketPayload.category,
       assignee: ticketPayload.assignee,
-      files: [data?.Location],
+      files: [],
       // comments: [],
     };
     return await TicketModel.create(payload);
-  });
+  } else {
+    const params = {
+      Bucket: "i-ticket/tickets",
+      Key: file.originalname,
+      Body: file.buffer,
+    };
+
+    const ticketNumber = "INC" + Math.floor(100000 + Math.random() * 900000);
+    await s3.upload(params, async (err, data) => {
+      if (err) {
+        console.error(err);
+      }
+      getS3Object = data;
+      const payload = {
+        title: ticketPayload.title,
+        ticketNumber: ticketNumber,
+        description: ticketPayload.description,
+        priority: ticketPayload.priority,
+        userCreated: ticketPayload.userCreated,
+        status: "new",
+        category: ticketPayload.category,
+        assignee: ticketPayload.assignee,
+        files: [data?.Location],
+        // comments: [],
+      };
+      return await TicketModel.create(payload);
+    });
+  }
 };
 
 exports.updateTicket = async (ticketPayload, file) => {

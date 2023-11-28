@@ -16,9 +16,10 @@ import {
 import wall from "../assets/wall.png";
 import { useState } from "react";
 import axios from "axios";
-import { PUBLIC_URL } from "../common/utils";
+import { PUBLIC_URL, validateSignup } from "../common/utils";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 
 const Login = () => {
   const [signupData, setSignupData] = useState({});
@@ -36,12 +37,13 @@ const Login = () => {
       role: "user",
     };
   };
+  const { register, handleSubmit, setValue } = useForm();
 
   const loginClicked = () => {
     if (
       (loginData as any)?.email?.length > 0 &&
       (loginData as any)?.password?.length > 0
-    )
+    ) {
       axios
         .post(PUBLIC_URL + "/users/login", loginData)
         .then((response) => {
@@ -64,6 +66,9 @@ const Login = () => {
           message.error("Failed to login, please try again..!");
           localStorage.setItem("isActive", "INACTIVE");
         });
+    } else {
+      message.error("Please verify login credentials..!");
+    }
   };
 
   const onSignupClicked = () => {
@@ -74,9 +79,12 @@ const Login = () => {
       (signupData as any)?.firstName?.length > 0 &&
       (signupData as any)?.lastName?.length > 0 &&
       (signupData as any)?.confirmPassword?.length > 0
-    )
+    ) {
       if (
-        ((signupData as any)?.password, (signupData as any)?.confirmPassword)
+        validateSignup(
+          (signupData as any)?.password,
+          (signupData as any)?.confirmPassword
+        )
       ) {
         axios
           .post(PUBLIC_URL + "/users/signup", payload)
@@ -87,10 +95,13 @@ const Login = () => {
             console.log("ERROR: ", error);
             message.error("Error while creating account..!");
           });
+      } else {
+        message.error("Password missmatch..!");
       }
+    } else {
+      message.error("Please check signup details..!");
+    }
   };
-
-  console.log("********** from data:", signupData);
 
   return (
     <Flex direction={"column"} alignItems={"center"} w={"100%"}>
@@ -134,34 +145,28 @@ const Login = () => {
           <GridItem>
             <Stack spacing={4} w={"full"} maxW={"md"}>
               <Heading fontSize={"2xl"}>Login</Heading>
-              <FormControl
-                id="email"
-                isRequired={true}
-                isInvalid={(loginData as any)?.email?.length === 0}
-              >
+              <FormControl id="email" isRequired>
                 <FormLabel fontSize={"sm"} textColor={"gray.700"}>
                   Email address
                 </FormLabel>
                 <Input
                   type="email"
                   borderColor={"gray.500"}
+                  {...register("email", { required: true })}
                   onChange={(e) => {
                     setLoginData({ ...loginData, email: e.target.value });
                   }}
                 />
                 <FormErrorMessage>Email is required.</FormErrorMessage>
               </FormControl>
-              <FormControl
-                id="password"
-                isRequired={true}
-                isInvalid={(loginData as any)?.password?.length === 0}
-              >
+              <FormControl id="password" isRequired={true}>
                 <FormLabel fontSize={"sm"} textColor={"gray.700"}>
                   Password
                 </FormLabel>
                 <Input
                   type="password"
                   borderColor={"gray.500"}
+                  {...register("password", { required: true })}
                   onChange={(e) => {
                     setLoginData({ ...loginData, password: e.target.value });
                   }}

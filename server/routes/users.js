@@ -26,6 +26,19 @@ router.get("/get-user-by-email", async (req, res, next) => {
   }
 });
 
+router.get("/get-all-users", async (req, res, next) => {
+  try {
+    const userDetails = await usersService.getsUsers();
+    if (userDetails?.length > 0) {
+      res.json({ users: userDetails, status: "success" });
+    } else {
+      res.status(500).json({ error: "No users found..!" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.post("/login", async function (req, res, next) {
   const payload = req.body;
   try {
@@ -64,7 +77,16 @@ router.put("/update-user-access", async function (req, res, next) {
   const payload = req.body.userAccessInfo;
   try {
     const users = await usersService.updateUserAccess(payload);
-    console.log("******* check useraccess*********", users);
+    res.json({ users: users, status: "success" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put("/update-profile", async function (req, res, next) {
+  const payload = req.body;
+  try {
+    const users = await usersService.updateProfile(payload);
     res.json({ users: users, status: "success" });
   } catch (err) {
     res.status(500).json({ error: err.message });

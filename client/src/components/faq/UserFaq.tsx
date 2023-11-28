@@ -9,10 +9,10 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { Segmented } from "antd";
+import { Segmented, Tooltip } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { PUBLIC_URL, getFileType } from "../common/utils";
+import { PUBLIC_URL, getFileType, shortternText } from "../common/utils";
 import Dashboard from "../dashboard/Dashboard";
 import { ImFilePdf } from "react-icons/im";
 import { IoMdDownload } from "react-icons/io";
@@ -31,7 +31,7 @@ const UserFaq = () => {
       .get(PUBLIC_URL + "/faq/faq-list")
       .then((response) => {
         const filteredData = response.data.faq?.filter(
-          (item: any) => item?.isHidden !== false && item.assignee !== "faculty"
+          (item: any) => item?.isHidden !== false && item.assignee !== "admin"
         );
         setFaq(filteredData);
         setInfo(filteredData[0]);
@@ -138,7 +138,7 @@ const UserFaq = () => {
               divider={<StackDivider />}
               mt="5"
               maxH={"xl"}
-              overflow={"scroll"}
+              overflowY={"scroll"}
               alignItems={"start"}
             >
               {faq?.map((item, index) => {
@@ -165,7 +165,9 @@ const UserFaq = () => {
                       fontWeight={"hairline"}
                       fontStyle={"italic"}
                     >
-                      {(item as any).description}
+                      <Tooltip title={(item as any).description}>
+                        {shortternText((item as any).description)}
+                      </Tooltip>
                     </Text>
                   </Flex>
                 );
@@ -215,8 +217,15 @@ const UserFaq = () => {
                   </Flex>
 
                   <Text fontSize={"sm"}> {(info as any)?.description}</Text>
-                  <Divider mt="4" />
-                  <Text fontSize={"sm"}>Attachments:</Text>
+                  {(info as any)?.files?.length > 0 && (
+                    <>
+                      {" "}
+                      <Divider mt="4" />
+                      <Text fontSize={"md"} mb="0">
+                        Attachments:
+                      </Text>
+                    </>
+                  )}
                   <Flex gap={3}>
                     {(info as any)?.files?.map((item: any) => {
                       return getAttachmentComponent(item);

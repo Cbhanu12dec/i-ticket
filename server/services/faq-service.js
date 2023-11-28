@@ -10,30 +10,43 @@ AWS.config.update({
 const s3 = new AWS.S3();
 
 exports.createFaq = async (faq, file) => {
-  const params = {
-    Bucket: "i-ticket/faq",
-    Key: file.originalname,
-    Body: file.buffer,
-  };
-
-  const faqNumber = "FAQ" + Math.floor(100000 + Math.random() * 900000);
-  await s3.upload(params, async (err, data) => {
-    if (err) {
-      console.error(err);
-    }
+  if (file === undefined) {
+    const faqNumber = "FAQ" + Math.floor(100000 + Math.random() * 900000);
     const payload = {
       title: faq.title,
       faqNumber: faqNumber,
       description: faq.description,
       isHidden: true,
       assignee: faq.assignee,
-      files: [data?.Location],
+      files: [],
     };
-    const doc = await await FaqModel.create(payload);
-    if (doc) {
-      return await FaqModel.find({});
-    }
-  });
+    return await FaqModel.create(payload);
+  } else {
+    const params = {
+      Bucket: "i-ticket/faq",
+      Key: file.originalname,
+      Body: file.buffer,
+    };
+
+    const faqNumber = "FAQ" + Math.floor(100000 + Math.random() * 900000);
+    await s3.upload(params, async (err, data) => {
+      if (err) {
+        console.error(err);
+      }
+      const payload = {
+        title: faq.title,
+        faqNumber: faqNumber,
+        description: faq.description,
+        isHidden: true,
+        assignee: faq.assignee,
+        files: [data?.Location],
+      };
+      const doc = await await FaqModel.create(payload);
+      if (doc) {
+        return await FaqModel.find({});
+      }
+    });
+  }
 };
 
 exports.getFaqs = async () => {

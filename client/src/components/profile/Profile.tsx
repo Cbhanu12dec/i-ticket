@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Divider,
@@ -22,6 +22,9 @@ import {
 import { useForm } from "react-hook-form";
 import { AiOutlineClose } from "react-icons/ai";
 import { TfiAnnouncement } from "react-icons/tfi";
+import axios from "axios";
+import { PUBLIC_URL } from "../common/utils";
+import { message } from "antd";
 interface ProfileProps {
   showModal: boolean;
   setShowModal: (_open: boolean) => void;
@@ -40,20 +43,47 @@ function Profile(props: ProfileProps) {
       firstName: usersData?.firstName,
       lastName: usersData?.lastName,
       email: usersData?.email,
-      phone: usersData?.phoneNumber,
-      employeeType: usersData?.subtype,
-      salary: usersData?.salary,
+      phoneNumber: usersData?.phoneNumber,
       addressLine1: usersData?.address?.addressLine1,
       addressLine2: usersData?.address?.addressLine1,
       city: usersData?.address?.city,
       state: usersData?.address?.state,
-      about: usersData?.about,
     },
   });
 
   const [formData, setFormData] = useState<any>();
 
-  const onSubmitClicked = () => {};
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("userInfo") as string);
+    setUserData({
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      email: user?.email,
+      phoneNumber: user?.phoneNumber,
+    });
+    setFormData({
+      ...formData,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      email: user?.email,
+      phoneNumber: user?.phoneNumber,
+    });
+  }, []);
+
+  const onSubmitClicked = () => {
+    console.log("file to be submited", formData);
+    axios
+      .put(PUBLIC_URL + "/users/update-profile", formData)
+      .then((response) => {
+        message.success("User profile updated successfully...!");
+        localStorage.setItem("userInfo", JSON.stringify(response.data.users));
+        console.log("checkinstatis");
+      })
+      .catch((error) => {
+        console.log("ERROR: ", error);
+        message.success("Failed to update User profile...!");
+      });
+  };
   return (
     <Modal
       isOpen={showModal}
@@ -70,7 +100,7 @@ function Profile(props: ProfileProps) {
           <Divider />
           <ModalBody py={"4"}>
             <form onSubmit={handleSubmit(onSubmitClicked)}>
-              <Flex direction={"column"} mx="10">
+              <Flex direction={"column"} mx="4">
                 <FormControl isInvalid={!!errors["firstName"]}>
                   <FormLabel
                     id="firstName"
@@ -148,7 +178,7 @@ function Profile(props: ProfileProps) {
                     {errors["email"]?.message as string}
                   </FormErrorMessage>
                 </FormControl>
-                <FormControl isInvalid={!!errors["phone"]}>
+                <FormControl isInvalid={!!errors["phoneNumber"]}>
                   <FormLabel
                     fontSize={"xs"}
                     textColor="gray.600"
@@ -158,7 +188,7 @@ function Profile(props: ProfileProps) {
                   </FormLabel>
                   <Input
                     type={"number"}
-                    {...register("phone", {
+                    {...register("phoneNumber", {
                       required: "Mobile Number is required",
                     })}
                     defaultValue={usersData?.phoneNumber}
@@ -171,7 +201,7 @@ function Profile(props: ProfileProps) {
                     }}
                   />
                   <FormErrorMessage>
-                    {errors["phone"]?.message as string}
+                    {errors["phoneNumber"]?.message as string}
                   </FormErrorMessage>
                 </FormControl>
 
@@ -282,27 +312,6 @@ function Profile(props: ProfileProps) {
                   <FormErrorMessage>
                     {errors["state"]?.message as string}
                   </FormErrorMessage>
-                </FormControl>
-                <FormControl>
-                  <FormLabel
-                    fontSize={"xs"}
-                    textColor="gray.600"
-                    fontWeight={"semibold"}
-                  >
-                    About You:
-                  </FormLabel>
-                  <Textarea
-                    placeholder="write short discription about you.."
-                    {...register("about")}
-                    // defaultValue={usersData?.about}
-                    onChange={(e) => {
-                      const userData = {
-                        ...formData,
-                        about: e.target.value,
-                      };
-                      setFormData(userData as any);
-                    }}
-                  />
                 </FormControl>
               </Flex>
             </form>

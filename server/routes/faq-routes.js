@@ -23,7 +23,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 router.post("/create-faq", upload.any("files"), async (req, res) => {
   const payload = req.body;
-  const file = req.files[0];
+  const file = req?.files === undefined ? undefined : req?.files[0];
   try {
     const faqResponse = await faqService.createFaq(payload, file);
     res.json({ faqs: faqResponse, status: "success" });
@@ -34,7 +34,7 @@ router.post("/create-faq", upload.any("files"), async (req, res) => {
 
 router.put("/update-faq", upload.any("files"), async (req, res) => {
   const payload = req?.body;
-  const file = req?.files[0];
+  const file = req?.files === undefined ? undefined : req?.files[0];
   try {
     const faqResponse = await faqService.updateFaq(payload, file);
     res.json({ faqs: faqResponse, status: "success" });

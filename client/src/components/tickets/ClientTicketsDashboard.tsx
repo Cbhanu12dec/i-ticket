@@ -68,7 +68,7 @@ import { IoCheckmarkDone } from "react-icons/io5";
 import { message } from "antd";
 import NoData from "../common/NoData";
 import { BiSolidTagAlt } from "react-icons/bi";
-import { FiEdit } from "react-icons/fi";
+import { FiDelete, FiEdit } from "react-icons/fi";
 
 export interface EditType {
   forEdit: boolean;
@@ -121,7 +121,11 @@ const ClientTicketsDashboard = () => {
     });
     setComments(updatedComments);
   };
-
+  useEffect(() => {
+    getTickets();
+    const user = JSON.parse(localStorage.getItem("userInfo") as string);
+    setUserInfo(user);
+  }, []);
   const handleDownload = async (filename: string) => {
     try {
       await axios
@@ -152,9 +156,12 @@ const ClientTicketsDashboard = () => {
     axios
       .get(PUBLIC_URL + "/ticket/get-all-tickets")
       .then((response) => {
-        if ((userInfo as any)?.role === "user") {
+        const user = JSON.parse(localStorage.getItem("userInfo") as string);
+        if ((user as any)?.role === "user") {
           const updatedTickets = response.data.ticketInfo?.filter(
-            (item: any) => item.userCreated === (userInfo as any)?.userID
+            (item: any) => {
+              return item.userCreated === (user as any)?.userID;
+            }
           );
           setTickets(updatedTickets);
         } else {
@@ -165,12 +172,6 @@ const ClientTicketsDashboard = () => {
         console.log("ERROR: ", error);
       });
   }, [tickets]);
-
-  useEffect(() => {
-    getTickets();
-    const user = JSON.parse(localStorage.getItem("userInfo") as string);
-    setUserInfo(user);
-  }, []);
 
   const getMenuIcons = (itemName: string) => {
     if (itemName === "Inbox") {
@@ -539,27 +540,32 @@ const ClientTicketsDashboard = () => {
                           {" "}
                           {item?.ticketNumber}
                         </Text>
-                        <MdModeEditOutline
-                          onClick={(e: any) => {
-                            e.stopPropagation();
-                            setShowTicketModal(false);
-                            setEdit({
-                              forEdit: true,
-                              data: item,
-                            });
-                            setShowModal(true);
-                          }}
-                          style={{ margin: "0 2px", cursor: "pointer" }}
-                          size={20}
-                        />
-                        <MdDeleteOutline
-                          size={20}
-                          style={{ margin: "0 5px", cursor: "pointer" }}
-                          onClick={(e: any) => {
-                            e.stopPropagation();
-                            onDeleteClicked(item?.ticketNumber);
-                          }}
-                        />
+                        {(userInfo as any)?.role === "user" && (
+                          <>
+                            {" "}
+                            <MdModeEditOutline
+                              onClick={(e: any) => {
+                                e.stopPropagation();
+                                setShowTicketModal(false);
+                                setEdit({
+                                  forEdit: true,
+                                  data: item,
+                                });
+                                setShowModal(true);
+                              }}
+                              style={{ margin: "0 2px", cursor: "pointer" }}
+                              size={20}
+                            />
+                            <MdDeleteOutline
+                              size={20}
+                              style={{ margin: "0 5px", cursor: "pointer" }}
+                              onClick={(e: any) => {
+                                e.stopPropagation();
+                                onDeleteClicked(item?.ticketNumber);
+                              }}
+                            />
+                          </>
+                        )}
                       </Flex>
                     </Flex>
                   );
@@ -734,69 +740,81 @@ const ClientTicketsDashboard = () => {
                   >
                     Ticket Status
                   </Text>
-                  <Menu>
-                    <MenuButton
-                      as={IconButton}
-                      colorScheme="white"
-                      aria-label="Options"
-                      color={"black"}
-                      size={"md"}
-                      mt="-2"
-                      icon={<FaEllipsisV />}
-                    />
-                    <MenuList>
-                      <MenuItem
-                        isDisabled={
-                          (ticketData as any)?.status?.toLowerCase() ===
-                            "open" ||
-                          (ticketData as any)?.status?.toLowerCase() ===
-                            "pending" ||
-                          (ticketData as any)?.status?.toLowerCase() ===
-                            "completed"
-                        }
-                        onClick={() => {
-                          setStatus("open");
-                          updateTicketStatus("open");
-                        }}
-                      >
-                        <BsBookmarkCheck style={{ margin: "0 2px" }} />
-                        <Text mx="2">Accept</Text>
-                      </MenuItem>
-                      <Divider />
-                      <MenuItem
-                        isDisabled={
-                          (ticketData as any)?.status?.toLowerCase() !==
-                            "new" &&
-                          (ticketData as any)?.status?.toLowerCase() !== "open"
-                        }
-                        onClick={() => {
-                          setStatus("pending");
-                          updateTicketStatus("pending");
-                        }}
-                      >
-                        <GrInProgress style={{ margin: "0 2px" }} />
-                        <Text mx="2">Pending Items</Text>
-                      </MenuItem>
-                      <Divider />
-                      <MenuItem
-                        isDisabled={
-                          (ticketData as any)?.status?.toLowerCase() !==
-                            "new" &&
-                          (ticketData as any)?.status?.toLowerCase() !==
-                            "open" &&
-                          (ticketData as any)?.status?.toLowerCase() !==
-                            "pending"
-                        }
-                        onClick={() => {
-                          setStatus("completed");
-                          updateTicketStatus("completed");
-                        }}
-                      >
-                        <IoCheckmarkDone size={18} />
-                        <Text mx="2">Done</Text>
-                      </MenuItem>
-                    </MenuList>
-                  </Menu>
+                  {(userInfo as any)?.role === "admin" && (
+                    <Menu>
+                      <MenuButton
+                        as={IconButton}
+                        colorScheme="white"
+                        aria-label="Options"
+                        color={"black"}
+                        size={"md"}
+                        mt="-2"
+                        icon={<FaEllipsisV />}
+                      />
+                      <MenuList>
+                        <MenuItem
+                          isDisabled={
+                            (ticketData as any)?.status?.toLowerCase() ===
+                              "open" ||
+                            (ticketData as any)?.status?.toLowerCase() ===
+                              "pending" ||
+                            (ticketData as any)?.status?.toLowerCase() ===
+                              "completed"
+                          }
+                          onClick={() => {
+                            setStatus("open");
+                            updateTicketStatus("open");
+                          }}
+                        >
+                          <BsBookmarkCheck style={{ margin: "0 2px" }} />
+                          <Text mx="2">Accept</Text>
+                        </MenuItem>
+                        <Divider />
+                        <MenuItem
+                          isDisabled={
+                            (ticketData as any)?.status?.toLowerCase() !==
+                              "new" &&
+                            (ticketData as any)?.status?.toLowerCase() !==
+                              "open"
+                          }
+                          onClick={() => {
+                            setStatus("pending");
+                            updateTicketStatus("pending");
+                          }}
+                        >
+                          <GrInProgress style={{ margin: "0 2px" }} />
+                          <Text mx="2">Pending Items</Text>
+                        </MenuItem>
+                        <Divider />
+                        <MenuItem
+                          isDisabled={
+                            (ticketData as any)?.status?.toLowerCase() !==
+                              "new" &&
+                            (ticketData as any)?.status?.toLowerCase() !==
+                              "open" &&
+                            (ticketData as any)?.status?.toLowerCase() !==
+                              "pending"
+                          }
+                          onClick={() => {
+                            setStatus("completed");
+                            updateTicketStatus("completed");
+                          }}
+                        >
+                          <IoCheckmarkDone size={18} />
+                          <Text mx="2">Done</Text>
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            setStatus("deleted");
+                            updateTicketStatus("deleted");
+                          }}
+                        >
+                          <MdDeleteOutline size={18} />
+                          <Text mx="2">Discard</Text>
+                        </MenuItem>
+                      </MenuList>
+                    </Menu>
+                  )}
                 </Flex>
 
                 <div className="ui ordered steps mini">

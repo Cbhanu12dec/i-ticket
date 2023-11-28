@@ -67,6 +67,7 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
     const user = JSON.parse(localStorage.getItem("userInfo") as string);
     setUserInfo(user);
   }, []);
+  console.log("******* edit data", edit?.data);
 
   useEffect(() => {
     setTicketPayload({
@@ -88,6 +89,13 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
     edit?.data?.title,
     setValue,
   ]);
+
+  // const resetValues = () => {
+  //   setValue("title", "");
+  //   setValue("description", "");
+  //   setValue("priority", "");
+  //   setValue("priority", "");
+  // };
 
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({});
 
@@ -225,7 +233,16 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
   };
 
   return (
-    <Modal isOpen={showModal} onClose={() => setShowModal(false)} size={"4xl"}>
+    <Modal
+      isOpen={showModal}
+      onClose={() => {
+        setShowModal(false);
+        setValue("title", "");
+        setValue("description", "");
+        setValue("assignee", "all");
+      }}
+      size={"4xl"}
+    >
       <ModalOverlay />
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmitClicked)}>
@@ -241,6 +258,7 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
                 type="text"
                 placeholder="Enter Title here..."
                 {...register("title", { required: true })}
+                value={ticketPayload?.title}
                 onChange={(e) =>
                   setTicketPayload({
                     ...ticketPayload,
@@ -254,6 +272,7 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
               <Textarea
                 placeholder="Enter details here..."
                 {...register("description", { required: true })}
+                value={ticketPayload?.description}
                 onChange={(e) =>
                   setTicketPayload({
                     ...ticketPayload,
@@ -366,7 +385,10 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
             <Button
               colorScheme="gray"
               mr={3}
-              onClick={() => setShowModal(false)}
+              onClick={() => {
+                setShowModal(false);
+                // resetValues();
+              }}
             >
               Close
             </Button>

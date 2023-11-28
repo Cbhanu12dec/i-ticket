@@ -36,7 +36,13 @@ export const shortternText = (text: string) => {
   return text?.length > 160 ? text.slice(0, 160) + "..." : text;
 };
 
-export const ticketStatuses = ["new", "open", "pending", "completed"];
+export const ticketStatuses = [
+  "new",
+  "open",
+  "pending",
+  "completed",
+  "deleted",
+];
 
 export const ticketProgressss = (status: string) => {
   if (status?.toLowerCase() === "new") {
@@ -65,7 +71,7 @@ export const ticketProgressss = (status: string) => {
 
 export const getStepStatus = (status: string) => {
   if (status === "Inbox") {
-    return ["open", "new", "pending", "completed"];
+    return ["open", "new", "pending", "completed", "deleted"];
   } else if (status === "In-Progress") {
     return ["open", "pending"];
   } else if (status === "Done") {

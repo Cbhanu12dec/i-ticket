@@ -81,6 +81,33 @@ exports.updateUserAccess = async (payload) => {
     return "Internal Server Error";
   }
 };
+exports.updateProfile = async (payload) => {
+  try {
+    const updatedDocument = await UsersModel.findOneAndUpdate(
+      { email: payload.email },
+      {
+        $set: {
+          firstName: payload.firstName,
+          lastName: payload.lastName,
+          phoneNumber: payload.phoneNumber,
+          address: payload.address,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    if (!updatedDocument) {
+      return "User access could not update";
+    }
+
+    return updatedDocument;
+  } catch (error) {
+    console.error(error);
+    return "Internal Server Error";
+  }
+};
 exports.updateUserByID = async (payload) => {
   return await UsersModel.findOneAndUpdate(
     { id: payload.id },
