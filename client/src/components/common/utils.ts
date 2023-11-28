@@ -5,8 +5,8 @@ export interface AnnouncementMetrics {
   UPCOMING: "Upcoming";
 }
 
-export const PUBLIC_URL = "http://localhost:5001";
-// export const PUBLIC_URL = "http://18.225.235.171:5001";
+// export const PUBLIC_URL = "http://localhost:5001";
+export const PUBLIC_URL = "http://18.225.235.171:5001";
 
 export const getFileType = (name: string) => {
   return name?.split(".")[1];
@@ -63,6 +63,29 @@ export const ticketProgressss = (status: string) => {
   }
 };
 
+export const getStepStatus = (status: string) => {
+  if (status === "Inbox") {
+    return ["open", "new", "pending", "completed"];
+  } else if (status === "In-Progress") {
+    return ["open", "pending"];
+  } else if (status === "Done") {
+    return ["completed"];
+  } else if (status === "Discard") {
+    return ["deleted"];
+  }
+  if (status === "High") {
+    return ["high"];
+  }
+  if (status === "Low") {
+    return ["low"];
+  }
+  if (status === "Medium") {
+    return ["medium"];
+  } else {
+    return ["open", "new", "pending", "completed"];
+  }
+};
+
 export const ticketProgress = [
   {
     title: "Created",
@@ -87,4 +110,16 @@ export const getStatusIndex = (status: string) => {
     (item) => item?.toLowerCase() === status?.toLowerCase()
   );
   return index;
+};
+
+export const ticketMenus = (item: string): string => {
+  if (item === "Inbox") {
+    return "all";
+  } else if (item === "In-Progress") {
+    return "inProgress";
+  } else if (item === "Done") {
+    return "completed";
+  } else {
+    return "deleted";
+  }
 };

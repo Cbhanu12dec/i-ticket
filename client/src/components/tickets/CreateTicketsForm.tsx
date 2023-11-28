@@ -122,7 +122,7 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
                 <FormLabel>Category</FormLabel>
                 <Input
                   type="text"
-                  placeholder="Enter Title here..."
+                  placeholder="Enter category here..."
                   {...register("category", { required: true })}
                   onChange={(e) =>
                     setTicketPayload({

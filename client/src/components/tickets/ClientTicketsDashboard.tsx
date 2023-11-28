@@ -43,6 +43,8 @@ import {
   PUBLIC_URL,
   getFileType,
   getStatusIndex,
+  getStepStatus,
+  ticketMenus,
   ticketProgress,
   ticketStatuses,
 } from "../common/utils";
@@ -51,7 +53,7 @@ import { IoMdDownload } from "react-icons/io";
 import Dashboard from "../dashboard/Dashboard";
 import CommentSection from "./CommentSection";
 import { CommentsDataType } from "../common/data-types";
-import { AiOutlineSend } from "react-icons/ai";
+import { AiOutlineInbox, AiOutlineSend } from "react-icons/ai";
 import dayjs from "dayjs";
 import _ from "lodash";
 import { PiFileJpgFill, PiFilePng } from "react-icons/pi";
@@ -60,6 +62,8 @@ import { BsBookmarkCheck, BsDatabaseX } from "react-icons/bs";
 import { FaEllipsisV } from "react-icons/fa";
 import { IoCheckmarkDone } from "react-icons/io5";
 import { message } from "antd";
+import NoData from "../common/NoData";
+import { BiSolidTagAlt } from "react-icons/bi";
 
 const ClientTicketsDashboard = () => {
   const [showticketModal, setShowTicketModal] = useState<boolean>(false);
@@ -73,6 +77,28 @@ const ClientTicketsDashboard = () => {
   const [commentTyped, setCommentTyped] = useState<string>("");
   const [userInfo, setUserInfo] = useState({});
   const [status, setStatus] = useState("new");
+  const [ticketCounts, setTicketCounts] = useState<{
+    all: number;
+    inProgress: number;
+    completed: number;
+    deleted: number;
+  }>({
+    all: 0,
+    inProgress: 0,
+    completed: 0,
+    deleted: 0,
+  });
+  const [priorityCounts, setPriorityCounts] = useState<{
+    high: number;
+    low: number;
+    medium: number;
+  }>({
+    high: 0,
+    low: 0,
+    medium: 0,
+  });
+
+  console.log("active step for tciekts:", activeStep);
   const handleCommentCollapse = (id: any) => {
     const updatedComments = comments.map((c: any) => {
       if (c.id === id) {
@@ -135,17 +161,30 @@ const ClientTicketsDashboard = () => {
       return <GrInProgress size={18} />;
     } else if (itemName === "Discard") {
       return <MdDeleteOutline size={24} />;
+    } else if (itemName === "High") {
+      return <BiSolidTagAlt size={24} color="red" />;
+    } else if (itemName === "Medium") {
+      return <BiSolidTagAlt size={24} color="orange" />;
+    } else if (itemName === "Low") {
+      return <BiSolidTagAlt size={24} color="green" />;
     } else {
       return <FaRegThumbsUp size={20} />;
     }
   };
+  const menyItems = ["Inbox", "In-Progress", "Done", "Discard"];
 
+  const priorityItems = ["High", "Medium", "Low"];
   useEffect(() => {
-    const preparedData = tickets?.filter((item) => item === activeStep);
+    const preparedData = tickets?.filter((item: any) => {
+      return priorityItems.indexOf(activeStep) !== -1
+        ? getStepStatus(activeStep).includes(item?.priority)
+        : getStepStatus(activeStep).includes(item?.status);
+    });
+
     setFilteredTickets(preparedData);
   }, [activeStep, tickets]);
 
-  const menyItems = ["Inbox", "In-Progress", "Done", "Discard"];
+  // console.log("********* filterred ticketys", filteredTickets);
 
   const getIcons = (type: string) => {
     if (type?.toLowerCase() === "pdf") {
@@ -260,6 +299,42 @@ const ClientTicketsDashboard = () => {
         message.error("Failed to update ticket status..!");
       });
   };
+
+  useEffect(() => {
+    const ticketsStats = tickets?.reduce(
+      (accumulator: any, currentValue: any) => {
+        if (
+          currentValue.status === "open" ||
+          currentValue.status === "pending"
+        ) {
+          accumulator.inProgress += 1;
+        } else if (currentValue.status === "completed") {
+          accumulator.completed += 1;
+        } else if (currentValue.status === "deleted") {
+          accumulator.deleted += 1;
+        }
+        accumulator.all += 1;
+        return accumulator;
+      },
+      { all: 0, inProgress: 0, completed: 0, deleted: 0 }
+    );
+    setTicketCounts(ticketsStats);
+    const priorityStats = tickets?.reduce(
+      (accumulator: any, currentValue: any) => {
+        if (currentValue.priority === "high") {
+          accumulator.high += 1;
+        } else if (currentValue.priority === "low") {
+          accumulator.low += 1;
+        } else if (currentValue.priority === "medium") {
+          accumulator.medium += 1;
+        }
+        return accumulator;
+      },
+      { high: 0, low: 0, medium: 0 }
+    );
+    setPriorityCounts(priorityStats);
+  }, [tickets]);
+
   return (
     <Dashboard>
       <Flex direction={"column"} alignItems={"start"} mx="6" my="3" w="97%">
@@ -300,7 +375,7 @@ const ClientTicketsDashboard = () => {
                 {menyItems?.map((item) => {
                   return (
                     <Flex
-                      mt="2"
+                      mt="1"
                       p="1"
                       _hover={{ bg: "gray.50" }}
                       rounded={"md"}
@@ -308,7 +383,7 @@ const ClientTicketsDashboard = () => {
                       align={"start"}
                       justifyContent={"space-between"}
                       cursor={"pointer"}
-                      onClick={() => setActiveStep("inbox")}
+                      onClick={() => setActiveStep(item)}
                     >
                       <Flex alignItems={"center"} gap={3}>
                         {getMenuIcons(item)}
@@ -320,20 +395,58 @@ const ClientTicketsDashboard = () => {
                         px="2"
                         rounded={"md"}
                         fontSize={"xs"}
+                        mb="0"
                       >
-                        {tickets?.length}
+                        {(ticketCounts as any)[ticketMenus(item)]}
                       </Text>
                     </Flex>
                   );
                 })}
               </VStack>
-              <VStack
-                divider={<StackDivider />}
-                mt="5"
-                maxH={"xl"}
-                overflow={"scroll"}
-                alignItems={"start"}
-              ></VStack>
+              <Divider borderColor={"gray.400"} my="5" />
+              <VStack w={"full"}>
+                {priorityItems?.map((item) => {
+                  return (
+                    <Flex
+                      mt="1"
+                      p="1"
+                      _hover={{ bg: "gray.50" }}
+                      rounded={"md"}
+                      width={"100%"}
+                      align={"start"}
+                      justifyContent={"space-between"}
+                      cursor={"pointer"}
+                      onClick={() => setActiveStep(item)}
+                    >
+                      <Flex alignItems={"center"} gap={3}>
+                        {getMenuIcons(item)}
+                        <Text
+                          fontSize={"lg"}
+                          textColor={
+                            item === "High"
+                              ? "red.500"
+                              : item === "Low"
+                              ? "green.500"
+                              : "orange.500"
+                          }
+                        >
+                          {item}
+                        </Text>
+                      </Flex>
+                      <Text
+                        bg="blue.100"
+                        py="1"
+                        px="2"
+                        rounded={"md"}
+                        fontSize={"xs"}
+                        mb="0"
+                      >
+                        {(priorityCounts as any)[item?.toLowerCase()]}
+                      </Text>
+                    </Flex>
+                  );
+                })}
+              </VStack>
             </Flex>
           </GridItem>
           <GridItem w="100%" bg="white" p="4" rounded={"lg"} colSpan={7}>
@@ -341,49 +454,68 @@ const ClientTicketsDashboard = () => {
               divider={<StackDivider />}
               mt="2"
               maxH={"xl"}
-              overflow={"scroll"}
+              overflowY={"scroll"}
               alignItems={"start"}
             >
-              {tickets?.map((item: any, index) => {
-                return (
-                  <Flex
-                    //   direction={"column"}
-                    p="2"
-                    rounded={"md"}
-                    width={"100%"}
-                    justifyContent={"space-between"}
-                    cursor={"pointer"}
-                    alignItems={"center"}
-                    bg={"white"}
-                    color={"black"}
-                    _hover={{ bg: "blue.50" }}
-                    onClick={() => {
-                      setShowTicketModal(true);
-                      setTicketData(item as any);
-                      setComments(item?.comments);
-                      const updatedTree = createTree(item?.comments);
-                      setCommentTree(updatedTree as any);
-                    }}
-                  >
-                    <VStack align={"start"}>
-                      <Text textColor={"purple.800"} fontWeight={"semibold"}>
-                        {item?.title}
+              {filteredTickets?.length > 0 ? (
+                filteredTickets?.map((item: any, index) => {
+                  return (
+                    <Flex
+                      p="2"
+                      rounded={"md"}
+                      width={"100%"}
+                      justifyContent={"space-between"}
+                      cursor={"pointer"}
+                      alignItems={"center"}
+                      bg={"white"}
+                      color={"black"}
+                      _hover={{ bg: "blue.50" }}
+                      onClick={() => {
+                        setShowTicketModal(true);
+                        setTicketData(item as any);
+                        setComments(item?.comments);
+                        const updatedTree = createTree(item?.comments);
+                        setCommentTree(updatedTree as any);
+                      }}
+                    >
+                      <VStack align={"start"}>
+                        <Text
+                          textColor={"purple.800"}
+                          fontWeight={"semibold"}
+                          mb="0"
+                        >
+                          {item?.title}
+                        </Text>
+                        <Text
+                          fontSize={"sm"}
+                          fontWeight={"hairline"}
+                          fontStyle={"italic"}
+                          mb="0"
+                        >
+                          {item?.description}
+                        </Text>
+                      </VStack>
+                      <Text mr="4" textColor={"purple.800"} fontWeight={"bold"}>
+                        {" "}
+                        {item?.ticketNumber}
                       </Text>
-                      <Text
-                        fontSize={"sm"}
-                        fontWeight={"hairline"}
-                        fontStyle={"italic"}
-                      >
-                        {item?.description}
-                      </Text>
-                    </VStack>
-                    <Text mr="4" textColor={"purple.800"} fontWeight={"bold"}>
-                      {" "}
-                      {item?.ticketNumber}
-                    </Text>
-                  </Flex>
-                );
-              })}
+                    </Flex>
+                  );
+                })
+              ) : (
+                <Flex
+                  gap={1}
+                  w="full"
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                  direction={"column"}
+                >
+                  <AiOutlineInbox size={"40px"} />
+                  <Text mb="0" fontSize={"md"}>
+                    No Tickets available..!
+                  </Text>
+                </Flex>
+              )}
             </VStack>
           </GridItem>
         </Grid>
@@ -528,6 +660,7 @@ const ClientTicketsDashboard = () => {
                 bg="#f1f5fa"
                 p="4"
                 mt="4"
+                mb="5"
                 direction={"column"}
                 rounded={"lg"}
               >
@@ -628,23 +761,6 @@ const ClientTicketsDashboard = () => {
               </Flex>
             </Flex>{" "}
           </ModalBody>
-
-          <ModalFooter>
-            <Button
-              colorScheme="gray"
-              mr={3}
-              onClick={() => setShowTicketModal(false)}
-            >
-              Close
-            </Button>
-            <Button
-              bg="purple.900"
-              color={"white"}
-              _hover={{ bg: "purple.800" }}
-            >
-              Confirm Ticket
-            </Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
       <CreateTicketsForm
