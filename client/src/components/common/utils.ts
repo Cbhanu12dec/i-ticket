@@ -33,7 +33,7 @@ export const validateSignup = (password: string, confirmPassword: string) => {
 };
 
 export const shortternText = (text: string) => {
-  return text?.length > 160 ? text.slice(0, 160) + "..." : text;
+  return text?.length > 100 ? text.slice(0, 100) + "..." : text;
 };
 
 export const ticketStatuses = [

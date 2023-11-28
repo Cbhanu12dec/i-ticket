@@ -21,6 +21,7 @@ import { PiFileJpgFill, PiFilePng } from "react-icons/pi";
 import { FaFileCsv } from "react-icons/fa6";
 import { MdOutlineAttachFile } from "react-icons/md";
 import { SiJpeg } from "react-icons/si";
+import _ from "lodash";
 // import data from "./data.json";
 
 const UserFaq = () => {
@@ -126,8 +127,8 @@ const UserFaq = () => {
             <Flex w="100%" direction={"column"} alignItems={"start"}>
               <Text
                 textColor={"purple.800"}
-                fontSize={"lg"}
-                fontWeight={500}
+                fontSize={"xl"}
+                fontWeight={600}
                 mb="2"
               >
                 View your Faq's
@@ -153,16 +154,20 @@ const UserFaq = () => {
                     bg={index === 0 ? "purple.800" : "white"}
                     color={index === 0 ? "white" : "black"}
                     onClick={() => setInfo(item)}
+                    mb="2"
+                    justifyContent={"start"}
                   >
                     <Text
                       textColor={index === 0 ? "white" : "purple.800"}
                       fontWeight={"semibold"}
+                      mb="0"
+                      fontSize={"lg"}
                     >
-                      {(item as any).title}
+                      {_.capitalize((item as any).title)}
                     </Text>
                     <Text
                       fontSize={"sm"}
-                      fontWeight={"hairline"}
+                      fontWeight={"thin"}
                       fontStyle={"italic"}
                     >
                       <Tooltip title={(item as any).description}>
@@ -186,7 +191,7 @@ const UserFaq = () => {
               <Flex justifyContent={"space-between"} alignItems={"center"}>
                 <Text
                   textColor={"purple.800"}
-                  fontSize={"xl"}
+                  fontSize={"2xl"}
                   fontWeight={500}
                   mb="4"
                 >
@@ -194,7 +199,7 @@ const UserFaq = () => {
                 </Text>
               </Flex>
 
-              <Divider />
+              <Divider mt="2" />
 
               {faq.length > 0 ? (
                 <VStack
@@ -209,14 +214,14 @@ const UserFaq = () => {
                   <Flex justifyContent={"space-between"} w="100%">
                     <Text
                       textColor={"purple.800"}
-                      fontSize={"lg"}
+                      fontSize={"xl"}
                       fontWeight={"semibold"}
                     >
                       {(info as any)?.title}
                     </Text>
                   </Flex>
 
-                  <Text fontSize={"sm"}> {(info as any)?.description}</Text>
+                  <Text fontSize={"md"}> {(info as any)?.description}</Text>
                   {(info as any)?.files?.length > 0 && (
                     <>
                       {" "}

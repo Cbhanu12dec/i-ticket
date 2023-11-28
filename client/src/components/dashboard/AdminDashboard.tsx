@@ -26,11 +26,16 @@ import { FaCubes, FaUsers } from "react-icons/fa6";
 import { prepareAnnouncements } from "../common/prepare-data";
 
 function AdminDashboard() {
-  const [statsData, setStatsData] = useState({
-    total: 100,
-    active: 63,
-    inactive: 30,
-    scheduled: 7,
+  const [statsData, setStatsData] = useState<{
+    total: number;
+    active: number;
+    completed: number;
+    deleted: number;
+  }>({
+    total: 0,
+    active: 0,
+    completed: 0,
+    deleted: 0,
   });
 
   const [userStats, setUsersStats] = useState<{
@@ -51,26 +56,11 @@ function AdminDashboard() {
 
   const [announcements, setAnnoucements] = useState([]);
 
-  const StatsCard = () => {
-    return (
-      <Flex
-        direction={"column"}
-        bg="white"
-        p="6"
-        rounded={"lg"}
-        minW={"52"}
-        minH={"32"}
-      >
-        <Text> Title</Text>
-      </Flex>
-    );
-  };
-
   const StatusProps = (prop: string) => {
     if (prop === "total") return "Total";
     else if (prop === "active") return "Active";
-    else if (prop === "inactive") return "In Active";
-    else if (prop === "scheduled") return "Scheduled";
+    else if (prop === "completed") return "Completed";
+    else if (prop === "deleted") return "Discard";
   };
 
   const gradientColor = [
@@ -99,7 +89,7 @@ function AdminDashboard() {
             backdropFilter="brightness(50%)"
           >
             <LineChart
-              width={260}
+              width={270}
               height={130}
               data={statsChartData}
               margin={{ top: 5, bottom: 5 }}
@@ -117,12 +107,16 @@ function AdminDashboard() {
               />
             </LineChart>
             <HStack position={"absolute"} mx={10} gap={3}>
-              <Icon as={IoIosStats} boxSize={14} textShadow="0 0 10px black" />
+              <Icon as={IoIosStats} boxSize={24} textShadow="0 0 10px black" />
               <Stat>
-                <StatLabel fontSize={"xl"} textShadow="0 0 10px black">
+                <StatLabel
+                  fontSize={"2xl"}
+                  textShadow="0 0 10px black"
+                  mb={"0"}
+                >
                   {StatusProps(item[0])}
                 </StatLabel>
-                <StatNumber fontSize={"4xl"} textShadow="0 0 10px black">
+                <StatNumber fontSize={"7xl"} textShadow="0 0 10px black">
                   {item[1]}
                 </StatNumber>
               </Stat>
@@ -168,7 +162,7 @@ function AdminDashboard() {
           (accumulator: any, currentValue: any) => {
             if (currentValue.isHidden === true) {
               accumulator.active += 1;
-            } else if (currentValue.isHidden === true) {
+            } else if (currentValue.isHidden === false) {
               accumulator.inActive += 1;
             }
             accumulator.total += 1;
@@ -197,9 +191,34 @@ function AdminDashboard() {
       .catch((error) => {
         console.log("ERROR: ", error);
       });
+
+    axios
+      .get(PUBLIC_URL + "/ticket/get-all-tickets")
+      .then((response) => {
+        const statsData = response.data?.ticketInfo?.reduce(
+          (accumulator: any, currentValue: any) => {
+            if (
+              currentValue.status === "open" ||
+              currentValue.status === "pending"
+            ) {
+              accumulator.active += 1;
+            } else if (currentValue.status === "deleted") {
+              accumulator.deleted += 1;
+            } else if (currentValue.status === "completed") {
+              accumulator.completed += 1;
+            }
+            accumulator.total += 1;
+            return accumulator;
+          },
+          { total: 0, active: 0, completed: 0, deleted: 0 }
+        );
+        setStatsData(statsData);
+      })
+      .catch((error) => {
+        console.log("ERROR: ", error);
+      });
   }, []);
 
-  console.log("*********** annoucements", announcements);
   return (
     <Dashboard>
       <Flex direction={"column"} alignItems={"start"} mx="2">
@@ -218,6 +237,7 @@ function AdminDashboard() {
           w="100%"
           bg="white"
           p="4"
+          mx="3"
           rounded={"lg"}
         >
           <Flex
@@ -258,6 +278,7 @@ function AdminDashboard() {
           bg="white"
           p="4"
           rounded={"lg"}
+          mx="3"
           // shadow={"lg"}
         >
           <Flex direction={"column"} alignItems={"start"} px="4" py="2">
@@ -310,6 +331,7 @@ function AdminDashboard() {
           w="100%"
           bg="white"
           p="4"
+          mx="3"
           rounded={"lg"}
           // shadow={"lg"}
         >

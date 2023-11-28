@@ -7,6 +7,7 @@ import {
   MenuItem,
   Menu,
   IconButton,
+  Divider,
 } from "@chakra-ui/react";
 import { TableProps, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
@@ -59,6 +60,7 @@ function FaqDashboard() {
     {
       title: "Active",
       dataIndex: "isHidden",
+      width: "160px",
       render: (text, record) =>
         text === false ? (
           <Text fontWeight={"semibold"} textColor={"red.500"}>
@@ -73,6 +75,7 @@ function FaqDashboard() {
     {
       title: "Created At",
       dataIndex: "createdAt",
+      width: "200px",
     },
     {
       title: "Access",
@@ -184,32 +187,43 @@ function FaqDashboard() {
                   });
                   setShowModal(true);
                 }}
+                mt="2"
+                mx="2"
               >
                 <FiEdit style={{ margin: "0 2px" }} />
-                <Text mx="2">Edit</Text>
+                <Text mx="2" fontSize={"md"}>
+                  Edit
+                </Text>
               </MenuItem>
+              <Divider mt="1" />
               <MenuItem
                 onClick={() => {
                   onDeleteClicked(record?.faqNumber);
                 }}
+                mt="2"
+                mx="2"
               >
                 <MdDeleteOutline size={20} />
                 <Text mx="1">Delete</Text>
               </MenuItem>
+              <Divider mt="1" />
+
               <MenuItem
                 onClick={() => {
                   onHideClicked(record);
                 }}
+                mt="2"
+                mx="2"
               >
                 {record?.isHidden ? (
                   <>
                     <FaRegEyeSlash size={20} style={{ margin: "0 2px" }} />
-                    <Text mx="1">Hide</Text>
+                    <Text mx="1">In Active</Text>
                   </>
                 ) : (
                   <>
                     <AiFillEye size={20} style={{ margin: "0 2px" }} />
-                    <Text mx="1">UnHide</Text>
+                    <Text mx="1">Active</Text>
                   </>
                 )}
               </MenuItem>

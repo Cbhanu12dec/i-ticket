@@ -28,3 +28,13 @@ export const getDefaultFaq = () => {
     assignee: "all",
   };
 };
+
+export const getDefaultTicket = () => {
+  return {
+    title: "",
+    description: "",
+    category: "",
+    priority: "low",
+    assignee: "admin",
+  };
+};

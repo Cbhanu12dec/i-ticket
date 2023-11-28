@@ -33,6 +33,7 @@ import { ImFilePdf } from "react-icons/im";
 import { PiFileJpgFill, PiFilePng } from "react-icons/pi";
 import { SiJpeg } from "react-icons/si";
 import { FaFileCsv } from "react-icons/fa6";
+import { getDefaultTicket } from "../common/default-values";
 
 interface CreateTicketForm {
   showModal: boolean;
@@ -67,7 +68,6 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
     const user = JSON.parse(localStorage.getItem("userInfo") as string);
     setUserInfo(user);
   }, []);
-  console.log("******* edit data", edit?.data);
 
   useEffect(() => {
     setTicketPayload({
@@ -240,7 +240,13 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
         setShowModal(false);
         setValue("title", "");
         setValue("description", "");
-        setValue("assignee", "all");
+        setValue("category", "");
+        setValue("priority", "low");
+        setEdit &&
+          setEdit({
+            forEdit: false,
+            data: getDefaultTicket(),
+          });
       }}
       size={"4xl"}
     >
@@ -389,6 +395,15 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
               onClick={() => {
                 setShowModal(false);
                 // resetValues();
+                setValue("title", "");
+                setValue("description", "");
+                setValue("category", "");
+                setValue("priority", "low");
+                setEdit &&
+                  setEdit({
+                    forEdit: false,
+                    data: getDefaultTicket(),
+                  });
               }}
             >
               Close

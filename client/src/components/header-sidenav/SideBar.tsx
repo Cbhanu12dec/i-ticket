@@ -32,6 +32,7 @@ const SideNav = ({ onClose, ...rest }: SideNavProps) => {
   const [activeStep, setActiveStep] = useState(1);
   const [navItems, setNavItems] = useState([]);
 
+  console.log("******* active step", activeStep);
   const [userInfo, setUserInfo] = useState({});
   const AdminLinks = [
     { name: "Dashboard", icon: FiHome, path: "/dashboard" },

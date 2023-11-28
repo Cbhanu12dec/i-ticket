@@ -38,6 +38,7 @@ import {
   MdDeleteOutline,
   MdModeEditOutline,
   MdOutlineAttachFile,
+  MdOutlineThumbUpAlt,
 } from "react-icons/md";
 import { GrInProgress } from "react-icons/gr";
 import { useCallback, useEffect, useState } from "react";
@@ -186,7 +187,7 @@ const ClientTicketsDashboard = () => {
     } else if (itemName === "Low") {
       return <BiSolidTagAlt size={24} color="green" />;
     } else {
-      return <FaRegThumbsUp size={20} />;
+      return <MdOutlineThumbUpAlt size={20} />;
     }
   };
   const menyItems = ["Inbox", "In-Progress", "Done", "Discard"];
@@ -384,15 +385,17 @@ const ClientTicketsDashboard = () => {
           <Text fontSize={"2xl"} fontWeight={"semibold"} mb="3">
             Tickets Dashboard
           </Text>
-          <Button
-            bg="purple.900"
-            color={"white"}
-            _hover={{ bg: "purple.800" }}
-            onClick={() => setShowModal(true)}
-            leftIcon={<FaTicket />}
-          >
-            Create Ticket
-          </Button>
+          {(userInfo as any)?.role !== "admin" && (
+            <Button
+              bg="purple.900"
+              color={"white"}
+              _hover={{ bg: "purple.800" }}
+              onClick={() => setShowModal(true)}
+              leftIcon={<FaTicket />}
+            >
+              Create Ticket
+            </Button>
+          )}
         </Flex>
         <Grid templateColumns="repeat(9, 1fr)" gap={4} w={"full"}>
           <GridItem colSpan={2} bg="white" p="4" rounded={"lg"}>
@@ -521,11 +524,11 @@ const ClientTicketsDashboard = () => {
                           fontWeight={"semibold"}
                           mb="0"
                         >
-                          {item?.title}
+                          {_.capitalize(item?.title)}
                         </Text>
                         <Text
                           fontSize={"sm"}
-                          fontWeight={"hairline"}
+                          fontWeight={"thin"}
                           fontStyle={"italic"}
                           mb="0"
                         >
@@ -541,7 +544,7 @@ const ClientTicketsDashboard = () => {
                           {" "}
                           {item?.ticketNumber}
                         </Text>
-                        {(userInfo as any)?.role === "user" && (
+                        {(userInfo as any)?.role !== "admin" && (
                           <>
                             {" "}
                             <MdModeEditOutline

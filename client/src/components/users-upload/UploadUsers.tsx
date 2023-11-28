@@ -66,6 +66,7 @@ const UploadUsers = () => {
       .then((response) => {
         message.success("Users data uploaded successfully..!");
         setShowModal(false);
+        setUsersData([]);
       })
       .catch((error) => {
         console.log("ERROR: ", error);
@@ -104,9 +105,9 @@ const UploadUsers = () => {
           <Flex direction={"column"} alignItems={"start"}>
             <Text
               mb="4"
-              textColor={"purple.800"}
+              textColor={"purple.900"}
               fontWeight={"semibold"}
-              fontSize={"lg"}
+              fontSize={"2xl"}
             >
               Upload Users Data
             </Text>
@@ -132,7 +133,7 @@ const UploadUsers = () => {
                       Click or drag file to this area to upload
                     </Text>
                     <Text
-                      fontWeight={"hairline"}
+                      fontWeight={"thin"}
                       textColor={"gray.700"}
                       fontSize={"xs"}
                       fontStyle={"italic"}
@@ -184,25 +185,27 @@ const UploadUsers = () => {
         <GridItem w="100%" bg={"white"} px="10" py="6" borderRadius={"lg"}>
           <Flex direction={"column"} alignItems={"start"} w="100%">
             <Text
-              mb="4"
+              mb="2"
               textColor={"purple.800"}
               fontWeight={"semibold"}
-              fontSize={"lg"}
+              fontSize={"2xl"}
             >
               Instructions
             </Text>
-            <Flex justifyContent={"space-between"} w="100%">
+            <Divider />
+            <Flex justifyContent={"space-between"} w="100%" mt="3">
               <Flex
                 gap={1}
                 direction={"column"}
                 textColor={"gray.700"}
-                fontWeight={"hairline"}
+                // fontWeight={"thin"}
                 fontSize={"sm"}
                 fontStyle={"italic"}
                 alignItems={"start"}
                 justifyContent={"start"}
+                mt="2"
               >
-                <Text mb="0">
+                <Text mb="1" fontSize={"md"}>
                   1){" "}
                   <b
                     style={{
@@ -217,11 +220,11 @@ const UploadUsers = () => {
                   </b>{" "}
                   to download the template.{" "}
                 </Text>
-                <Text>
+                <Text mb="1" fontSize={"md"}>
                   2) Template contains set of instructions which need to be
                   followed in order to create users accounts.
                 </Text>
-                <Text>3) Specify role as user or admin.</Text>
+                <Text fontSize={"md"}>3) Specify role as user or admin.</Text>
               </Flex>
               <Image src={Upload} maxW={"52"} mr="10" />
             </Flex>

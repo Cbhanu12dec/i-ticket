@@ -62,12 +62,12 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       </Text>
 
       <HStack spacing={{ base: "0", md: "6" }}>
-        <IconButton
+        {/* <IconButton
           size="lg"
           variant="ghost"
           aria-label="open menu"
           icon={<FiBell />}
-        />
+        /> */}
         <Flex alignItems={"center"}>
           <Menu>
             <MenuButton
@@ -78,9 +78,16 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               <HStack>
                 <Avatar
                   size={"sm"}
-                  src={
-                    "https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
+                  bg="purple.800"
+                  textColor={"white"}
+                  name={
+                    _.capitalize((userInfo as any)?.firstName) +
+                    "" +
+                    _.capitalize((userInfo as any)?.lastName)
                   }
+                  // src={
+                  //   "https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
+                  // }
                 />
                 <VStack
                   display={{ base: "none", md: "flex" }}
@@ -89,7 +96,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                   ml="2"
                 >
                   <Text
-                    fontSize="sm"
+                    fontSize="md"
                     fontWeight={"semibold"}
                     textColor={"purple.900"}
                     mb="0"
@@ -98,15 +105,15 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                     {_.capitalize((userInfo as any)?.lastName)}
                   </Text>
                   <Text
-                    fontSize="xs"
+                    fontSize="sm"
                     textColor="green.800"
                     fontWeight={"semibold"}
                   >
                     {_.capitalize((userInfo as any)?.role)}
                   </Text>
                 </VStack>
-                <Box display={{ base: "none", md: "flex" }}>
-                  <FiChevronDown />
+                <Box display={{ base: "none", md: "flex" }} mx="2">
+                  <FiChevronDown size={18} />
                 </Box>
               </HStack>
             </MenuButton>

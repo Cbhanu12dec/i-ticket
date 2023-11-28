@@ -195,7 +195,7 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
         }}
       >
         <Icon as={getIcons(getFileType(fileName))} />
-        <Text ml="2" mr="4" fontSize={"sm"} mb="0">
+        <Text ml="2" mr="4" fontSize={"md"} mb="0">
           {fileName}
         </Text>
         <IoMdDownload

@@ -19,6 +19,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import Dashboard from "../dashboard/Dashboard";
 import { message } from "antd";
 import dayjs from "dayjs";
+import { LuCalendarClock } from "react-icons/lu";
 export interface EditType {
   forEdit: boolean;
   data: Partial<AnnouncementDataType>;
@@ -69,7 +70,7 @@ const Announcement = () => {
       render: (text, record) =>
         text === "Published" ? (
           <Flex
-            bg="green"
+            bg="red"
             py="2"
             px="2"
             textColor={"white"}
@@ -80,11 +81,11 @@ const Announcement = () => {
             justifyContent={"center"}
           >
             <TfiAlarmClock size={16} />
-            <Text mx="1">{text}</Text>
+            <Text mx="1">{"Completed"}</Text>
           </Flex>
         ) : text === "Running" ? (
           <Flex
-            bg="orange"
+            bg="green"
             py="2"
             px="2"
             textColor={"white"}
@@ -99,7 +100,7 @@ const Announcement = () => {
           </Flex>
         ) : (
           <Flex
-            bg="red"
+            bg="orange"
             py="2"
             px="2"
             textColor={"white"}
@@ -132,8 +133,12 @@ const Announcement = () => {
       title: "Published To",
       dataIndex: "assignee",
       render: (text, record) => (
-        <Text textColor={"purple.800"} fontWeight={"semibold"}>
-          {_.capitalize(text)}
+        <Text
+          textColor={"purple.800"}
+          fontWeight={"semibold"}
+          letterSpacing={"wide"}
+        >
+          {_.upperCase(text)}
         </Text>
       ),
     },
@@ -174,26 +179,26 @@ const Announcement = () => {
   const getIcons = (name: string) => {
     if (name === "total") {
       return (
-        <Flex bg="orange.400" rounded={"full"} p="4">
-          <AiOutlineCodeSandbox size={40} />
+        <Flex bg="#710b79" rounded={"full"} p="5">
+          <AiOutlineCodeSandbox size={40} color="#fff" />
         </Flex>
       );
     } else if (name === "running") {
       return (
-        <Flex bg="green.400" rounded={"full"} p="4">
-          <TfiAlarmClock size={40} />
+        <Flex bg="#f88810" rounded={"full"} p="5">
+          <TfiAlarmClock size={40} color="#fff" />
         </Flex>
       );
     } else if (name === "published") {
       return (
-        <Flex bg="#3182ce" rounded={"full"} p="4">
-          <TbClockExclamation size={40} />
+        <Flex bg="#5bc7e1" rounded={"full"} p="5">
+          <TbClockExclamation size={40} color="#fff" />
         </Flex>
       );
     } else {
       return (
-        <Flex bg="orange.500" rounded={"full"} p="4">
-          <TbClockExclamation size={40} />
+        <Flex bg="#0331a1" rounded={"full"} p="5">
+          <LuCalendarClock size={36} color="#fff" />
         </Flex>
       );
     }
@@ -212,7 +217,9 @@ const Announcement = () => {
       >
         {getIcons(name)}
         <Flex direction={"column"} alignItems={"start"} mx="4">
-          <Text textColor={"gray.800"}>{_.capitalize(name)}</Text>
+          <Text textColor={"gray.800"} mb="0" fontSize={"lg"}>
+            {_.capitalize(name)}
+          </Text>
           <Text textColor={"gray.600"} fontSize={"5xl"} fontWeight={"bold"}>
             {value}
           </Text>
@@ -289,12 +296,9 @@ const Announcement = () => {
           direction={"column"}
           alignItems={"start"}
           py="4"
-          // bgGradient="linear(to top, #09203f 0%, #537895 100%)"
-          // bgGradient="linear(to-br, #243949 10%, #517fa4 80%)"
           bgGradient="linear(to bottom, #cfd9df 0%, #e2ebf0 100%);"
         >
           <Text
-            // textColor={"white"}
             textColor={"gray.900"}
             fontSize={"lg"}
             letterSpacing={"wide"}

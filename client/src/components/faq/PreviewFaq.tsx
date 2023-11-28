@@ -127,15 +127,20 @@ function PreviewFaq(props: PreviewFaqProps) {
                 {(data as any)?.title}
               </Text>
               <Text my="2">{data?.description}</Text>
-              <Divider borderColor={"gray.300"} />
-              <Text
-                mb="0"
-                fontSize={"lg"}
-                textColor={"purple.800"}
-                fontWeight={"semibold"}
-              >
-                Attachments:
-              </Text>
+              {data?.files?.length > 0 && (
+                <>
+                  <Divider borderColor={"gray.300"} />
+                  <Text
+                    mb="0"
+                    fontSize={"lg"}
+                    textColor={"purple.800"}
+                    fontWeight={"semibold"}
+                  >
+                    Attachments:
+                  </Text>
+                </>
+              )}
+
               <Flex gap={3}>
                 {data?.files?.map((item) => {
                   return getAttachmentComponent(item);

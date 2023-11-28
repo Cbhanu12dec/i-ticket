@@ -31,7 +31,7 @@ export const prepareFaqs = (data: any) => {
       isHidden: faq?.isHidden,
       faqNumber: faq?.faqNumber,
       files: faq?.files,
-      createdAt: dayjs(faq?.createdAt).format("MM-DD-YYYY hh:MMa"),
+      createdAt: dayjs(faq?.createdAt).format("MM-DD-YYYY - hh:MM A"),
       assignee: faq?.assignee,
     };
   });
