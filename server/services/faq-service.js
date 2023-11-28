@@ -11,7 +11,7 @@ const s3 = new AWS.S3();
 
 exports.createFaq = async (faq, file) => {
   const params = {
-    Bucket: "i-ticket/faqs",
+    Bucket: "i-ticket/faq",
     Key: file.originalname,
     Body: file.buffer,
   };
@@ -25,12 +25,14 @@ exports.createFaq = async (faq, file) => {
       title: faq.title,
       faqNumber: faqNumber,
       description: faq.description,
-      isHidden: false,
+      isHidden: true,
       assignee: faq.assignee,
       files: [data?.Location],
-      comments: [],
     };
-    return await await FaqModel.create(payload);
+    const doc = await await FaqModel.create(payload);
+    if (doc) {
+      return await FaqModel.find({});
+    }
   });
 };
 
@@ -54,6 +56,10 @@ exports.deleteFaqByID = async (id) => {
 
 exports.updateFaq = async (faq, file) => {
   if (file === undefined) {
+    const files =
+      JSON.parse(faq?.exsisting_files)?.length > 0
+        ? [faq?.exsisting_files]
+        : [];
     const doc = await FaqModel.findOneAndUpdate(
       { faqNumber: faq.faqNumber },
       {
@@ -63,7 +69,7 @@ exports.updateFaq = async (faq, file) => {
           description: faq?.description,
           isHidden: faq?.isHidden,
           assignee: faq?.assignee,
-          files: [faq?.exsisting_files],
+          files: files,
         },
       }
     );
@@ -72,7 +78,7 @@ exports.updateFaq = async (faq, file) => {
     }
   } else {
     const params = {
-      Bucket: "i-ticket/faqs",
+      Bucket: "i-ticket/faq",
       Key: file?.originalname,
       Body: file?.buffer,
     };
@@ -81,6 +87,8 @@ exports.updateFaq = async (faq, file) => {
       if (err) {
         console.error(err);
       }
+
+      const files = JSON.parse(faq?.exsisting_files);
 
       const doc = await FaqModel.findOneAndUpdate(
         { faqNumber: faq.faqNumber },
@@ -91,7 +99,7 @@ exports.updateFaq = async (faq, file) => {
             description: faq?.description,
             isHidden: faq?.isHidden,
             assignee: faq?.assignee,
-            files: [faq?.exsisting_files, data?.Location],
+            files: [...files, data?.Location],
           },
         }
       );

@@ -31,3 +31,7 @@ export const timeDifference = (time: string, time2: string) => {
 export const validateSignup = (password: string, confirmPassword: string) => {
   return password === confirmPassword;
 };
+
+export const shortternText = (text: string) => {
+  return text?.length > 160 ? text.slice(0, 160) + "..." : text;
+};

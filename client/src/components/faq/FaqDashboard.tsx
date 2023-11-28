@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { TableProps, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import TableContainer from "../common/TableContainer";
 import CreateFaqForm from "./CreateFaqForm";
 import { AiFillEye, AiOutlineSync, AiTwotoneBulb } from "react-icons/ai";
@@ -18,7 +18,7 @@ import { FaEllipsisV, FaRegEyeSlash } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
 import { MdDeleteOutline } from "react-icons/md";
 import axios from "axios";
-import { PUBLIC_URL } from "../common/utils";
+import { PUBLIC_URL, shortternText } from "../common/utils";
 import { prepareFaqs } from "../common/prepare-data";
 import { FaqDataType } from "../common/data-types";
 import PreviewFaq from "./PreviewFaq";
@@ -48,6 +48,13 @@ function FaqDashboard() {
     {
       title: "Description",
       dataIndex: "description",
+      render: (value) => {
+        return (
+          <Tooltip title={value} style={{ minWidth: "200px" }}>
+            <Text>{shortternText(value)}</Text>
+          </Tooltip>
+        );
+      },
     },
     {
       title: "Active",
@@ -116,10 +123,10 @@ function FaqDashboard() {
             fontWeight={"semibold"}
             alignItems={"center"}
             justifyContent={"center"}
-            maxW="20"
+            maxW="24"
           >
             <AiOutlineSync style={{ fontWeight: 800 }} />
-            <Text fontWeight={"semibold"} mx="2">
+            <Text fontWeight={"semibold"} mx="1">
               {_.upperCase(text)}
             </Text>
           </Flex>
@@ -137,7 +144,7 @@ function FaqDashboard() {
             maxW="20"
           >
             <AiOutlineSync />
-            <Text fontWeight={"semibold"} mx="2">
+            <Text fontWeight={"semibold"} mx="1">
               {_.upperCase(text)}
             </Text>
           </Flex>
@@ -221,8 +228,7 @@ function FaqDashboard() {
   ) => {
     console.log("params", pagination, filters, sorter, extra);
   };
-
-  useEffect(() => {
+  const getFaqs = () => {
     axios
       .get(PUBLIC_URL + "/faq/faq-list")
       .then((response) => {
@@ -231,6 +237,10 @@ function FaqDashboard() {
       .catch((error) => {
         console.log("ERROR: ", error);
       });
+  };
+
+  useEffect(() => {
+    getFaqs();
   }, []);
 
   const onDeleteClicked = (faqID: string) => {
@@ -284,6 +294,7 @@ function FaqDashboard() {
           edit={edit}
           setEdit={setEdit}
           setFaqs={setFaq}
+          getFaqs={getFaqs}
         />
         <PreviewFaq
           setShowModal={setPreviewFaq}

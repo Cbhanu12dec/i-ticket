@@ -50,7 +50,7 @@ exports.login = async (payload) => {
 exports.deleteUserByID = async (id) => {
   return await UsersModel.findOneAndDelete({ id: id })
     .then(() => {
-      return UsersModel.find({ type: "employee" });
+      return UsersModel.find({});
     })
     .catch(() => {
       return "Failed to retreive updated employee data";
@@ -100,7 +100,7 @@ exports.updateUserByID = async (payload) => {
     }
   )
     .then(() => {
-      return UsersModel.find({ type: "employee" });
+      return UsersModel.find({});
     })
     .catch(() => {
       return "Failed to retreive updated employee data";

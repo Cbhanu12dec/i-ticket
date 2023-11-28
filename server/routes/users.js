@@ -16,7 +16,11 @@ router.get("/get-user-by-email", async (req, res, next) => {
   const email = req.query.email;
   try {
     const userDetails = await usersService.getUsersByEmail(email);
-    res.json({ userInfo: userDetails, status: "success" });
+    if (userDetails?.length > 0) {
+      res.json({ userInfo: userDetails, status: "success" });
+    } else {
+      res.status(500).json({ error: "No such users found..!" });
+    }
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -60,6 +64,7 @@ router.put("/update-user-access", async function (req, res, next) {
   const payload = req.body.userAccessInfo;
   try {
     const users = await usersService.updateUserAccess(payload);
+    console.log("******* check useraccess*********", users);
     res.json({ users: users, status: "success" });
   } catch (err) {
     res.status(500).json({ error: err.message });

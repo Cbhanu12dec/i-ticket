@@ -37,9 +37,12 @@ function UserAccess() {
         },
       })
       .then((response) => {
+        setShowUserAccess(true);
         setUserAccessInfo(response.data.userInfo[0]);
       })
       .catch((error) => {
+        setShowUserAccess(false);
+        message.error("No such user found...!");
         console.log("ERROR: ", error);
       });
   };
@@ -70,7 +73,7 @@ function UserAccess() {
   return (
     <Dashboard>
       <Flex direction={"column"} alignItems={"start"} w="100%" mx="6" my="2">
-        <Text fontSize={"2xl"} fontWeight={"semibold"}>
+        <Text fontSize={"2xl"} fontWeight={"semibold"} mb="0">
           User Access Dashboard
         </Text>
         <Flex
@@ -91,7 +94,7 @@ function UserAccess() {
               p="4"
               rounded={"md"}
             >
-              <Text fontSize={"lg"} fontWeight={"semibold"}>
+              <Text fontSize={"lg"} fontWeight={"semibold"} mb="0">
                 My Access Details:
               </Text>
               <Divider
@@ -101,7 +104,7 @@ function UserAccess() {
                 variant={"dashed"}
                 borderWidth={0.2}
               />
-              <Text>
+              <Text mb="0">
                 Name: {_.capitalize((currentUserDeatials as any)?.firstName)}
                 {"   "}
                 {_.capitalize((currentUserDeatials as any)?.lastName)}{" "}
@@ -122,7 +125,7 @@ function UserAccess() {
               alignItems={"start"}
               rounded={"md"}
             >
-              <Text>Do you want to update access to Anyone?</Text>
+              <Text mb="0">Do you want to update access to Anyone?</Text>
               <Divider
                 my="3"
                 borderColor={"purple.800"}
@@ -144,7 +147,6 @@ function UserAccess() {
                   _hover={{ bg: "purple.700" }}
                   color={"white"}
                   onClick={() => {
-                    setShowUserAccess(true);
                     getUserAccessByEmail();
                   }}
                   mx="4"
@@ -175,20 +177,20 @@ function UserAccess() {
             <ModalBody bg="#f1f5fa" p="4" rounded={"md"} mx="6" my="6">
               <form>
                 <HStack my="3">
-                  <Text>First Name: </Text>
-                  <Text fontWeight={"semibold"} textColor={"purple.800"}>
+                  <Text mb="0">First Name: </Text>
+                  <Text fontWeight={"semibold"} textColor={"purple.800"} mb="0">
                     {_.capitalize((userAccessInfo as any)?.firstName)}
                   </Text>
                 </HStack>
                 <HStack>
-                  <Text>Last Name:</Text>
-                  <Text fontWeight={"semibold"} textColor={"purple.800"}>
+                  <Text mb="0"> Last Name:</Text>
+                  <Text fontWeight={"semibold"} textColor={"purple.800"} mb="0">
                     {_.capitalize((userAccessInfo as any)?.lastName)}
                   </Text>
                 </HStack>
                 <HStack my="3">
-                  <Text>Email: </Text>
-                  <Text fontWeight={"semibold"} textColor={"purple.800"}>
+                  <Text mb="0">Email: </Text>
+                  <Text fontWeight={"semibold"} textColor={"purple.800"} mb="0">
                     {(userAccessInfo as any)?.email}
                   </Text>
                 </HStack>
@@ -207,7 +209,6 @@ function UserAccess() {
                     })
                   }
                 >
-                  <option value="super-admin">Super Admin</option>
                   <option value="admin">Admin</option>
                   <option value="user">User</option>
                 </Select>

@@ -10,7 +10,6 @@ import {
   VStack,
   Text,
   Icon,
-  HStack,
 } from "@chakra-ui/react";
 import React from "react";
 import { FaqDataType } from "../common/data-types";
@@ -34,7 +33,7 @@ function PreviewFaq(props: PreviewFaqProps) {
   const handleDownload = async (filename: string) => {
     try {
       await axios
-        .get(PUBLIC_URL + "/ticket/download", {
+        .get(PUBLIC_URL + "/faq/download", {
           responseType: "blob",
           params: {
             fileName: filename,
@@ -119,12 +118,24 @@ function PreviewFaq(props: PreviewFaqProps) {
               py="6"
               minH={"80"}
             >
-              <Text textColor={"purple.800"} fontSize={"xl"} fontWeight={500}>
+              <Text
+                textColor={"purple.800"}
+                fontSize={"xl"}
+                fontWeight={500}
+                mb="0"
+              >
                 {(data as any)?.title}
               </Text>
               <Text my="2">{data?.description}</Text>
               <Divider borderColor={"gray.300"} />
-              <Text mb="0">Attachments:</Text>
+              <Text
+                mb="0"
+                fontSize={"lg"}
+                textColor={"purple.800"}
+                fontWeight={"semibold"}
+              >
+                Attachments:
+              </Text>
               <Flex gap={3}>
                 {data?.files?.map((item) => {
                   return getAttachmentComponent(item);

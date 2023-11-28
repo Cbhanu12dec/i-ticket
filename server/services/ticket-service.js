@@ -1,5 +1,5 @@
 // const TicketModel = require("../models//tickets-model");
-const { TicketModel } = require('../models/tickets-model');
+const { TicketModel } = require("../models/tickets-model");
 
 const AWS = require("aws-sdk");
 const multer = require("multer");
@@ -40,8 +40,7 @@ exports.createTicket = async (ticketPayload, file) => {
   });
 };
 
-exports.updateComments = async(ticketPayload) =>{
-  console.log("************ finding data:", ticketPayload)
+exports.updateComments = async (ticketPayload) => {
   const doc = await TicketModel.findOneAndUpdate(
     { ticketNumber: ticketPayload.ticketNumber },
     {
@@ -53,8 +52,7 @@ exports.updateComments = async(ticketPayload) =>{
   if (doc) {
     return await TicketModel.find({});
   }
-
-}
+};
 
 exports.getAllTickets = async () => {
   return await TicketModel.find({});

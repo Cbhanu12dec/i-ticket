@@ -40,9 +40,10 @@ interface CreateFaqFormProps {
   setFaqs: React.Dispatch<React.SetStateAction<any>>;
   edit?: EditType;
   setEdit?: React.Dispatch<React.SetStateAction<EditType | undefined>>;
+  getFaqs: () => void;
 }
 const CreateFaqForm = (props: CreateFaqFormProps) => {
-  const { setShowModal, showModal, edit, setEdit, setFaqs } = props;
+  const { setShowModal, showModal, edit, setEdit, setFaqs, getFaqs } = props;
   const [faq, setFaq] = useState(getDefaultFaq());
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({});
   const { register, handleSubmit, setValue } = useForm();
@@ -53,10 +54,10 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
     formData.append("title", faq?.title);
     formData.append("description", faq?.description);
     formData.append("assignee", faq?.assignee);
-    formData.append("exsisting_files", updateFiles as any);
     formData.append("files", acceptedFiles[0]);
 
     if (edit?.forEdit) {
+      formData.append("exsisting_files", JSON.stringify(updateFiles) as any);
       formData.append("faqNumber", (edit?.data as any)?.faqNumber);
       formData.append("isHidden", (edit?.data as any)?.isHidden);
 
@@ -70,7 +71,9 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
           message.success("Updated Faq successfully..!");
           setShowModal(false);
           resetValues();
-          setFaqs(response.data.faqs);
+          getFaqs();
+
+          // setFaqs(response.data.faqs);
         })
         .catch((err) => {
           console.log("ERROR: ", err);
@@ -89,12 +92,14 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
           message.success("Created Faq successfully..!");
           setShowModal(false);
           resetValues();
-          setFaqs(response.data.faqs);
+          getFaqs();
+          // setFaqs(response.data.faqs);
         })
         .catch((err) => {
           console.log("checking error", err);
           setShowModal(false);
           resetValues();
+          getFaqs();
           message.error("Failed to create faq..!");
         });
     }
@@ -155,7 +160,6 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
       console.error("Error downloading file:", error);
     }
   };
-
   const getIcons = (type: string) => {
     if (type?.toLowerCase() === "pdf") {
       return ImFilePdf;
@@ -373,7 +377,7 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
               type="submit"
               leftIcon={<AiOutlineCheck />}
             >
-              Update FAQ
+              {edit?.forEdit ? "Update FAQ" : "Create FAQ"}
             </Button>
           </ModalFooter>
         </form>
