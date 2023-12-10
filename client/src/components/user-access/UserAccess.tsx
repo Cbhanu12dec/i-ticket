@@ -11,9 +11,9 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-  Select,
   Image,
   HStack,
+  Select,
 } from "@chakra-ui/react";
 import access from "../assets/useraccess.svg";
 import { BsPersonLock } from "react-icons/bs";
@@ -21,13 +21,14 @@ import React, { useEffect, useState } from "react";
 import { PUBLIC_URL } from "../common/utils";
 import axios from "axios";
 import _ from "lodash";
-import { message } from "antd";
+import { Select as ASelect, SelectProps, Space, message } from "antd";
 import Dashboard from "../dashboard/Dashboard";
 
 function UserAccess() {
   const [showUserAccess, setShowUserAccess] = useState<boolean>(false);
   const [userAccessEmail, setUserAccessEmail] = useState<string>("");
   const [userAccessInfo, setUserAccessInfo] = useState();
+  const [usersOptions, setUsersOption] = useState([]);
   const [currentUserDeatials, setCurrentUserDetails] = useState({});
   const getUserAccessByEmail = () => {
     axios
@@ -64,10 +65,56 @@ function UserAccess() {
   };
 
   useEffect(() => {
+    axios
+      .get(PUBLIC_URL + "/users/get-all-users")
+      .then((response) => {
+        const users = response.data.users;
+        const prepareData = users?.map((item: any) => {
+          return {
+            label: item?.firstName + " " + item.lastName,
+            value: item.email,
+          };
+        });
+        setUsersOption(prepareData);
+        // message.success("User access updated successfully...!");
+        // setShowUserAccess(false);
+      })
+      .catch((error) => {
+        console.log("ERROR: ", error);
+        message.error("Error while updating user access...!");
+        // setShowUserAccess(false);
+      });
+
     const info = JSON.parse(localStorage.getItem("userInfo") as string);
     setCurrentUserDetails(info);
   }, []);
 
+  const options: SelectProps["options"] = [
+    {
+      label: "China",
+      value: "china",
+      emoji: "🇨🇳",
+      desc: "China (中国)",
+    },
+    {
+      label: "USA",
+      value: "usa",
+      emoji: "🇺🇸",
+      desc: "USA (美国)",
+    },
+    {
+      label: "Japan",
+      value: "japan",
+      emoji: "🇯🇵",
+      desc: "Japan (日本)",
+    },
+    {
+      label: "Korea",
+      value: "korea",
+      emoji: "🇰🇷",
+      desc: "Korea (韩国)",
+    },
+  ];
   return (
     <Dashboard>
       <Flex direction={"column"} alignItems={"start"} w="100%" mx="6" my="2">
@@ -132,13 +179,22 @@ function UserAccess() {
                 borderWidth={0.2}
               />
               <Flex width={"100%"} mt="3">
-                <Input
+                {/* <Input
                   placeholder="Enter email"
                   maxW={"72"}
                   borderColor={"gray.400"}
                   _placeholder={{ color: "purple.800" }}
                   // opacity={0.2}
                   onChange={(e) => setUserAccessEmail(e.target.value)}
+                /> */}
+                <ASelect
+                  mode="multiple"
+                  style={{ width: "50%" }}
+                  placeholder="select user"
+                  // defaultValue={["china"]}
+                  onChange={(e) => setUserAccessEmail(e[0])}
+                  optionLabelProp="label"
+                  options={usersOptions}
                 />
                 <Button
                   bg={"purple.800"}

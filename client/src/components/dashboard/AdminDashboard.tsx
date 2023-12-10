@@ -22,8 +22,9 @@ import axios from "axios";
 import { PUBLIC_URL } from "../common/utils";
 import { message } from "antd";
 import _ from "lodash";
-import { FaCubes, FaUsers } from "react-icons/fa6";
+import { FaCubes, FaInbox, FaUsers } from "react-icons/fa6";
 import { prepareAnnouncements } from "../common/prepare-data";
+import { BsDatabaseX } from "react-icons/bs";
 
 function AdminDashboard() {
   const [statsData, setStatsData] = useState<{
@@ -256,20 +257,35 @@ function AdminDashboard() {
               Upcoming Announcements
             </Text>
             <Divider my="2" />
-            <VStack divider={<StackDivider />} mt="2" w="full">
-              {announcements?.map((item: any) => {
-                return (
-                  <Flex w="full">
-                    <Text mb="0" fontSize={"lg"}>
-                      {_.capitalize(item?.title)}
-                    </Text>
-                    <Box mx="6">
-                      <div className="ui orange basic label mini">Upcoming</div>
-                    </Box>
-                  </Flex>
-                );
-              })}
-            </VStack>
+            {announcements?.length > 0 ? (
+              <VStack divider={<StackDivider />} mt="2" w="full">
+                {announcements?.map((item: any) => {
+                  return (
+                    <Flex w="full">
+                      <Text mb="0" fontSize={"lg"}>
+                        {_.capitalize(item?.title)}
+                      </Text>
+                      <Box mx="6">
+                        <div className="ui orange basic label mini">
+                          Upcoming
+                        </div>
+                      </Box>
+                    </Flex>
+                  );
+                })}
+              </VStack>
+            ) : (
+              <Flex
+                direction={"column"}
+                w="full"
+                justifyContent={"center"}
+                alignItems={"center"}
+                mt="10"
+              >
+                <BsDatabaseX size={42} />
+                <Text mt="2">No Announcements scheduled...!</Text>
+              </Flex>
+            )}
           </Flex>
         </GridItem>
         <GridItem

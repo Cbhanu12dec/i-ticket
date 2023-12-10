@@ -14,10 +14,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Select,
-  Textarea,
-  Text,
-  Avatar,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { AiOutlineClose } from "react-icons/ai";
@@ -60,6 +56,10 @@ function Profile(props: ProfileProps) {
       lastName: user?.lastName,
       email: user?.email,
       phoneNumber: user?.phoneNumber,
+      addressLine1: usersData?.address?.addressLine1,
+      addressLine2: usersData?.address?.addressLine1,
+      city: usersData?.address?.city,
+      state: usersData?.address?.state,
     });
     setFormData({
       ...formData,
@@ -67,17 +67,19 @@ function Profile(props: ProfileProps) {
       lastName: user?.lastName,
       email: user?.email,
       phoneNumber: user?.phoneNumber,
+      addressLine1: usersData?.address?.addressLine1,
+      addressLine2: usersData?.address?.addressLine1,
+      city: usersData?.address?.city,
+      state: usersData?.address?.state,
     });
   }, []);
 
   const onSubmitClicked = () => {
-    console.log("file to be submited", formData);
     axios
       .put(PUBLIC_URL + "/users/update-profile", formData)
       .then((response) => {
         message.success("User profile updated successfully...!");
         localStorage.setItem("userInfo", JSON.stringify(response.data.users));
-        console.log("checkinstatis");
       })
       .catch((error) => {
         console.log("ERROR: ", error);
@@ -100,8 +102,8 @@ function Profile(props: ProfileProps) {
           <Divider />
           <ModalBody py={"4"}>
             <form onSubmit={handleSubmit(onSubmitClicked)}>
-              <Flex direction={"column"} mx="4">
-                <FormControl isInvalid={!!errors["firstName"]}>
+              <Flex direction={"column"} mx="2">
+                <FormControl isInvalid={!!errors["firstName"]} mt="2">
                   <FormLabel
                     id="firstName"
                     fontSize={"xs"}
@@ -128,7 +130,7 @@ function Profile(props: ProfileProps) {
                     {errors["firstName"]?.message as string}
                   </FormErrorMessage>
                 </FormControl>
-                <FormControl isInvalid={!!errors["lastName"]}>
+                <FormControl isInvalid={!!errors["lastName"]} mt="2">
                   <FormLabel
                     fontSize={"xs"}
                     textColor="gray.600"
@@ -154,7 +156,7 @@ function Profile(props: ProfileProps) {
                     {errors["lastName"]?.message as string}
                   </FormErrorMessage>
                 </FormControl>
-                <FormControl isInvalid={!!errors["email"]}>
+                <FormControl isInvalid={!!errors["email"]} mt="2">
                   <FormLabel
                     fontSize={"xs"}
                     textColor="gray.600"
@@ -178,7 +180,7 @@ function Profile(props: ProfileProps) {
                     {errors["email"]?.message as string}
                   </FormErrorMessage>
                 </FormControl>
-                <FormControl isInvalid={!!errors["phoneNumber"]}>
+                <FormControl isInvalid={!!errors["phoneNumber"]} mt="2">
                   <FormLabel
                     fontSize={"xs"}
                     textColor="gray.600"
@@ -205,7 +207,7 @@ function Profile(props: ProfileProps) {
                   </FormErrorMessage>
                 </FormControl>
 
-                <FormControl isInvalid={!!errors["addressLine1"]}>
+                <FormControl isInvalid={!!errors["addressLine1"]} mt="2">
                   <FormLabel
                     fontSize={"xs"}
                     textColor="gray.600"
@@ -239,6 +241,7 @@ function Profile(props: ProfileProps) {
                     fontSize={"xs"}
                     textColor="gray.600"
                     fontWeight={"semibold"}
+                    mt="2"
                   >
                     Address Line 2:
                   </FormLabel>
@@ -257,7 +260,7 @@ function Profile(props: ProfileProps) {
                     }}
                   />
                 </FormControl>
-                <FormControl isInvalid={!!errors["city"]}>
+                <FormControl isInvalid={!!errors["city"]} mt="2">
                   <FormLabel
                     fontSize={"xs"}
                     textColor="gray.600"
@@ -285,7 +288,7 @@ function Profile(props: ProfileProps) {
                     {errors["city"]?.message as string}
                   </FormErrorMessage>
                 </FormControl>
-                <FormControl isInvalid={!!errors["state"]}>
+                <FormControl isInvalid={!!errors["state"]} mt="2">
                   <FormLabel
                     fontSize={"xs"}
                     textColor="gray.600"

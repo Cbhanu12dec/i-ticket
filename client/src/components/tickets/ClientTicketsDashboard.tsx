@@ -203,8 +203,6 @@ const ClientTicketsDashboard = () => {
     setFilteredTickets(preparedData);
   }, [activeStep, tickets]);
 
-  // console.log("********* filterred ticketys", filteredTickets);
-
   const getIcons = (type: string) => {
     if (type?.toLowerCase() === "pdf") {
       return ImFilePdf;
@@ -495,6 +493,7 @@ const ClientTicketsDashboard = () => {
               mt="2"
               maxH={"xl"}
               overflowY={"scroll"}
+              // overflowX={"scroll"}
               alignItems={"start"}
             >
               {filteredTickets?.length > 0 ? (
@@ -503,7 +502,7 @@ const ClientTicketsDashboard = () => {
                     <Flex
                       p="2"
                       rounded={"md"}
-                      width={"100%"}
+                      width={"95%"}
                       justifyContent={"space-between"}
                       cursor={"pointer"}
                       alignItems={"center"}
@@ -536,8 +535,25 @@ const ClientTicketsDashboard = () => {
                         </Text>
                       </VStack>
                       <Flex alignItems={"start"}>
+                        <div
+                          style={{
+                            // fontSize: "10px",
+                            fontWeight: 500,
+                            letterSpacing: 0.8,
+                          }}
+                          className={`ui mini basic label ${
+                            item.priority?.toLocaleLowerCase() === "low"
+                              ? "green"
+                              : item === "medium"
+                              ? "orange"
+                              : "red"
+                          }`}
+                        >
+                          {_.upperCase(item?.priority)}
+                        </div>
                         <Text
                           mr="4"
+                          ml="3"
                           textColor={"purple.800"}
                           fontWeight={"bold"}
                         >
@@ -636,11 +652,25 @@ const ClientTicketsDashboard = () => {
                   </HStack>
                 </Flex>
                 <Text fontSize={"sm"}> {(ticketData as any)?.description}</Text>
-                <Divider borderColor={"gray.400"} borderStyle={"dashed"} />
-                <Text mb="0" fontWeight={"semibold"} textColor={"purple.800"}>
-                  Attachments:
-                </Text>
-                {getAttachmentComponent((ticketData as any)?.files[0])}
+                {(ticketData as any)?.files?.length > 0 && (
+                  <>
+                    {" "}
+                    <Divider borderColor={"gray.400"} borderStyle={"dashed"} />
+                    <Text
+                      mb="0"
+                      fontWeight={"semibold"}
+                      textColor={"purple.800"}
+                    >
+                      Attachments:
+                    </Text>
+                  </>
+                )}
+                {/* {getAttachmentComponent((ticketData as any)?.files[0])} */}
+                <HStack>
+                  {(ticketData as any)?.files?.map((item: any) => {
+                    return getAttachmentComponent(item);
+                  })}
+                </HStack>
                 <Divider borderColor={"gray.400"} borderStyle={"dashed"} />
                 <Text mb="0" fontWeight={"semibold"} textColor={"purple.800"}>
                   Comments:

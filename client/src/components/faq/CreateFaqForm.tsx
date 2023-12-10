@@ -12,11 +12,13 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Select,
   Textarea,
   VStack,
   Text,
   Icon,
+  RadioGroup,
+  Stack,
+  Radio,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -267,26 +269,34 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
                 }
               />
             </FormControl>
-            <FormControl mt="3">
+            <FormControl mt="3" mb="1">
               <FormLabel fontSize={"sm"} textColor={"gray.700"}>
                 Access to
               </FormLabel>
-              <Select
-                placeholder="Select option"
-                value={faq.assignee}
+              <RadioGroup
+                defaultValue="all"
                 {...register("assignee", { required: true })}
                 onChange={(e) =>
                   setFaq({
                     ...faq,
-                    assignee: e.target.value,
+                    assignee: e,
                   })
                 }
               >
-                <option value="all">All</option>
-                <option value="user">Users</option>
-                <option value="admin">Admin</option>
-              </Select>
+                <Stack spacing={6} direction="row">
+                  <Radio value="all" colorScheme="purple">
+                    All
+                  </Radio>
+                  <Radio colorScheme="purple" value="user">
+                    Users
+                  </Radio>
+                  <Radio colorScheme="purple" value="admin">
+                    Admin
+                  </Radio>
+                </Stack>
+              </RadioGroup>
             </FormControl>
+
             {updateFiles?.length > 0 && (
               <FormControl mt="3">
                 <FormLabel fontSize={"sm"} textColor={"gray.700"}>

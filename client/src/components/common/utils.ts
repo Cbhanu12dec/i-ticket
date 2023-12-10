@@ -5,8 +5,8 @@ export interface AnnouncementMetrics {
   UPCOMING: "Upcoming";
 }
 
-// export const PUBLIC_URL = "http://localhost:5001";
-export const PUBLIC_URL = "http://18.225.235.171:5001";
+export const PUBLIC_URL = "http://localhost:5001";
+// export const PUBLIC_URL = "http://18.225.235.171:5001";
 
 export const getFileType = (name: string) => {
   return name?.split(".")[1];

@@ -38,34 +38,39 @@ const Login = () => {
     };
   };
   const { register, handleSubmit, setValue } = useForm();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const loginClicked = () => {
     if (
       (loginData as any)?.email?.length > 0 &&
       (loginData as any)?.password?.length > 0
     ) {
-      axios
-        .post(PUBLIC_URL + "/users/login", loginData)
-        .then((response) => {
-          message.success("User logged in success..!");
-          localStorage.setItem(
-            "userInfo",
-            JSON.stringify(response.data.users[0])
-          );
-          localStorage.setItem("isActive", "ACTIVE");
-          localStorage.setItem("announcements", JSON.stringify([]));
+      if (emailRegex.test((loginData as any)?.email)) {
+        axios
+          .post(PUBLIC_URL + "/users/login", loginData)
+          .then((response) => {
+            message.success("User logged in success..!");
+            localStorage.setItem(
+              "userInfo",
+              JSON.stringify(response.data.users[0])
+            );
+            localStorage.setItem("isActive", "ACTIVE");
+            localStorage.setItem("announcements", JSON.stringify([]));
 
-          if (response.data.users[0]?.role === "user") {
-            navigate("/tickets");
-          } else {
-            navigate("/dashboard");
-          }
-        })
-        .catch((error) => {
-          console.log("ERROR: ", error);
-          message.error("Failed to login, please try again..!");
-          localStorage.setItem("isActive", "INACTIVE");
-        });
+            if (response.data.users[0]?.role === "user") {
+              navigate("/tickets");
+            } else {
+              navigate("/dashboard");
+            }
+          })
+          .catch((error) => {
+            console.log("ERROR: ", error);
+            message.error("Failed to login, please try again..!");
+            localStorage.setItem("isActive", "INACTIVE");
+          });
+      } else {
+        message.error("Please enter valid email..!");
+      }
     } else {
       message.error("Please verify login credentials..!");
     }
@@ -86,15 +91,19 @@ const Login = () => {
           (signupData as any)?.confirmPassword
         )
       ) {
-        axios
-          .post(PUBLIC_URL + "/users/signup", payload)
-          .then((response) => {
-            message.success("Account created successfully..!");
-          })
-          .catch((error) => {
-            console.log("ERROR: ", error);
-            message.error("Error while creating account..!");
-          });
+        if (emailRegex.test((signupData as any)?.email)) {
+          axios
+            .post(PUBLIC_URL + "/users/signup", payload)
+            .then((response) => {
+              message.success("Account created successfully..!");
+            })
+            .catch((error) => {
+              console.log("ERROR: ", error);
+              message.error("Error while creating account..!");
+            });
+        } else {
+          message.error("Please enter valid email..!");
+        }
       } else {
         message.error("Password missmatch..!");
       }

@@ -12,7 +12,9 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Select,
+  Radio,
+  RadioGroup,
+  Stack,
   Textarea,
 } from "@chakra-ui/react";
 import { DatePicker, message } from "antd";
@@ -190,29 +192,39 @@ const CreatAnnouncement = (props: CreateFaqFormProps) => {
             </FormControl>
             <FormControl
               mt="3"
+              mb="1"
               isRequired
               isInvalid={annnouncementData?.assignee?.length === 0}
             >
               <FormLabel fontSize={"sm"} textColor={"gray.700"}>
                 Announce To
               </FormLabel>
-              <Select
-                placeholder="Select option"
+              <RadioGroup
+                defaultValue="all"
                 value={annnouncementData.assignee}
                 {...register("assignee", { required: true })}
                 onChange={(e) =>
                   setAnnouncementData({
                     ...annnouncementData,
-                    assignee: e.target.value,
+                    assignee: e,
                   })
                 }
               >
-                <option value="all">All</option>
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-              </Select>
-              <FormErrorMessage>Announce is required.</FormErrorMessage>
+                <Stack spacing={6} direction="row">
+                  <Radio value="all" colorScheme="purple">
+                    All
+                  </Radio>
+                  <Radio colorScheme="purple" value="user">
+                    Users
+                  </Radio>
+                  <Radio colorScheme="purple" value="admin">
+                    Admin
+                  </Radio>
+                </Stack>
+              </RadioGroup>
+              <FormErrorMessage>Assignee to is required.</FormErrorMessage>
             </FormControl>
+
             <FormControl mt="3">
               <FormLabel fontSize={"sm"} textColor={"gray.700"}>
                 Schedule duration

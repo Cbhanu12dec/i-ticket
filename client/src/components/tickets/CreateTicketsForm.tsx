@@ -18,6 +18,9 @@ import {
   VStack,
   Text,
   Icon,
+  RadioGroup,
+  Stack,
+  Radio,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -292,9 +295,8 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
             <HStack mt="3" gap={4}>
               <FormControl>
                 <FormLabel>Category</FormLabel>
-                <Input
-                  type="text"
-                  placeholder="Enter category here..."
+                <Select
+                  placeholder="Select category"
                   {...register("category", { required: true })}
                   value={ticketPayload?.category}
                   onChange={(e) =>
@@ -303,24 +305,38 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
                       category: e.target.value,
                     } as any)
                   }
-                />
+                >
+                  <option value="category-1">Category - 1 </option>
+                  <option value="category-2">Category - 2</option>
+                  <option value="category-3">Category - 3</option>
+                  <option value="category-4">Category - 4</option>
+                  <option value="category-5">Category - 5</option>
+                </Select>
               </FormControl>
-              <FormControl>
+              <FormControl ml="6">
                 <FormLabel>Priority</FormLabel>
-                <Select
+                <RadioGroup
+                  defaultValue="low"
                   value={ticketPayload?.priority}
-                  placeholder="Select option"
                   onChange={(e) =>
                     setTicketPayload({
                       ...ticketPayload,
-                      priority: e.target.value,
+                      priority: e,
                     } as any)
                   }
                 >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </Select>
+                  <Stack spacing={6} direction="row">
+                    <Radio value="low" colorScheme="purple">
+                      Low
+                    </Radio>
+                    <Radio colorScheme="purple" value="medium">
+                      Medium
+                    </Radio>
+                    <Radio colorScheme="purple" value="high">
+                      High
+                    </Radio>
+                  </Stack>
+                </RadioGroup>
               </FormControl>
             </HStack>
             {updateFiles?.length > 0 && (

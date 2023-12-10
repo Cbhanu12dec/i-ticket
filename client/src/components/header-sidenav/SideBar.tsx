@@ -37,7 +37,7 @@ const SideNav = ({ onClose, ...rest }: SideNavProps) => {
   const AdminLinks = [
     { name: "Dashboard", icon: FiHome, path: "/dashboard" },
     { name: "Announcements", icon: TfiAnnouncement, path: "/announcements" },
-    { name: "Faq's", icon: FiTrendingUp, path: "/faq" },
+    { name: "FAQs", icon: FiTrendingUp, path: "/faq" },
     { name: "Tickets", icon: FiCompass, path: "/tickets" },
     { name: "User Access", icon: FiStar, path: "/users" },
     { name: "Upload Data", icon: FiSettings, path: "/upload" },
