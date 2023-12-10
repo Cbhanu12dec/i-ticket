@@ -57,6 +57,7 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
     formData.append("description", faq?.description);
     formData.append("assignee", faq?.assignee);
     formData.append("files", acceptedFiles[0]);
+    console.log("******** fromatda", formData);
 
     if (edit?.forEdit) {
       formData.append("exsisting_files", JSON.stringify(updateFiles) as any);
@@ -82,6 +83,7 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
           message.error("Failed to update faq..!");
         });
     } else {
+      console.log("************* fromata", formData);
       axios
         .post(`${PUBLIC_URL}/faq/create-faq`, formData, {
           headers: {
@@ -216,6 +218,8 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
       </Flex>
     );
   };
+
+  console.log("********** faq:", faq);
   return (
     <Modal
       isOpen={showModal}
@@ -228,7 +232,7 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
     >
       <ModalOverlay />
       <ModalContent>
-        <form onSubmit={handleSubmit(onSubmitClicked)}>
+        <form>
           <ModalHeader>
             {edit?.forEdit ? "Edit Faq" : "Create Faq Form"}
           </ModalHeader>
@@ -275,6 +279,7 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
               </FormLabel>
               <RadioGroup
                 defaultValue="all"
+                value={faq.assignee}
                 {...register("assignee", { required: true })}
                 onChange={(e) =>
                   setFaq({
@@ -382,7 +387,7 @@ const CreateFaqForm = (props: CreateFaqFormProps) => {
               bg="purple.900"
               color={"white"}
               _hover={{ bg: "purple.800" }}
-              type="submit"
+              onClick={onSubmitClicked}
               leftIcon={<AiOutlineCheck />}
             >
               {edit?.forEdit ? "Update FAQ" : "Create FAQ"}

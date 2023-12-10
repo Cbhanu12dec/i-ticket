@@ -73,6 +73,7 @@ const CreatAnnouncement = (props: CreateFaqFormProps) => {
   }, [edit?.data, setValue]);
 
   const onSubmitClicked = () => {
+    console.log("*********** annouments datas");
     if (edit?.forEdit) {
       axios
         .put(
@@ -128,6 +129,9 @@ const CreatAnnouncement = (props: CreateFaqFormProps) => {
     setValue("description", "");
     setValue("assignee", "all");
   };
+
+  console.log("******** bahnu ", annnouncementData);
+
   return (
     <Modal
       isOpen={showModal}
@@ -141,7 +145,7 @@ const CreatAnnouncement = (props: CreateFaqFormProps) => {
     >
       <ModalOverlay />
       <ModalContent>
-        <form onSubmit={handleSubmit(onSubmitClicked)}>
+        <form>
           <ModalHeader textColor={"purple.800"}>
             {edit?.forEdit ? "Edit Announcement" : "Create Announcement Form"}
           </ModalHeader>
@@ -190,12 +194,7 @@ const CreatAnnouncement = (props: CreateFaqFormProps) => {
               />
               <FormErrorMessage>Description is required.</FormErrorMessage>
             </FormControl>
-            <FormControl
-              mt="3"
-              mb="1"
-              isRequired
-              isInvalid={annnouncementData?.assignee?.length === 0}
-            >
+            <FormControl mt="3" mb="1">
               <FormLabel fontSize={"sm"} textColor={"gray.700"}>
                 Announce To
               </FormLabel>
@@ -267,7 +266,7 @@ const CreatAnnouncement = (props: CreateFaqFormProps) => {
               color={"white"}
               _hover={{ bg: "purple.800" }}
               leftIcon={<TfiAnnouncement />}
-              type="submit"
+              onClick={onSubmitClicked}
             >
               {edit?.forEdit ? "Edit Announcement" : "Create Announcement"}
             </Button>

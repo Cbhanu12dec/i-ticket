@@ -111,10 +111,10 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
     formData.append("priority", ticketPayload?.priority);
     formData.append("assignee", "admin");
     formData.append("userCreated", (userInfo as any)?.userID);
-    formData.append("files", acceptedFiles[0]);
 
     if (edit?.forEdit) {
       formData.append("exsisting_files", JSON.stringify(updateFiles) as any);
+      formData.append("files", acceptedFiles[0]);
       formData.append("ticketNumber", (edit?.data as any)?.ticketNumber);
       axios
         .put(PUBLIC_URL + `/ticket/update-ticket`, formData, {
@@ -135,6 +135,7 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
           getTickets();
         });
     } else {
+      formData.append("files", acceptedFiles[0]);
       axios
         .post(PUBLIC_URL + `/ticket/create-ticket`, formData, {
           headers: {
@@ -255,7 +256,7 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
     >
       <ModalOverlay />
       <ModalContent>
-        <form onSubmit={handleSubmit(onSubmitClicked)}>
+        <form>
           <ModalHeader>
             {edit?.forEdit ? "Edit Ticket" : "Create Ticket Form"}
           </ModalHeader>
@@ -428,7 +429,7 @@ const CreateTicketsForm = (props: CreateTicketForm) => {
               bg="purple.900"
               color={"white"}
               _hover={{ bg: "purple.800" }}
-              type="submit"
+              onClick={onSubmitClicked}
             >
               {edit?.forEdit ? "Update Ticket" : "Create Ticket"}
             </Button>
